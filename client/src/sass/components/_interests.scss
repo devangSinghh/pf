@@ -1,0 +1,18 @@
+.interests {
+    ul {
+        li {
+            h5 {
+                font-size: 24px;
+                color: rgb(88, 88, 88);
+            }
+            h6 {
+                color: rgb(34, 110, 145);
+            }
+            font-family: $font-2;
+
+            ul {
+                color: rgb(34, 110, 145);
+            }
+        }
+    }
+}

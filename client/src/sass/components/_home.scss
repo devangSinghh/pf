@@ -1,0 +1,110 @@
+.home-left {
+    height: 100vh;
+    background-color: rgb(26, 26, 26);
+    position: fixed !important;
+    .heading-container {
+        padding: 2.3rem;
+
+        .person_img {
+            
+            // object-fit: cover;
+            // border-radius: 50%;
+            // height: 270px;
+            // width: 270px;
+            // overflow: hidden;
+        }
+    }
+    .main-heading {
+        color: rgb(241, 241, 241);
+        font-size: 50px;
+        font-family: $font-1;
+        margin-top: 0.2rem;
+    }
+
+    .social-media {
+        margin-top: 0.6rem;
+        margin-bottom: 2rem;
+    }
+
+    h6 {
+        margin-top: 1.6rem;
+        color: rgb(241, 241, 241);
+        font-size: 20px;
+        font-family: $font-2;
+    }
+
+}
+.blog-link {
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    color: rgb(104, 104, 104);
+    &:hover {
+        color: rgb(117, 117, 117);
+    }
+}
+
+.developer-section {
+    font-size: 12px;
+    margin-top: 2.5rem;
+    color: rgb(78, 78, 78);
+}
+
+.home-right {
+
+}
+
+@media (max-width:1024.98px) {
+    .home-left {
+        // height: 115vh;
+        // position: relative !important;
+
+        // .person_img {
+        //     height: 250px !important;
+        //     width: 250px !important;
+        // }
+    }
+}
+
+
+@media (max-width:767.98px) {
+    .home-left {
+        height: 120vh;
+        position: relative !important;
+    }
+}
+
+@media (max-width:520px) {
+    .home-left {
+        height: 115vh;
+        position: relative !important;
+
+        // .person_img {
+        //     height: 200px !important;
+        //     width: 200px !important;
+        // }
+    }
+}
+
+@media (max-width:375px) {
+    .home-left {
+        height: 110vh;
+        position: relative !important;
+
+        .person_img {
+            height: 200px !important;
+            width: 200px !important;
+        }
+    }
+}
+
+@media (max-width:320px) {
+    .home-left {
+        height: 110vh;
+        position: relative !important;
+
+        // .person_img {
+        //     height: 200px !important;
+        //     width: 200px !important;
+        // }
+    }
+}

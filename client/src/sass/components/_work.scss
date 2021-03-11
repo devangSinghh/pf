@@ -1,0 +1,63 @@
+.work-experience {
+    .work-quote {
+        font-family: $font-2;
+        color: rgb(102, 101, 101);
+    }
+
+    button {
+        width: 150px;
+        background-color: rgb(48, 48, 48);
+        border-radius: 0.24rem;
+        padding: 0.14rem;
+        transition: all 0.3s;
+        margin-top: 0.6rem;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        &:hover {
+            background-color: rgb(36, 36, 36);
+        }
+
+        &:active {
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        }
+    }
+
+    .work-cards {
+        margin-top: 1.3rem;
+    }
+
+    .work-card {
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+        border-radius: 0.3rem;
+        width: 300px;
+        .work-img {
+            width: 100%;
+            // height: 200px;
+            border-top-left-radius: 0.3rem;
+            border-top-right-radius: 0.3rem;
+            object-fit: cover;
+        }
+
+        .work-card-content {
+            padding: 0.4rem;
+        }
+
+        .work-card-heading {
+            font-family: $font-2;
+            font-size: 20px;
+            margin-top: 1rem;
+            color: rgb(70, 70, 70);
+        }
+
+        .work-card-desc {
+            font-size: 14px;
+            font-family: $font-2;
+            color: rgb(54, 124, 170);
+            padding: 0.3rem;
+        }
+
+        .work-card-repo {
+            color: rgb(32, 102, 129);
+            padding: 0 0 0.3rem 0.3rem;
+        }
+    }
+}
