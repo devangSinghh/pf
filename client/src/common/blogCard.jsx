@@ -26,7 +26,7 @@ const BlogCard = props => {
                     {props.desc}
                     </div>
                 </div>
-                <Link to={'/blog/' + props.slug}><h6 className="read-more">Read more...</h6></Link>
+                <Link to={'/blogs/' + props.slug}><h6 className="read-more">Read more...</h6></Link>
                 </Timeline.Item>
                 <Timeline.Item></Timeline.Item>
             </Timeline>

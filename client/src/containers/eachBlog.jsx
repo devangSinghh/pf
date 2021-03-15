@@ -74,7 +74,7 @@ class EachBlog extends BLogFunctions {
 
     componentDidMount = async() => {
         const { match: { params } } = this.props;
-        const { data:blog } = await axios.get(`blog/${params.slug}/`)
+        const { data:blog } = await axios.get(base + `blog/${params.slug}/`)
         this.setState({ blog, loadingBlog : false });
         document.addEventListener('click', this.handleClickOutside, true);
         this.setState({ 
