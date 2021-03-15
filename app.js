@@ -36,6 +36,7 @@ const editThisBlog = require('./routes/editThisBlog')
 const PORT = 6161;
 
 app.use('*', function(req, res, next) {
+  
 //replace localhost:8080 to the ip address:port of your server
 res.header("Access-Control-Allow-Origin", "http://localhost:6161");
 res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -62,6 +63,14 @@ app.use(passport.session());
 app.use('/add-project', project);
 app.use('/add-blog', blog);
 app.use('/update-blog', editThisBlog);
+let count=0;
+function countMiddleware(req,res,next){
+count++;
+if(next)next();
+}
+
+app.use(countMiddleware);
+console.log(count)
 
 // connect to DB
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, () => console.log("Database is connected!"));

@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
-
 import glogo from '../assets/socialmedialogo/glogo.svg'
-
-import test from '../assets/test.png';
-
 import WorkCard from '../common/workCard';
-
 import axios, { base } from '../axios-pf';
 
 class Work extends Component {
@@ -17,6 +12,7 @@ class Work extends Component {
     componentDidMount = async() => {
         const { data : projects } = await axios.get(base + 'add-project');
         this.setState({ projects })
+        console.log(projects)
     }
 
     render() {

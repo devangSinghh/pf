@@ -14,6 +14,7 @@ class Blog extends Component {
     componentDidMount = async() => {
         const { data : blogs } = await axios.get(base + 'add-blog');
         this.setState({ blogs })
+        console.log(blogs)
     }
 
     render() {
@@ -43,8 +44,9 @@ class Blog extends Component {
                 <div className="home-right offset-md-3 col-md-5">
 
                     <div className="row m-0">
-                        {blogs.map(m => 
+                        {blogs.map((m, key) => 
                                 <BlogCard
+                                key={key}
                                 image = {base + 'blog/' + m.blogcardImgRoute}
                                 name = {m.name}
                                 desc = {m.desc}

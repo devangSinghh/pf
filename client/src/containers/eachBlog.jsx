@@ -112,7 +112,7 @@ class EachBlog extends BLogFunctions {
                 <button
                 onClick={this.addCatchLine}
                 className="catch-line-button">Save</button>}
-                {false && <div className="d-flex flex-column editor-menu">
+                {true && <div className="d-flex flex-column editor-menu">
                     <button className="mb-2" onClick={e => this.appendInput(e)}>add para</button>
                     <button className="mb-2" onClick={this.changeblogBackground}>Change blog background color</button>
                     <button className="mb-2" onClick={this.changecontent}>Change content color</button>
@@ -188,19 +188,22 @@ class EachBlog extends BLogFunctions {
 
                 {/* <img src={mask} className="mask" alt=""/> */}
                 {this.state.blog.blogSections === undefined ? null : this.state.blog.blogSections.map((m, key) => 
-                    <div className="container d-flex justify-content-center align-items-center">
+                    <div key={key} className="container d-flex justify-content-center align-items-center">
                         <TextareaAutosize 
                         ref={(c) => (this.textarea = c)} 
                         style={{ color:this.state.contentColor }}
                         className="blog-section-1" 
-                        tagKey={key} 
                         onChange={e => this.handleBlogChange(e, key)} name={m.name} id={m.name} key={key}>
                             {m.content}
                         </TextareaAutosize>
-                        {/* <button className="blog-content-edit-button" onClick={e => this.deleteThisSection(e, key, m.sectionName)}><i className="fa fa-trash"></i></button>
-                        <button className="blog-content-edit-button" onClick={e => this.saveBlog(e, key, m.sectionName)}> <i className="fa fa-check"></i> </button> */}
+                        <button className="blog-content-edit-button" onClick={e => this.deleteThisSection(e, key, m.sectionName)}><i className="fa fa-trash"></i></button>
+                        <button className="blog-content-edit-button" onClick={e => this.saveBlog(e, key, m.sectionName)}> <i className="fa fa-check"></i> </button>
                     </div>
                 )}
+                <div className="container author-area">
+                    <h6 className="mb-0 author-id"><a href="https://instagram.com/dev___ang">dev___ang</a></h6>
+                    <h6 className="publishing-date">{this.state.blog.publishedOn}</h6>
+                </div>
             </div>
         );
     }

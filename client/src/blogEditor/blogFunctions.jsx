@@ -88,6 +88,7 @@ class BlogFunctions extends Component {
         const payload = await {color : color.hex}
 
         const {data : res} = await axios.post(base + `update-blog/catchLine/${this.state.blog._id}`, payload)
+        console.log(res)
       };
 
       changeFontFamilyOfCatchLine = async font => {
@@ -96,6 +97,7 @@ class BlogFunctions extends Component {
         const payload = await {fontFamily : font}
 
         const { data : res } = await axios.post(base + `update-blog/catchLineFont/${this.state.blog._id}`, payload)
+        console.log(res)
       }
 
       changeFontWeightOfCatchLine = async weight => {
@@ -104,6 +106,7 @@ class BlogFunctions extends Component {
           const payload = await { fontWeight : weight }
 
           const { data : res } = await axios.post(base + `update-blog/catchLineFontWeight/${this.state.blog._id}`, payload)
+          console.log(res)
       }
 
       changeblogBackground = async background => {
@@ -115,6 +118,7 @@ class BlogFunctions extends Component {
             this.setState({ changeblogBackground : color.hex })
             const payload = { blogBackground : color.hex }
             const { data : res } = await axios.post(base + `update-blog/blogBackground/${this.state.blog._id}`, payload)
+            console.log(res)
       }
 
       changecontent = async background => {
@@ -126,6 +130,7 @@ class BlogFunctions extends Component {
           this.setState({ contentColor : color.hex })
           const payload = { contentColor : color.hex }
           const { data : res } = await axios.post(base + `update-blog/content/${this.state.blog._id}`, payload)
+          console.log(res)
     }
 
     handleBlogColorChange = e => {
@@ -136,6 +141,7 @@ class BlogFunctions extends Component {
     sendBlogCustomColorChange = async() => {
         const payload = {blogBackground : '#'+this.state.blogCustomColor}
         const { data : res } = await axios.post(base + `update-blog/blogBackground/${this.state.blog._id}`, payload)
+        console.log(res)
         
     }
 

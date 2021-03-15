@@ -30,3 +30,10 @@
         outline: none;
     }
 }
+
+
+@media (max-width:320px) {
+    .blog-section-1 {
+        width: 100% !important;
+    }
+}
