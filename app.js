@@ -36,9 +36,9 @@ const editThisBlog = require('./routes/editThisBlog')
 const PORT = 6161;
 
 app.use('*', function(req, res, next) {
-  
+
 //replace localhost:8080 to the ip address:port of your server
-res.header("Access-Control-Allow-Origin", "http://localhost:6161");
+res.header("Access-Control-Allow-Origin", "http://35.165.61.67");
 res.header("Access-Control-Allow-Headers", "X-Requested-With");
 res.header('Access-Control-Allow-Headers', 'Content-Type');
 res.header('Access-Control-Allow-Credentials', true);
