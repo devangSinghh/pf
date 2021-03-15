@@ -22,7 +22,7 @@ function App() {
 
            {/*Blog routes*/}
            {/* <Route path="/blogs/:slug" render={props => <EachBlog {...props} key={props.location.key}/>} /> */}
-           {/* <Route path="/blogs" exact component={Blog} /> */}
+           <Route path="/blogs" exact component={Blog} />
            <Route path="/showcase-your-blog" exact component={ShowcaseBlog} />
 
         </switch>
