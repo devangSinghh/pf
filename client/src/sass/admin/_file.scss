@@ -179,3 +179,18 @@
         }
     }
 }
+
+
+#write-a-blog {
+    button {
+        width: 120px;
+        background-color: rgb(51, 51, 51);
+        padding: 0.3rem;
+        border-radius: 0.3rem;
+        color: rgb(206, 206, 206);
+
+        &:active {
+            transform: scale(0.97);
+        }
+    }
+}

@@ -1,0 +1,53 @@
+.showcase-blog-form {
+    margin-top: 1.4rem;
+    border: 1px solid rgb(114, 114, 114);
+    border-radius: 0.3rem;
+
+    .main-heading {
+        font-family: $font-4;
+    }
+
+    .showcase-image {
+        width: 16%;
+     }
+}
+
+.general-query-area {
+    margin-top: 1.4rem;
+    &::placeholder {
+        padding: 3rem;
+        text-align: center;
+    }
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.submit-button {
+    button {
+        width: 130px;
+        border-radius: 0.3rem;
+        padding: 0.3rem;
+        background-color: rgb(58, 58, 58);
+        margin: 1rem 0;
+        color: rgb(230, 230, 230);
+    }
+}
+
+
+@media (max-width:320px) {
+    .showcase-blog-form {
+    
+        .showcase-image {
+           width: 50%;
+        }
+    
+    }
+
+    .general-query-area {
+        width: 90% !important;
+        height: 240px; 
+        margin-bottom: 1.4rem;
+    }
+}

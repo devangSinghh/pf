@@ -24,8 +24,13 @@ const bodyParser = require('body-parser');
 //database libraries
 const mongoose = require('mongoose');
 
+//models
+const Blog = require('./models/blog/blog')
+
 //routes
 const project = require('./routes/addProject');
+const blog = require('./routes/blog');
+const editThisBlog = require('./routes/editThisBlog')
 
 //Port
 const PORT = 6161;
@@ -55,6 +60,8 @@ app.use(passport.session());
 
 //routes
 app.use('/add-project', project);
+app.use('/add-blog', blog);
+app.use('/update-blog', editThisBlog);
 
 // connect to DB
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, () => console.log("Database is connected!"));
@@ -86,6 +93,9 @@ app.get('/add-project/:file_name', (req,res) => {
     res.sendFile(path.join(__dirname+"/media/project/"+req.params.file_name));
 })
   
+app.get('/blog/:blogname/:file_name', (req,res) => {
+  res.sendFile(path.join(__dirname+"/media/blog/"+ req.params.blogname + '/' +req.params.file_name));
+})
 
 //facebook login routes
 app.get('/facebook/login', passport.authenticate('facebook', { scope : 'email' } ));
@@ -96,14 +106,12 @@ app.get('/facebook/callback', passport.authenticate('facebook', {failureRedirect
   res.redirect('/home');
 });
 
-app.get('/creator-special/:file_name', (req,res) => {
-  res.sendFile(path.join(__dirname+"/media/CreatorSpecial/"+req.params.file_name));
-})
+app.get('/blog/:slug', async(req, res) => {
+  const thisBlog = await Blog.findOne({slug : req.params.slug})
+  // console.log(thisBlog)
 
-app.get('/highest-rating/:file_name', (req,res) => {
-  res.sendFile(path.join(__dirname+"/media/HighestRatings/"+req.params.file_name));
+  res.send(thisBlog)
 })
-
 
 app.use(express.static('client/build'));
 

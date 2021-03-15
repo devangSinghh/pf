@@ -1,0 +1,91 @@
+.blog-card {
+    box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
+    border-radius: 0.4rem;
+    margin: 1.5rem 0;
+    transition: all 0.3s;
+    width: 360px;
+
+    &:hover {
+        cursor: pointer;
+        box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px;
+        transform: translateY(-7px);
+    }
+}
+
+.blog-card-image {
+    width: 90%;
+    height: 250px !important;
+    object-fit: cover;
+    border-radius: 0.4rem;
+}
+
+.blog-card-title {
+    font-size: 24px;
+    margin-bottom: 0;
+    padding-left: 0.3rem;
+    margin-top: 1rem;
+}
+
+.blog-author {
+    padding-left: 0.3rem;
+    font-size: 14px;
+    margin-bottom: 0;
+    font-family: $font-4;
+}
+
+.blog-author-id {
+    padding-left: 0.3rem;
+    font-size: 14px;
+    color: grey;
+}
+
+.blog-card-content {
+    font-size: 16px;
+    padding: 0.3rem;
+    margin-top: 0.5rem;
+}
+
+.read-more {
+    padding-top: 0.5rem;
+    font-size: 12px;
+}
+
+//timeline styling (left line)
+.rs-timeline-item-dot {
+    &:before {
+        border-radius: 8px !important;
+        background-color: #c4c4c4 !important;
+        width: 11px;
+        height: 11px;
+    }
+    
+}
+// .timeline-container {
+//     height: 80vh;
+// }
+/*timeline tail*/
+.rs-timeline-item-tail {
+    width: 3px;
+    background-color: #c4c4c4 !important;
+}
+.rs-timeline-item {
+    font-family:$font-2;
+    h1 {
+        color: #494949;
+        font-size: 40px;
+        font-weight:900;
+        font-family: 'Ubuntu';
+    }
+    h6 {
+        color: #8B8B8B;
+        font-weight: 900;
+        font-size: 13px;
+    }
+    .blog_story_section {
+        margin-top: 0.5rem;
+        max-width: 87%;
+        color: #5E5858;
+        font-weight: 800;
+        font-family: 'Ubuntu';
+    }
+}

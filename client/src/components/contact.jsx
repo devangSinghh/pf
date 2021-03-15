@@ -12,7 +12,8 @@ class Contact extends Component {
 
                 <h6>Have an idea, <Link style={{ textDecoration:"none" }} to="showcase-your-blog">write your blog</Link></h6>
 
-                Tag me in your blog <span>@dev___ang</span>
+                Tag me in your blog &nbsp;
+                <a style={{ textDecoration:"none", color:"#005796" }} href="https://www.instagram.com/dev___ang/" target="_blank">@dev___ang</a>
                 
             </div>
         );

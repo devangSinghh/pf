@@ -28,7 +28,7 @@ class Work extends Component {
                     no, and WOW! Wow is the one to aim for.
                 </h6>
 
-                <button><img src={glogo} alt=""/></button>
+                <a href="https://github.com/devangSinghh"><button><img src={glogo} alt=""/></button></a>
 
                 <div className="row d-flex justify-content-center m-0">
                     {this.state.projects.map(m => 

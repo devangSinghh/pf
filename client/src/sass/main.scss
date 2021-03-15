@@ -7,5 +7,15 @@
 @import './components/work';
 @import './components/contact';
 
+//blog scss files
+@import './components/blog/eachBlog';
+@import './components/blog/blog-editor';
+@import './components/blog/all-blog-page';
+@import './components/blog/blog-card';
+@import './components/blog/showcase-blog';
+
 //admin css file
 @import './admin/file';
+
+//scroll bar
+@import './components/scrollbar';
