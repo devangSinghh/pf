@@ -13,8 +13,6 @@ router.put('/:name', Apidata.uploadBlog , async(req, res) => {
     const tempPath = './media/blog/' + req.file.filename
     const newPath = './media/blog/' + req.params.name + '/banner-' + req.file.filename
 
-    const d = new Uint8Array(Buffer.from(tempPath))
-
     if (fs.readdirSync('./media/blog/' + req.params.name).filter(m => m.includes('banner')).length == 0) {
         fs.rename(tempPath, newPath, err => { 
             if (err) throw err;
@@ -97,6 +95,18 @@ router.post('/content/:id', async(req, res) => {
     await Blog.findByIdAndUpdate(req.params.id, { contentColor : req.body.contentColor })
 })
 
+
+router.post('/upload-blog-content/:name', Apidata.uploadBlog, async(req, res) => {
+    const tempPath = './media/blog/' + req.file.filename
+    const newPath = './media/blog/' + req.params.name + '/' + req.file.filename
+    console.log(tempPath)
+    console.log(newPath)
+    fs.rename(tempPath, newPath, err => { 
+        if (err) throw err;
+        console.log("content image moved")
+     })
+})
+
 router.post('/delete-a-section/:id/:section', async(req, res) => {
     const data = await Blog.findByIdAndUpdate(req.params.id, {
         $pull : {
@@ -107,6 +117,11 @@ router.post('/delete-a-section/:id/:section', async(req, res) => {
     })
 
     res.send(data)
+})
+
+//save editor content
+router.post('/save-editor-content/:id', async(req, res) => {
+    await Blog.findByIdAndUpdate(req.params.id, { blogEditorContent : req.body.blogEditorContent })
 })
 
 //Get route for blogs

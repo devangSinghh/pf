@@ -11,6 +11,8 @@ import Blog from './containers/blog';
 import './sass/main.scss'
 import EachBlog from './containers/eachBlog';
 import ShowcaseBlog from './blogEditor/showcaseBlog'
+import BlogEditor from './blogEditor/blogEditor';
+import BlogEditor2 from './blogEditor/blogEditor2';
 
 function App() {
   return (
@@ -24,6 +26,10 @@ function App() {
            <Route path="/blogs/:slug" render={props => <EachBlog {...props} key={props.location.key}/>} />
            <Route path="/blogs" exact component={Blog} />
            <Route path="/showcase-your-blog" exact component={ShowcaseBlog} />
+
+            {/*Blog editors*/}
+           <Route path="/blog-editor" component={BlogEditor} />
+           <Route path="/blog-editor-2" component={BlogEditor2} />
 
         </switch>
       </Router>

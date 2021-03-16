@@ -26,6 +26,7 @@ const blog = new mongoose.Schema({
     catchLineFontWeight : String,
     blogBackground : String,
     contentColor : String,
+    blogEditorContent : String,
     maxParaNumber : Number,
     blogSections : [blogSection]
 })

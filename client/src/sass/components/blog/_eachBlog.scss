@@ -176,6 +176,40 @@
     bottom: -13%;
 }
 
+.blog-content {
+    text-align: justify;
+    width: 50%;
+    margin: 0 auto;
+    font-family: 'Roboto';
+    margin-top: 1.6rem;
+}
+
+.copy-to-clipboard {
+    width: 50%;
+    margin: 0 auto;
+
+    button {
+        background-color: rgb(41, 41, 41);
+        width: 100px;
+        padding: 0.3rem;
+        border-radius: 0.3rem;
+        color: rgb(126, 126, 126);
+
+        &:hover {
+            background-color: rgb(39, 39, 39); 
+        }
+
+        &:active {
+            transform: scale(0.97);
+        }
+    }
+
+    .blog-copy-message {
+        font-size: 12px;
+        margin-top: 0.3rem;
+    }
+}
+
 .author-area {
     width: 70%;
     display: flex;
@@ -193,5 +227,30 @@
     .publishing-date {
         font-size: 13px;
         color: rgb(63, 63, 63);
+    }
+}
+
+@media (max-width:800px) {
+    .blog-content {
+        text-align: justify;
+        width: 83%;
+        margin-top: 1.5rem;
+    }
+    .copy-to-clipboard {
+        width: 83%;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width:700px) {
+    .blog-content {
+        text-align: justify;
+        width: 90%;
+        margin-top: 1.5rem;
+    }
+
+    .copy-to-clipboard {
+        width: 90%;
+        margin: 0 auto;
     }
 }

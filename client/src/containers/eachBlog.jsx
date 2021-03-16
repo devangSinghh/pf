@@ -5,6 +5,8 @@ import BLogFunctions from '../blogEditor/blogFunctions';
 import { SwatchesPicker  } from 'react-color';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 
+import BlogEditor from '../blogEditor/blogEditor';
+
 class EachBlog extends BLogFunctions {
     menuPaleteRef = React.createRef()
     state = {
@@ -16,6 +18,7 @@ class EachBlog extends BLogFunctions {
         catchLineColor : "#fff",
         catchLineFontFamily : "",
         catchLineFontWeight : "",
+        copyClipBoardStatus : false,
         contentColor : "",
         maxParaNumber : 0,
         blogBackground : "",
@@ -75,7 +78,7 @@ class EachBlog extends BLogFunctions {
     componentDidMount = async() => {
         const { match: { params } } = this.props;
         const { data:blog } = await axios.get(base + `blog/${params.slug}/`)
-        this.setState({ blog, loadingBlog : false });
+        this.setState({ blog });
         document.addEventListener('click', this.handleClickOutside, true);
         this.setState({ 
             blogSections : this.state.blog.blogSections,
@@ -86,6 +89,7 @@ class EachBlog extends BLogFunctions {
             blogBackground : this.state.blog.blogBackground,
             contentColor : this.state.blog.contentColor
         })
+        this.setState({ loadingBlog : false, })
     }
     componentWillUnmount = () => {
         return () => {
@@ -93,54 +97,25 @@ class EachBlog extends BLogFunctions {
         };
     }
 
+
+    copyTextToClipBoard = () => {
+        navigator.clipboard.writeText(base + 'blogs/' + this.state.blog.slug)
+        this.setState({ copyClipBoardStatus : true })
+    }
+    
+
     render() {
         const blog = this.state.blog === undefined ? null : this.state.blog
-        return (
-            <div style={{ backgroundColor:this.state.blogBackground }} className="blog-container">
-                {this.state.showCatchLineInput && <div className="black-rect" />}
-
-                {this.state.showCatchLineInput && 
-                <input ref={r => this.input = r} 
-                type="text" 
-                name="catchLine" 
-                id="catchLine" 
-                className="catch-line-input"
-                onChange={(e) => this.setState({ catchLine : e.target.value })}
-                />}
-
-                {this.state.showCatchLineInput && 
-                <button
-                onClick={this.addCatchLine}
-                className="catch-line-button">Save</button>}
-                {false && <div className="d-flex flex-column editor-menu">
-                    <button className="mb-2" onClick={e => this.appendInput(e)}>add para</button>
-                    <button className="mb-2" onClick={this.changeblogBackground}>Change blog background color</button>
-                    <button className="mb-2" onClick={this.changecontent}>Change content color</button>
-                    <button>
-                        <label className="blogBanner-label" htmlFor="blogBanner">
-                            <span className="p-1 rounded">Change banner image</span></label>
-                    </button>
-                    <button className="mt-2" onClick={this.catchLine}>Add catch line</button>
-                    <button className="mt-2">Add blog content image</button>
-                    {this.state.changeblogBackgroundState && <div>
-                        <SwatchesPicker
-                        height={250}
-                        onChange={this.handleChangeBlogBackgroundColor}
-                    />
-                        <input onChange={this.handleBlogColorChange} type="text"/>
-                        <button onClick={this.sendBlogCustomColorChange}>Save</button>
-                    </div>
-                    }
-                    {this.state.changecontentState && <SwatchesPicker
-                        height={250}
-                        onChange={this.handleChangecontentColor}
-                    />}
-                    <input style={{ display:"none" }}
-                     name="blogBanner" id="blogBanner" 
-                     onChange={this.ChangeBannerImage} 
-                     type="file"/>
-                </div>}
-                <img 
+        const el = this.state.loadingBlog === true ? 
+        <div style={{ height:"100vh", backgroundColor:"#000" }} className="d-flex justify-content-center align-items-center container-fluid p-0">
+            <svg className="loading-component" width="363" height="363" viewBox="0 0 363 363" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M181.5 363C281.74 363 363 281.74 363 181.5C363 81.2603 281.74 0 181.5 0C81.2603 0 0 81.2603 0 181.5C0 281.74 81.2603 363 181.5 363ZM181.5 356C277.874 356 356 277.874 356 181.5C356 85.1263 277.874 7 181.5 7C85.1263 7 7 85.1263 7 181.5C7 277.874 85.1263 356 181.5 356Z" fill="#E2E2E2"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M342.24 114.055C342.219 114.002 342.209 113.945 342.209 113.887V113.887C342.212 113.734 342.294 113.593 342.425 113.515L343.999 112.579C345.951 111.419 348.48 112.263 349.292 114.384C357.563 136.009 361.966 159.787 361.587 184.695C361.193 210.516 355.698 234.965 346.157 256.937C345.445 258.577 343.516 259.284 341.897 258.526V258.526C340.753 257.989 340.029 256.832 340.049 255.568L340.05 255.458C340.057 255.019 340.149 254.586 340.32 254.181C349.282 232.968 354.439 209.428 354.818 184.592C355.2 159.549 350.686 135.674 342.24 114.055Z" fill="white"/>
+            </svg>
+        </div>
+        :
+        <div>
+            <img 
                 style={{ pointerEvents:"none" }} 
                 src={base + this.state.blog.blogBannerRoute} 
                 className="blog-banner-img" 
@@ -187,26 +162,86 @@ class EachBlog extends BLogFunctions {
                 {/* <img src={colorfulBand} className="img img-fluid w-100 colorful-band" alt=""/> */}
 
                 {/* <img src={mask} className="mask" alt=""/> */}
-                {this.state.blog.blogSections === undefined ? null : this.state.blog.blogSections.map((m, key) => 
-                    <div key={key} className="container d-flex justify-content-center align-items-center">
-                        <TextareaAutosize 
-                        ref={(c) => (this.textarea = c)} 
-                        style={{ color:this.state.contentColor }}
-                        className="blog-section-1" 
-                        onChange={e => this.handleBlogChange(e, key)} name={m.name} id={m.name} key={key}>
-                            {m.content}
-                        </TextareaAutosize>
-                        {/* <button className="blog-content-edit-button" onClick={e => this.deleteThisSection(e, key, m.sectionName)}><i className="fa fa-trash"></i></button>
-                        <button className="blog-content-edit-button" onClick={e => this.saveBlog(e, key, m.sectionName)}> <i className="fa fa-check"></i> </button> */}
-                    </div>
-                )}
+                <p className="blog-content" dangerouslySetInnerHTML={{__html:`${this.state.blog.blogEditorContent}`}}></p>
+                <div className="copy-to-clipboard">
+                    <button onClick={() =>  this.copyTextToClipBoard()}><i className="fa fa-share-alt" aria-hidden="true"></i></button>
+                    {this.state.copyClipBoardStatus && <p style={{ fontFamily:"Roboto" }}className="blog-copy-message text-success">blog url copied!</p>}
+                </div>
                 <div className="container author-area">
                     <h6 className="mb-0 author-id"><a href="https://instagram.com/dev___ang">dev___ang</a></h6>
                     <h6 className="publishing-date">{this.state.blog.publishedOn}</h6>
                 </div>
+        </div>
+        return (
+            <div style={{ backgroundColor:this.state.blogBackground }} className="blog-container">
+                {this.state.showCatchLineInput && <div className="black-rect" />}
+
+                {this.state.showCatchLineInput && 
+                <input ref={r => this.input = r} 
+                type="text" 
+                name="catchLine" 
+                id="catchLine" 
+                className="catch-line-input"
+                onChange={(e) => this.setState({ catchLine : e.target.value })}
+                />}
+
+                {this.state.showCatchLineInput && 
+                <button
+                onClick={this.addCatchLine}
+                className="catch-line-button">Save</button>}
+                {false && <div className="d-flex flex-column editor-menu">
+                    <button className="mb-2" onClick={e => this.appendInput(e)}>add para</button>
+                    <button className="mb-2" onClick={this.changeblogBackground}>Change blog background color</button>
+                    <button className="mb-2" onClick={this.changecontent}>Change content color</button>
+                    <button>
+                        <label className="blogBanner-label" htmlFor="blogBanner">
+                            <span className="p-1 rounded">Change banner image</span></label>
+                    </button>
+                    <button className="mt-2" onClick={this.catchLine}>Add catch line</button>
+                    <button className="mt-2">Add blog content image</button>
+                    {this.state.changeblogBackgroundState && <div>
+                        <SwatchesPicker
+                        height={250}
+                        onChange={this.handleChangeBlogBackgroundColor}
+                    />
+                        <input onChange={this.handleBlogColorChange} type="text"/>
+                        <button onClick={this.sendBlogCustomColorChange}>Save</button>
+                    </div>
+                    }
+                    {this.state.changecontentState && <SwatchesPicker
+                        height={250}
+                        onChange={this.handleChangecontentColor}
+                    />}
+                    <input style={{ display:"none" }}
+                     name="blogBanner" id="blogBanner" 
+                     onChange={this.ChangeBannerImage} 
+                     type="file"/>
+                </div>}
+
+                {/*main blog starts*/}
+                {el}
+
+                {/* <BlogEditor blogId={this.state.blog._id}/> */}
+                
             </div>
         );
     }
 }
 
 export default EachBlog;
+
+
+
+// {this.state.blog.blogSections === undefined ? null : this.state.blog.blogSections.map((m, key) => 
+//     <div key={key} className="container d-flex justify-content-center align-items-center">
+//         <TextareaAutosize 
+//         ref={(c) => (this.textarea = c)} 
+//         style={{ color:this.state.contentColor }}
+//         className="blog-section-1" 
+//         onChange={e => this.handleBlogChange(e, key)} name={m.name} id={m.name} key={key}>
+//             {m.content}
+//         </TextareaAutosize>
+//         {/* <button className="blog-content-edit-button" onClick={e => this.deleteThisSection(e, key, m.sectionName)}><i className="fa fa-trash"></i></button>
+//         <button className="blog-content-edit-button" onClick={e => this.saveBlog(e, key, m.sectionName)}> <i className="fa fa-check"></i> </button> */}
+//     </div>
+// )}

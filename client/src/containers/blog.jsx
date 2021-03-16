@@ -8,18 +8,36 @@ import BlogCard from '../common/blogCard'
 class Blog extends Component {
 
     state = {
-        blogs : []
+        blogs : [],
+        loadingBlogs : true
     }
 
     componentDidMount = async() => {
         const { data : blogs } = await axios.get(base + 'add-blog');
-        this.setState({ blogs })
+        this.setState({ blogs, loadingBlogs : false })
         console.log(blogs)
     }
 
     render() {
 
         const blogs = this.state.blogs === undefined ? null : this.state.blogs
+
+        const el = this.state.loadingBlogs === true ? <div style={{ height:"70vh", color:"grey" }} className="d-flex justify-content-center align-items-center"><h3>loading Blogs...</h3></div>
+        :
+        <div className="row m-0">
+                        {blogs.map((m, key) => 
+                                <BlogCard
+                                key={key}
+                                image = {base + 'blog/' + m.blogcardImgRoute}
+                                name = {m.name}
+                                desc = {m.desc}
+                                author = {m.author}
+                                instaid = {m.instaid}
+                                publishedOn={m.publishedOn}
+                                slug={m.slug}
+                                /> 
+                        )}
+                    </div>
 
         return (
             <div className="container-fluid p-0">
@@ -43,20 +61,7 @@ class Blog extends Component {
                 </div>
                 <div className="home-right offset-md-3 col-md-5">
 
-                    <div className="row m-0">
-                        {blogs.map((m, key) => 
-                                <BlogCard
-                                key={key}
-                                image = {base + 'blog/' + m.blogcardImgRoute}
-                                name = {m.name}
-                                desc = {m.desc}
-                                author = {m.author}
-                                instaid = {m.instaid}
-                                publishedOn={m.publishedOn}
-                                slug={m.slug}
-                                /> 
-                        )}
-                    </div>
+                    {el}
                     
                 </div>
             </div>
