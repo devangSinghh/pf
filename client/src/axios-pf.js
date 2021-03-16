@@ -3,12 +3,12 @@ const instance = axios.create({
 
     // Base Domain Name
 
-    baseURL: 'https://thedevang.com/' 
+    baseURL: 'https://65.0.108.90/' 
     // baseURL: 'http://127.0.0.1:6161/'
 
 });
 
-export let base = 'https://thedevang.com/';
+export let base = 'https://65.0.108.90/';
 // export let base = 'http://127.0.0.1:6161/';
 
 export default instance;

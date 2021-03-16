@@ -16,10 +16,10 @@ class BlogFunctions extends Component {
         let payload;
         payload = {name : `section-${maxParaNumber + 1}`, val : ""}
 
-        const {data : res} = await axios.post(base + `update-blog/thissection/${this.state.blog._id}`, payload)
+        const {data : res} = await axios.post(`update-blog/thissection/${this.state.blog._id}`, payload)
         console.log(res)
         this.setState({ maxParaNumber: maxParaNumber + 1 })
-        const { data : totalParaInBlog } = await axios.post(base + `update-blog/total-blog-sections/${this.state.blog._id}/${this.state.maxParaNumber}`)
+        const { data : totalParaInBlog } = await axios.post(`update-blog/total-blog-sections/${this.state.blog._id}/${this.state.maxParaNumber}`)
         console.log(totalParaInBlog)
     }
 
@@ -55,7 +55,7 @@ class BlogFunctions extends Component {
 
         const config = { headers: { 'content-type': 'multipart/form-data' } }
 
-        const {data : res} = await axios.put(base + `update-blog/${this.state.blog.name}`, payload, config)
+        const {data : res} = await axios.put(`update-blog/${this.state.blog.name}`, payload, config)
         console.log(res)
     };
 
@@ -65,7 +65,7 @@ class BlogFunctions extends Component {
             content : this.state.blogSections[key].val
         }
 
-        const { data : res } = await axios.put(base + `update-blog/section/${this.state.blog._id}/${sectionName}`, payload)
+        const { data : res } = await axios.put(`update-blog/section/${this.state.blog._id}/${sectionName}`, payload)
         console.log(res)
     }
     
@@ -87,7 +87,7 @@ class BlogFunctions extends Component {
 
         const payload = await {color : color.hex}
 
-        const {data : res} = await axios.post(base + `update-blog/catchLine/${this.state.blog._id}`, payload)
+        const {data : res} = await axios.post(`update-blog/catchLine/${this.state.blog._id}`, payload)
         console.log(res)
       };
 
@@ -96,7 +96,7 @@ class BlogFunctions extends Component {
 
         const payload = await {fontFamily : font}
 
-        const { data : res } = await axios.post(base + `update-blog/catchLineFont/${this.state.blog._id}`, payload)
+        const { data : res } = await axios.post(`update-blog/catchLineFont/${this.state.blog._id}`, payload)
         console.log(res)
       }
 
@@ -105,7 +105,7 @@ class BlogFunctions extends Component {
 
           const payload = await { fontWeight : weight }
 
-          const { data : res } = await axios.post(base + `update-blog/catchLineFontWeight/${this.state.blog._id}`, payload)
+          const { data : res } = await axios.post(`update-blog/catchLineFontWeight/${this.state.blog._id}`, payload)
           console.log(res)
       }
 
@@ -117,7 +117,7 @@ class BlogFunctions extends Component {
       handleChangeBlogBackgroundColor = async color => {
             this.setState({ changeblogBackground : color.hex })
             const payload = { blogBackground : color.hex }
-            const { data : res } = await axios.post(base + `update-blog/blogBackground/${this.state.blog._id}`, payload)
+            const { data : res } = await axios.post(`update-blog/blogBackground/${this.state.blog._id}`, payload)
             console.log(res)
       }
 
@@ -129,7 +129,7 @@ class BlogFunctions extends Component {
     handleChangecontentColor = async color => {
           this.setState({ contentColor : color.hex })
           const payload = { contentColor : color.hex }
-          const { data : res } = await axios.post(base + `update-blog/content/${this.state.blog._id}`, payload)
+          const { data : res } = await axios.post(`update-blog/content/${this.state.blog._id}`, payload)
           console.log(res)
     }
 
@@ -140,7 +140,7 @@ class BlogFunctions extends Component {
 
     sendBlogCustomColorChange = async() => {
         const payload = {blogBackground : '#'+this.state.blogCustomColor}
-        const { data : res } = await axios.post(base + `update-blog/blogBackground/${this.state.blog._id}`, payload)
+        const { data : res } = await axios.post(`update-blog/blogBackground/${this.state.blog._id}`, payload)
         console.log(res)
         
     }
