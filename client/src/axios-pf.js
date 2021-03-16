@@ -3,7 +3,7 @@ const instance = axios.create({
 
     // Base Domain Name
 
-    baseURL: 'https://thedevang.com/'
+    baseURL: 'https://thedevang.com/' 
     // baseURL: 'http://127.0.0.1:6161/'
 
 });
