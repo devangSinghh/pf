@@ -22,7 +22,11 @@ class Blog extends Component {
 
         const blogs = this.state.blogs === undefined ? null : this.state.blogs
 
-        const el = this.state.loadingBlogs === true ? <div style={{ height:"70vh", color:"grey" }} className="d-flex justify-content-center align-items-center"><h3>loading Blogs...</h3></div>
+        const el = this.state.loadingBlogs === true ? 
+        <div style={{ height:"70vh", color:"grey" }} 
+        className="d-flex justify-content-center align-items-center">
+            <h3>loading Blogs...</h3>
+        </div>
         :
         <div className="row m-0">
                         {blogs.map((m, key) => 
@@ -56,7 +60,7 @@ class Blog extends Component {
                         </Link>
                     </div>
                     <div className="text-center">
-                        <a href="/admin/#write-a-blog"><button className="make-blog-button">Write a blog</button></a>
+                        {/* <a href="/admin/#write-a-blog"><button className="make-blog-button">Write a blog</button></a> */}
                     </div>
                 </div>
                 <div className="home-right offset-md-3 col-md-5">

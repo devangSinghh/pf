@@ -44,9 +44,11 @@
 }
 
 .developer-section {
-    font-size: 12px;
+    h6 {
+        font-size: 11px;
+        color: rgb(78, 78, 78);
+    }
     margin-top: 2.5rem;
-    color: rgb(78, 78, 78);
 }
 
 .home-right {

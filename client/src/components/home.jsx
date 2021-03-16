@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 import fb from '../assets/socialmedialogo/fb.svg'
 import insta from '../assets/socialmedialogo/insta.svg'
 import tweet from '../assets/socialmedialogo/tweet.svg'
@@ -53,7 +54,11 @@ class Home extends Component {
                         <Interests/>
                         <Work/>
                         <Contact />
-                        <h6 className="developer-section">Developed by Devang Singh</h6>
+                        <div className="developer-section">
+                            <h6>The site is best viewed in Internet Explorer 9.0 +, Firefox 24+ or Chrome 33+.</h6>
+                            <h6>Developed by Devang Singh</h6>
+                            <h6><i className="fa fa-copyright pt-1" />&nbsp;{new Date().getFullYear()}&nbsp;thedevang.com</h6>
+                        </div>
                     </div>
                     <div className="col-md-3">
                         {/* Blogs */}

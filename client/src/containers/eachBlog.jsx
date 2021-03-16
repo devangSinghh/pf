@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import axios, { base } from '../axios-pf';
 
 import BLogFunctions from '../blogEditor/blogFunctions';
@@ -163,8 +164,10 @@ class EachBlog extends BLogFunctions {
 
                 {/* <img src={mask} className="mask" alt=""/> */}
                 <p className="blog-content" dangerouslySetInnerHTML={{__html:`${this.state.blog.blogEditorContent}`}}></p>
+
                 <div className="copy-to-clipboard">
-                    <button onClick={() =>  this.copyTextToClipBoard()}><i className="fa fa-share-alt" aria-hidden="true"></i></button>
+                    <Link to="/blogs"><button className="mr-1"><i className="fa fa-arrow-left"></i></button></Link>
+                    <button className="ml-1" onClick={() =>  this.copyTextToClipBoard()}><i className="fa fa-share-alt" aria-hidden="true"></i></button>
                     {this.state.copyClipBoardStatus && <p style={{ fontFamily:"Roboto" }}className="blog-copy-message text-success">blog url copied!</p>}
                 </div>
                 <div className="container author-area">

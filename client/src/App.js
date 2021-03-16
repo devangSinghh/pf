@@ -19,7 +19,7 @@ function App() {
       <Router>
         <switch>
            <Route path="/" exact component={Home} />
-           <Route path="/admin" component={Manage} />
+           {/* <Route path="/admin" component={Manage} /> */}
 
            {/*Blog routes*/}
            <Route path="/blogs/:slug" render={props => <EachBlog {...props} key={props.location.key}/>} />
@@ -27,7 +27,7 @@ function App() {
            <Route path="/showcase-your-blog" exact component={ShowcaseBlog} />
 
             {/*Blog editors*/}
-           <Route path="/blog-editor" component={BlogEditor} />
+           {/* <Route path="/blog-editor" component={BlogEditor} /> */}
 
         </switch>
       </Router>
