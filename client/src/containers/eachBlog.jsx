@@ -112,7 +112,7 @@ class EachBlog extends BLogFunctions {
                 <button
                 onClick={this.addCatchLine}
                 className="catch-line-button">Save</button>}
-                {true && <div className="d-flex flex-column editor-menu">
+                {false && <div className="d-flex flex-column editor-menu">
                     <button className="mb-2" onClick={e => this.appendInput(e)}>add para</button>
                     <button className="mb-2" onClick={this.changeblogBackground}>Change blog background color</button>
                     <button className="mb-2" onClick={this.changecontent}>Change content color</button>
@@ -196,8 +196,8 @@ class EachBlog extends BLogFunctions {
                         onChange={e => this.handleBlogChange(e, key)} name={m.name} id={m.name} key={key}>
                             {m.content}
                         </TextareaAutosize>
-                        <button className="blog-content-edit-button" onClick={e => this.deleteThisSection(e, key, m.sectionName)}><i className="fa fa-trash"></i></button>
-                        <button className="blog-content-edit-button" onClick={e => this.saveBlog(e, key, m.sectionName)}> <i className="fa fa-check"></i> </button>
+                        {/* <button className="blog-content-edit-button" onClick={e => this.deleteThisSection(e, key, m.sectionName)}><i className="fa fa-trash"></i></button>
+                        <button className="blog-content-edit-button" onClick={e => this.saveBlog(e, key, m.sectionName)}> <i className="fa fa-check"></i> </button> */}
                     </div>
                 )}
                 <div className="container author-area">
