@@ -44,9 +44,9 @@ class Blog extends Component {
                     </div>
 
         return (
-            <div className="container-fluid p-0">
+            <div className="blog-container container-fluid p-0">
             <div className="row m-0">
-                <div className="home-left col-md-3">
+                <div className="blog-left col-md-3">
                     <div className="heading-container">
 
                         <h5 className="main-heading">Welcome</h5>

@@ -36,3 +36,4 @@ function App() {
 }
 
 export default App;
+//https://stackoverflow.com/questions/63753022/javascript-heap-out-of-memory-on-aws-ec2
