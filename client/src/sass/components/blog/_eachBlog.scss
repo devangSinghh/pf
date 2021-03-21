@@ -11,7 +11,7 @@
 
 .black-rect-shadow {
     position: absolute;
-    bottom: 0;
+    bottom: -7vh;
     height: 20vh;
     width: 100%;
     background: linear-gradient(180deg, rgba(0, 0, 0, 0) 1.33%, #121212 98%);
@@ -245,6 +245,15 @@
         width: 83%;
         margin: 0 auto;
     }
+
+    .black-rect-shadow {
+        position: absolute;
+        bottom: -10.4vh;
+        height: 20vh;
+        width: 100%;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 1.33%, #121212 98%);
+    
+    }
 }
 
 @media (max-width:700px) {
@@ -258,11 +267,28 @@
         width: 90%;
         margin: 0 auto;
     }
+    .black-rect-shadow {
+        position: absolute;
+        bottom: -10.9vh;
+        height: 20vh;
+        width: 100%;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 1.33%, #121212 98%);
+    
+    }
 }
 
 @media (max-width:426px) {
     .blog-heading {
         font-size: 38px;
+    }
+
+    .black-rect-shadow {
+        position: absolute;
+        bottom: -7.9vh;
+        height: 20vh;
+        width: 100%;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 1.33%, #121212 98%);
+    
     }
 }
 
@@ -270,10 +296,28 @@
     .blog-heading {
         font-size: 35px;
     }
+
+    .black-rect-shadow {
+        position: absolute;
+        bottom: -8.1vh;
+        height: 20vh;
+        width: 100%;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 1.33%, #121212 98%);
+    
+    }
 }
 
 @media (max-width:320px) {
     .blog-heading {
         font-size: 32px;
     }
+    .black-rect-shadow {
+        position: absolute;
+        bottom: -14.6vh;
+        height: 20vh;
+        width: 100%;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 1.33%, #121212 98%);
+    
+    }
+    
 }
