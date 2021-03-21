@@ -37,6 +37,20 @@ const BlogEditor = props => {
       console.log(res)
   }
 
+  const uploadCallback = file => {
+    return new Promise(
+        (resolve, reject) => {
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = (e) => {
+                    resolve({ data: { link: e.target.result } })
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    );
+}
+
   return (
     <div className="">
       <Editor
@@ -45,8 +59,23 @@ const BlogEditor = props => {
         wrapperClassName="wrapper-class"
         editorClassName="editor-class"
         toolbarClassName="toolbar-class"
+       mention={{
+      separator: ' ',
+      trigger: '@',
+      suggestions: [
+        { text: 'APPLE', value: 'apple', url: 'apple' },
+        { text: 'BANANA', value: 'banana', url: 'banana' },
+        { text: 'CHERRY', value: 'cherry', url: 'cherry' },
+        { text: 'DURIAN', value: 'durian', url: 'durian' },
+        { text: 'EGGFRUIT', value: 'eggfruit', url: 'eggfruit' },
+        { text: 'FIG', value: 'fig', url: 'fig' },
+        { text: 'GRAPEFRUIT', value: 'grapefruit', url: 'grapefruit' },
+        { text: 'HONEYDEW', value: 'honeydew', url: 'honeydew' },
+      ],
+    }}
+    hashtag={{}}
       />
-      <div className="preview" dangerouslySetInnerHTML={{__html: `${draftToHtml(convertToRaw(editorState.getCurrentContent()))}`}}></div>
+      {/* <div className="preview" dangerouslySetInnerHTML={{__html: `${draftToHtml(convertToRaw(editorState.getCurrentContent()))}`}}></div> */}
 
       <button onClick={saveEditorContent}>Save</button>
     </div>

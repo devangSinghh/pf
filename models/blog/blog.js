@@ -28,6 +28,7 @@ const blog = new mongoose.Schema({
     contentColor : String,
     blogEditorContent : String,
     maxParaNumber : Number,
+    blogIp : String,
     blogSections : [blogSection]
 })
 

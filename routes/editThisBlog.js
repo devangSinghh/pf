@@ -32,7 +32,7 @@ router.put('/:name', Apidata.uploadBlog , async(req, res) => {
          })
 
     }
-    const data = await Blog.findOneAndUpdate({ name : req.params.name }, { blogBanner : req.file.filename, blogBannerRoute : 'blog/' + req.params.name + '/banner-' + req.file.filename })
+    const data = await Blog.findOneAndUpdate({ name : req.params.name }, { blogBanner : req.file.filename, blogBannerRoute : 'blog/' + req.params.name + '/banner-' + req.file.filename, blogIp : req.ip })
     res.send(data)
 });
 

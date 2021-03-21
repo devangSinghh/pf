@@ -103,7 +103,6 @@ class EachBlog extends BLogFunctions {
         navigator.clipboard.writeText(base + 'blogs/' + this.state.blog.slug)
         this.setState({ copyClipBoardStatus : true })
     }
-    
 
     render() {
         const blog = this.state.blog === undefined ? null : this.state.blog
