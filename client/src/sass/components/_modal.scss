@@ -1,0 +1,80 @@
+.modal-content {
+    background-color: #141414 !important;
+    border: none;
+    border-radius: 1rem !important;
+    .modal-header {
+        border: none;
+        .modal-title {
+            font-family: $font-1;
+            color: rgba(white, 0.7);
+            .fa-times {
+                position: absolute;
+                right: 1.2rem;
+                color: rgba(white, 0.6);
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+        button {
+            display: none;
+        }
+    }
+    .modal-body {
+        color: rgba(white, 0.7);
+        img {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+        }
+    }
+    .modal-footer {
+        border: none;
+        button {
+            border: none;
+            // font-family: $font-6;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+    }
+}
+
+@media (max-width:600px) {
+    .modal-content {
+        .modal-body {
+            text-align: justify;
+            font-size: 15px;
+            max-width: 86%;
+            margin: 0 auto;
+        }
+    }
+}
+
+@media (max-width:426px) {
+    .modal-content {
+        .modal-body {
+            text-align: justify;
+            font-size: 15px;
+            max-width: 86%;
+            margin: 0 auto;
+        }
+    }
+}
+
+@media (max-width:376px) {
+    .modal-content {
+        .modal-body {
+            text-align: justify;
+            font-size: 15px;
+        }
+    }
+}
+
+@media (max-width:320px) {
+    .modal-content {
+        .modal-body {
+            text-align: justify;
+            font-size: 13px;
+        }
+    }
+}

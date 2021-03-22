@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { EditorState, convertToRaw } from 'draft-js';
+import { EditorState, convertToRaw, convertFromRaw, ContentState, convertFromHTML } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import { convertToHTML } from 'draft-convert';
 import draftToHtml from "draftjs-to-html";
@@ -11,8 +11,16 @@ import axios, {base} from '../axios-pf';
 
 const BlogEditor = props => {
 
-  const [editorState, setEditorState] = useState(() => EditorState.createEmpty(),);
+  const [savedContent, setSavedContent] = useState("")
+
+  const [editorState, setEditorState] = useState(EditorState.createEmpty(), )
   const [convertedContent, setConvertedContent] = useState(null);
+
+  useEffect(async() => {
+    const { data:blog } = await axios.get(base + `blog/${props.blogName}/`)
+    // const editorState = await EditorState.createWithContent(convertFromRaw(blog === undefined ? "" : blog.blogEditorContent))
+    // setEditorState(editorState)
+  }, [])
 
   const handleEditorChange = state => {
     setEditorState(state);
@@ -24,12 +32,7 @@ const BlogEditor = props => {
     let currentContentAsHTML = convertToHTML(editorState.getCurrentContent());
     setConvertedContent(currentContentAsHTML);
   }
-  const createMarkup = html => {
-    return  {
-      __html: DOMPurify.sanitize(html)
-    }
-  }
-
+  
   const saveEditorContent = async() => {
       const payload = { blogEditorContent : draftToHtml(convertToRaw(editorState.getCurrentContent())) }
 
@@ -59,6 +62,8 @@ const BlogEditor = props => {
         wrapperClassName="wrapper-class"
         editorClassName="editor-class"
         toolbarClassName="toolbar-class"
+        placeholder="dfgdfg"
+        editorStyle = {{ height :"90vh" }}
        mention={{
       separator: ' ',
       trigger: '@',
@@ -75,9 +80,9 @@ const BlogEditor = props => {
     }}
     hashtag={{}}
       />
-      {/* <div className="preview" dangerouslySetInnerHTML={{__html: `${draftToHtml(convertToRaw(editorState.getCurrentContent()))}`}}></div> */}
+      <div className="preview" dangerouslySetInnerHTML={{__html: `${draftToHtml(convertToRaw(editorState.getCurrentContent()))}`}}></div>
 
-      <button onClick={saveEditorContent}>Save</button>
+      <button className="blog-editor-content-save-button" onClick={saveEditorContent}>Save</button>
     </div>
   )
 }

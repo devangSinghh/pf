@@ -8,10 +8,20 @@ import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 
 import BlogEditor from '../blogEditor/blogEditor';
 
+//share buttons
+import { FacebookShareButton, TwitterShareButton } from "react-share";
+import { FacebookIcon, TwitterIcon } from "react-share";
+
+//import Modal
+import M from '../common/modal';
+
+import $ from 'jquery'
+
 class EachBlog extends BLogFunctions {
     menuPaleteRef = React.createRef()
     state = {
         blog : [],
+        blogName:"",
         loadingBlog : true,
         showCatchLineInput : false,
         catchLine : "",
@@ -20,6 +30,7 @@ class EachBlog extends BLogFunctions {
         catchLineFontFamily : "",
         catchLineFontWeight : "",
         copyClipBoardStatus : false,
+        imagesUsedInBlog : [],
         contentColor : "",
         maxParaNumber : 0,
         blogBackground : "",
@@ -78,6 +89,7 @@ class EachBlog extends BLogFunctions {
 
     componentDidMount = async() => {
         const { match: { params } } = this.props;
+        this.setState({ blogName:params.slug })
         const { data:blog } = await axios.get(base + `blog/${params.slug}/`)
         this.setState({ blog });
         document.addEventListener('click', this.handleClickOutside, true);
@@ -91,6 +103,17 @@ class EachBlog extends BLogFunctions {
             contentColor : this.state.blog.contentColor
         })
         this.setState({ loadingBlog : false, })
+
+        const blogImages = document.getElementById('blog-content').getElementsByTagName('img')
+        const imageUsedInBlogUrl = []
+        for(let i=0; i<blogImages.length; i++) {
+            imageUsedInBlogUrl.push({src:blogImages[i].currentSrc})
+            blogImages[i].onclick = this.openImageInNewTab = () => {
+                window.open(blogImages[i].currentSrc)
+            }
+        }
+
+        this.setState({ imagesUsedInBlog:imageUsedInBlogUrl })
     }
     componentWillUnmount = () => {
         return () => {
@@ -105,6 +128,7 @@ class EachBlog extends BLogFunctions {
     }
 
     render() {
+        console.log(this.state.imagesUsedInBlog)
         const blog = this.state.blog === undefined ? null : this.state.blog
         const el = this.state.loadingBlog === true ? 
         <div style={{ height:"100vh", backgroundColor:"#000" }} className="d-flex justify-content-center align-items-center container-fluid p-0">
@@ -121,7 +145,7 @@ class EachBlog extends BLogFunctions {
                 className="blog-banner-img" 
                 alt={this.state.blog.name}/>
 
-                <div className="black-rect-shadow" />
+                {/* <div className="black-rect-shadow" /> */}
 
                 <h5 style={{ color:this.state.catchLineColor, fontFamily:this.state.catchLineFontFamily, fontWeight:this.state.catchLineFontWeight }} className="blog-heading text-center">{blog.blogCatchLine} 
                     {/* <i onClick={this.openCatchLineMenu} className="catchLine-menu-bar fa fa-ellipsis-v" aria-hidden="true"></i> */}
@@ -162,13 +186,21 @@ class EachBlog extends BLogFunctions {
                 {/* <img src={colorfulBand} className="img img-fluid w-100 colorful-band" alt=""/> */}
 
                 {/* <img src={mask} className="mask" alt=""/> */}
-                <p className="blog-content" dangerouslySetInnerHTML={{__html:`${this.state.blog.blogEditorContent}`}}></p>
+                <p id="blog-content" className="blog-content" dangerouslySetInnerHTML={{__html:`${this.state.blog.blogEditorContent}`}}></p>
 
                 <div className="copy-to-clipboard">
                     <Link to="/blogs"><button className="mr-1"><i className="fa fa-arrow-left"></i></button></Link>
                     <button className="ml-1" onClick={() =>  this.copyTextToClipBoard()}><i className="fa fa-share-alt" aria-hidden="true"></i></button>
                     {this.state.copyClipBoardStatus && <p style={{ fontFamily:"Roboto" }}className="blog-copy-message text-success">blog url copied!</p>}
                 </div>
+                {/* <div>
+                    <FacebookShareButton url={"https://thedevang.com/"} hashtag={"#blog", '#'+blog.name} description={"blog"} className="Demo__some-network__share-button">
+                        <FacebookIcon size={32} round />
+                    </FacebookShareButton>
+                    <TwitterShareButton title={"test"} url={"https://thedevang.com/"} hashtags={["hashtag1", "hashtag2"]}>
+                      <TwitterIcon size={32} round />
+                    </TwitterShareButton>
+                </div> */}
                 <div className="container author-area">
                     <h6 className="mb-0 author-id"><a href="https://instagram.com/dev___ang">dev___ang</a></h6>
                     <h6 className="publishing-date">{this.state.blog.publishedOn}</h6>
@@ -223,7 +255,9 @@ class EachBlog extends BLogFunctions {
                 {/*main blog starts*/}
                 {el}
 
-                {/* <BlogEditor blogId={this.state.blog._id}/> */}
+                <div className="blog-editor container">
+                    {/* <BlogEditor blogId={this.state.blog._id} savedContent={this.state.blog.blogEditorContent} blogName={this.state.blogName}/> */}
+                </div>
                 
             </div>
         );
