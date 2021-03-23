@@ -40,7 +40,7 @@ const PORT = 6161
 app.use('*', function(req, res, next) {
 
 //replace localhost:8080 to the ip address:port of your server
-res.header("Access-Control-Allow-Origin", "http://35.165.61.67")
+res.header("Access-Control-Allow-Origin", "http://thedevang.com")
 res.header("Access-Control-Allow-Headers", "X-Requested-With")
 res.header('Access-Control-Allow-Headers', 'Content-Type')
 res.header('Access-Control-Allow-Credentials', true)
@@ -163,10 +163,6 @@ app.use(express.static('client/build'))
 
 app.get('*', (req,res) =>{
   res.sendFile(path.join(__dirname+'/client/build/index.html'))
-})
-
-app.get('http://api.ipstack.com/check?access_key=0c9243e65ccfad9de3a11694c1f35eed', (req, res) => {
-    console.log(res)
 })
 
 app.use(function(req, res, next) {

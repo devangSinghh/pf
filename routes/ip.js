@@ -9,13 +9,13 @@ router.get('/', async(req, res) => {
         ip = ip.substr(7)
       }
 
-      let callback = (err, ip) => {
+      let callback = async(err, ip) => {
         if(err) return res.send(e)
 
         recordIp(ip, process.env.IP_ACCESS_KEY, async(e, res) => {
             if (e) return res.send(e)
 
-            const iprecord = await new IpRecord({
+            const iprecord = new IpRecord({
                 ip : res.ip,
                 type : res.type,
                 continent_name : res.continent_name,
