@@ -23,7 +23,7 @@ import axios, {base} from '../axios-pf';
 class Home extends Component {
 
     componentDidMount = async() => {
-        const {data:recordIp} = await axios.post('/record-ip')
+        const {data:recordIp} = await axios.get('/record-ip/add')
         console.log(recordIp)
     }
     
