@@ -187,6 +187,7 @@ class EachBlog extends BLogFunctions {
 
                 {/* <img src={mask} className="mask" alt=""/> */}
                 <p id="blog-content" className="blog-content" dangerouslySetInnerHTML={{__html:`${this.state.blog.blogEditorContent}`}}></p>
+                <p id="blog-content" className="blog-content" style={{ color:"white", marginBottom:"1.2rem" }}>Overall, the place is full of adventure and thrill ♡, with a perfect nature blend.  </p>
 
                 <div className="copy-to-clipboard">
                     <Link to="/blogs"><button className="mr-1"><i className="fa fa-arrow-left"></i></button></Link>
