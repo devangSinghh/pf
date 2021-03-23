@@ -54,7 +54,7 @@ class Home extends Component {
                         .
                         <div className="row m-0 d-flex justify-content-center">
                             <img style={{ pointerEvents:"none" }} src={sign} className="m-2" alt=""/>
-                            <Link to="/blogs" style={{ textDecoration:"none" }}><h5 className="m-2 blog-link">Visit the Blog</h5></Link>
+                            <a href={'http://blogs.' + window.location.host} style={{ textDecoration:"none" }}><h5 className="m-2 blog-link">Visit the Blog</h5></a>
                         </div>
                     </div>
                     <div className="home-right offset-md-3 col-md-6">

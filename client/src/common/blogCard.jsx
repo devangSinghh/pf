@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-
+import {base} from '../axios-pf';
 import { Timeline, Divider } from 'rsuite';
 import 'rsuite/dist/styles/rsuite-default.css';
 
@@ -26,7 +26,7 @@ const BlogCard = props => {
                     {props.desc}
                     </div>
                 </div>
-                <Link to={'/blogs/' + props.slug}><h6 className="read-more">Read more...</h6></Link>
+                <a href={base + 'blogs/' + props.slug}><h6 className="read-more">Read more...</h6></a>
                 </Timeline.Item>
                 <Timeline.Item></Timeline.Item>
             </Timeline>
