@@ -16,9 +16,9 @@ import BlogEditor from './blogEditor/blogEditor';
 function App() {
   if (window.location.host.split(".")[0] == "blogs") {
     return (
-      <Router >
+      // <Router >
         <Blog />
-      </Router>
+      // </Router>
     )
   }
   else {
