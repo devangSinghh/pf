@@ -14,36 +14,25 @@ import ShowcaseBlog from './blogEditor/showcaseBlog'
 import BlogEditor from './blogEditor/blogEditor';
 
 function App() {
-  if (window.location.host.split(".")[0] == "blogs") {
-    return (
-      // <Router >
-        <Blog />
-      // </Router>
-    )
-  }
-  else {
-    return (
-      <div>
-        <Router>
-          <switch>
-             <Route path="/" exact component={Home} />
-             {/* <Route path="/admin" component={Manage} /> */}
-  
-             {/*Blog routes*/}
-             <Route path="/blogs/:slug" render={props => <EachBlog {...props} key={props.location.key}/>} />
-             
-             {/* <Route path="/blogs" exact component={Blog} /> */}
-             <Route path="/showcase-your-blog" exact component={ShowcaseBlog} />
-  
-              {/*Blog editors*/}
-             {/* <Route path="/blog-editor" component={BlogEditor} /> */}
-  
-          </switch>
-        </Router>
-      </div>
-    )
-  }
-  
+  return (
+    <div>
+      <Router>
+        <switch>
+           <Route path="/" exact component={Home} />
+           {/* <Route path="/admin" component={Manage} /> */}
+
+           {/*Blog routes*/}
+           <Route path="/blogs/:slug" render={props => <EachBlog {...props} key={props.location.key}/>} />
+           <Route path="/blogs" exact component={Blog} />
+           <Route path="/showcase-your-blog" exact component={ShowcaseBlog} />
+
+            {/*Blog editors*/}
+           {/* <Route path="/blog-editor" component={BlogEditor} /> */}
+
+        </switch>
+      </Router>
+    </div>
+  );
 }
 
 export default App;

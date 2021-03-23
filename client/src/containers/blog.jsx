@@ -55,9 +55,9 @@ class Blog extends Component {
                     </div>
 
                     <div className="row m-0 d-flex justify-content-center">
-                        <a href={base} style={{ textDecoration:"none" }}>
+                        <Link to="/" style={{ textDecoration:"none" }}>
                             <h5 className="mr-5 blog-link"><i className="fa fa-arrow-left"></i> Back to home</h5>
-                        </a>
+                        </Link>
                     </div>
                     <div className="text-center">
                         {/* <a href="/admin/#write-a-blog"><button className="make-blog-button">Write a blog</button></a> */}
