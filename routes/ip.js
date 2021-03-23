@@ -3,12 +3,13 @@ const recordIp = require('ipstack')
 const IpRecord = require('../models/recordIp')
 const https = require('https')
 
-router.get('/', async(req, res) => {
-     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-     if (ip.substr(0, 7) == "::ffff:") {
+router.post('/', async(req, res) => {
+
+    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+     if (ip.substr(0, 7) == "::ffff:")
         ip = ip.substr(7)
-      }
-      let ipAddress;
+
+      let ipAddress
       let callback = async(err, ip) => {
         if(err) return res.send(e)
 
@@ -50,6 +51,10 @@ router.get('/', async(req, res) => {
 
 })
 
+router.get('/', async(req, res) => {
+   const data = await IpRecord.find({  })
+   res.send(data)
+})
 
 
 module.exports = router
