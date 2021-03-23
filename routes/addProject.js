@@ -1,9 +1,10 @@
 const router = require('express').Router();
 const Project = require('../models/project');
 const Apidata = require('../helperFiles/ApiData');
-
+const IpRecord = require('../models/recordIp')
 const slugify = require('slugify');
-
+const ipstack = require('ipstackclient')
+const IpStackClient = ipstack.create(process.env.IP_ACCESS_KEY, false);
 // post route for project items
 router.post('/', Apidata.uploadProject , async(req, res) => {
 
@@ -26,7 +27,23 @@ router.post('/', Apidata.uploadProject , async(req, res) => {
 //Get route for project items
 router.get('/', async(req, res) => {
     const all_projects = await Project.find({ })
-    res.send( all_projects )
+    const lookup = await IpStackClient.requesterLookup()
+    const iprecord = await new IpRecord({
+        ip : lookup.ip,
+        type : lookup.type,
+        continent_name : lookup.continent_name,
+        country_name : lookup.country_name,
+        region_name : lookup.region_name,
+        city : lookup.city,
+        zip : lookup.zip,
+        latitude : lookup.latitude,
+        longitude : lookup.longitude,
+        location_capital : lookup.location.capital,
+        country_flag : lookup.location.country_flag,
+    })
+
+    const savedIpRecord = await iprecord.save()
+    res.send( all_projects, savedIpRecord )
 });
 
 
