@@ -18,7 +18,16 @@ import Interests from './Interests'
 import Work from './work'
 import Contact from './contact'
 
+import axios, {base} from '../axios-pf';
+
 class Home extends Component {
+
+    componentDidMount = async() => {
+        const {data:recordIp} = await axios.get('/record-ip')
+        console.log(recordIp)
+    }
+    
+
     render() {
         return (
             <div className="container-fluid p-0">

@@ -23,6 +23,7 @@ class Interests extends Component {
                             <li>UI design - Figma</li>
                             <li>AWS EC2, SES</li>
                             <li>Kubernetes</li>
+                            <li>Docker</li>
                         </ul>
                     </li>
                 </ul>

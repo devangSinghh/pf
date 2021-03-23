@@ -32,6 +32,7 @@ const project = require('./routes/addProject')
 const blog = require('./routes/blog')
 const editThisBlog = require('./routes/editThisBlog')
 const blogRequest = require('./routes/showcaseBlogRequests')
+const ip = require('./routes/ip')
 
 //Port
 const PORT = 6161
@@ -65,6 +66,7 @@ app.use('/add-project', project)
 app.use('/add-blog', blog)
 app.use('/update-blog', editThisBlog)
 app.use('/showcase-blog-request', blogRequest)
+app.use('/record-ip', ip);
 
 AWS.config = new AWS.Config();
 AWS.config.accessKeyId = process.env.aws_access_key;
@@ -161,6 +163,10 @@ app.use(express.static('client/build'))
 
 app.get('*', (req,res) =>{
   res.sendFile(path.join(__dirname+'/client/build/index.html'))
+})
+
+app.get('http://api.ipstack.com/check?access_key=0c9243e65ccfad9de3a11694c1f35eed', (req, res) => {
+    console.log(res)
 })
 
 app.use(function(req, res, next) {

@@ -20,7 +20,7 @@ class Work extends Component {
             <div className="work-experience">
                 <h5 className="timeline-heading mt-5">Work Experience</h5>
                 <h6 className="work-quote">
-                    There are three responses to a piece of design – yes, 
+                    There are three responses to a piece of work – yes, 
                     no, and WOW! Wow is the one to aim for.
                 </h6>
 
