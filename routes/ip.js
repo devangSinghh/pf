@@ -8,7 +8,7 @@ router.get('/', async(req, res) => {
      if (ip.substr(0, 7) == "::ffff:") {
         ip = ip.substr(7)
       }
-
+      let ipAddress;
       let callback = async(err, ip) => {
         if(err) return res.send(e)
 
@@ -30,7 +30,7 @@ router.get('/', async(req, res) => {
             })
 
             const savedIpRecord = await iprecord.save()
-
+            ipAddress = savedIpRecord
         })
     };
     
@@ -45,6 +45,8 @@ router.get('/', async(req, res) => {
             else callback('could not get public ip address :(')
         })
     })
+
+    res.send(ipAddress)
 
 })
 
