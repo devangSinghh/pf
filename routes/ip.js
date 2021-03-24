@@ -7,7 +7,7 @@ const recordIp = require('ipstack')
 router.get('/add', async(req, res) => {
 
     let hostIp = req.headers["X-Forwarded-For"] || req.connection.remoteAddress;
-
+    res.send(hostIp)
       let callback = async(err, res) => {
         if(err) return res.send(err)
 
