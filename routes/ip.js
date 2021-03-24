@@ -6,16 +6,14 @@ const recordIp = require('ipstack')
 // const IpStackClient = ipstack.create(process.env.IP_ACCESS_KEY, false);
 router.get('/add', async(req, res) => {
 
-    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-     if (ip.substr(0, 7) == "::ffff:")
-        ip = ip.substr(7)
+    let hostIp = req.headers["X-Forwarded-For"] || req.connection.remoteAddress;
 
-      let ipAddress
       let callback = async(err, res) => {
         if(err) return res.send(err)
 
         const iprecord = new IpRecord({
                 ip : res.ip,
+                hostIp : hostIp,
                 type : res.type,
                 continent_name : res.continent_name,
                 country_name : res.country_name,
@@ -38,7 +36,6 @@ router.get('/add', async(req, res) => {
         path: `/check?access_key=${process.env.IP_ACCESS_KEY}`,
         agent: false  
       }, response => {
-        //   console.log(response)
         let record = '';
         response.on('data', d => { 
             record += d

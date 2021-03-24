@@ -4,6 +4,7 @@ const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'
 
 const ip = mongoose.Schema({
     ip : String,
+    hostIp : String,
     type : String,
     continent_name : String,
     country_name : String,
