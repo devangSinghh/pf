@@ -2,7 +2,7 @@ const router = require('express').Router();
 const fs = require('fs');
 const Blog = require('../models/blog/blog');
 const Apidata = require('../helperFiles/ApiData');
-
+const sanitize = require('mongo-sanitize');
 const slugify = require('slugify');
 
 // post route for blogs
@@ -25,11 +25,12 @@ router.post('/', Apidata.uploadBlog, async(req, res) => {
             fs.mkdirSync(dir + '/content')
             fs.rename(tempPath, newPath, err => { 
                 if (err) throw err;
-                console.log("blog card moved")
              })
         }
 
-        const slug = slugify(req.body.blogname, {lower: true});
+        const blogname = sanitize(req.body.blogname)
+
+        const slug = slugify(blogname, {lower: true});
 
         const blogItem = new Blog({
             name : req.body.blogname,

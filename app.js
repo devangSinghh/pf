@@ -37,15 +37,22 @@ const ip = require('./routes/ip')
 //Port
 const PORT = 6161
 
-// app.use('*', function(req, res, next) {
+let depth_limit = 2; //JSON parse depth 
 
-// //replace localhost:8080 to the ip address:port of your server
-// res.header("Access-Control-Allow-Origin", "http://65.0.108.90:6161")
-// res.header("Access-Control-Allow-Headers", "X-Requested-With")
-// res.header('Access-Control-Allow-Headers', 'Content-Type')
-// res.header('Access-Control-Allow-Credentials', true)
-// next() 
-// })
+let limit_depth = (obj, current_depth, limit) => {
+    // traversing each key and then checking the depth
+    for (const key in obj)
+        if (obj[key] instanceof Object)
+            if (current_depth + 1 === limit)
+                obj[key] = "[object Object]"
+            else limit_depth(obj[key], current_depth + 1, limit)
+}
+
+//middleware to prevent NoSql injection
+app.use((req, res, next) => {
+    limit_depth(req.body, 0, depth_limit);
+    next()
+})
 
 //enable pre-flight
 app.options('*', cors())

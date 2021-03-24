@@ -227,6 +227,7 @@ class EachBlog extends BLogFunctions {
                 <button
                 onClick={this.addCatchLine}
                 className="catch-line-button">Save</button>}
+                
                 {false && <div className="d-flex flex-column editor-menu">
                     <button className="mb-2" onClick={e => this.appendInput(e)}>add para</button>
                     <button className="mb-2" onClick={this.changeblogBackground}>Change blog background color</button>

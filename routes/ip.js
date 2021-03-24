@@ -1,29 +1,55 @@
 const router = require('express').Router()
-const recordIp = require('ipstack')
+const http = require('http');
 const IpRecord = require('../models/recordIp')
-const https = require('https')
-const ipstack = require('ipstackclient')
-const IpStackClient = ipstack.create(process.env.IP_ACCESS_KEY, false);
+// const ipstack = require('ipstackclient')
+const recordIp = require('ipstack')
+// const IpStackClient = ipstack.create(process.env.IP_ACCESS_KEY, false);
 router.get('/add', async(req, res) => {
 
-    const lookup = await IpStackClient.requesterLookup()
-    const iprecord = await new IpRecord({
-        ip : lookup.ip,
-        type : lookup.type,
-        continent_name : lookup.continent_name,
-        country_name : lookup.country_name,
-        region_name : lookup.region_name,
-        city : lookup.city,
-        zip : lookup.zip,
-        latitude : lookup.latitude,
-        longitude : lookup.longitude,
-        location_capital : lookup.location.capital,
-        country_flag : lookup.location.country_flag,
+    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+     if (ip.substr(0, 7) == "::ffff:")
+        ip = ip.substr(7)
+
+      let ipAddress
+      let callback = async(err, res) => {
+        if(err) return res.send(err)
+
+        const iprecord = new IpRecord({
+                ip : res.ip,
+                type : res.type,
+                continent_name : res.continent_name,
+                country_name : res.country_name,
+                region_name : res.region_name,
+                city : res.city,
+                zip : res.zip,
+                latitude : res.latitude,
+                longitude : res.longitude,
+                location_capital : res.location.capital,
+                country_flag : res.location.country_flag,
+        })
+
+        const savedIpRecord = await iprecord.save()
+        ipAddress = savedIpRecord
+    }
+    
+    http.get({
+        hostname: 'api.ipstack.com',
+        port: 80,
+        path: `/check?access_key=${process.env.IP_ACCESS_KEY}`,
+        agent: false  
+      }, response => {
+        //   console.log(response)
+        let record = '';
+        response.on('data', d => { 
+            record += d
+            record = JSON.parse(record)
+        })
+
+        response.on('end', () => {
+            if(record) callback(null, record)
+            else callback('could not get public ip address :(')
+        })
     })
-
-    const savedIpRecord = await iprecord.save()
-
-    res.send(savedIpRecord)
 
 })
 
