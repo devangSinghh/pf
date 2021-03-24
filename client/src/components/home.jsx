@@ -64,7 +64,7 @@ class Home extends Component {
                         <Work/>
                         <Contact />
                         <div className="developer-section">
-                            <h6>The site is best viewed in Internet Explorer 9.0 +, Firefox 24+ or Chrome 33+.</h6>
+                            {/* <h6>The site is best viewed in Internet Explorer 9.0 +, Firefox 24+ or Chrome 33+.</h6> */}
                             <h6>Developed by Devang Singh</h6>
                             <h6><i className="fa fa-copyright pt-1" />&nbsp;{new Date().getFullYear()}&nbsp;thedevang.com</h6>
                         </div>

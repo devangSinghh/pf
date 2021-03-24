@@ -8,7 +8,7 @@ class Interests extends Component {
                 <ul>
                     <li>
                         <h5>Travelling</h5>
-                        <h6>A creative person who loves to travel</h6>
+                        <h6>There are always new things to visit</h6>
                     </li>
                     <li>
                         <h5>Blogging</h5>
