@@ -190,9 +190,12 @@ class EachBlog extends BLogFunctions {
                 <p id="blog-content" className="blog-content" style={{ color:"white", marginBottom:"1.2rem" }}>Overall, the place is full of adventure and thrill ♡, with a perfect nature blend.  </p>
 
                 <div className="copy-to-clipboard">
-                    <Link to="/blogs"><button className="mr-1"><i className="fa fa-arrow-left"></i></button></Link>
-                    <button className="ml-1" onClick={() =>  this.copyTextToClipBoard()}><i className="fa fa-share-alt" aria-hidden="true"></i></button>
-                    {this.state.copyClipBoardStatus && <p style={{ fontFamily:"Roboto" }}className="blog-copy-message text-success">blog url copied!</p>}
+                    <Link to="/blogs">
+                        <button className="mr-1"><i className="fa fa-arrow-left"></i></button>
+                    </Link>
+
+                    {/* <button className="ml-1" onClick={() =>  this.copyTextToClipBoard()}><i className="fa fa-share-alt" aria-hidden="true"></i></button>
+                    {this.state.copyClipBoardStatus && <p style={{ fontFamily:"Roboto" }}className="blog-copy-message text-success">blog url copied!</p>} */}
                 </div>
                 {/* <div>
                     <FacebookShareButton url={"https://thedevang.com/"} hashtag={"#blog", '#'+blog.name} description={"blog"} className="Demo__some-network__share-button">

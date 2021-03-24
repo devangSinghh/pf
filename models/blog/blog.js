@@ -17,6 +17,8 @@ const blog = new mongoose.Schema({
     slug:String,
     publishedOn:String,
     blogcardImg : String,
+    blogInitialLine : String,
+    color : String,
     blogcardImgRoute : String,
     blogBanner : String,
     blogBannerRoute : String,

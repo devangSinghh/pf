@@ -30,7 +30,8 @@ class Blog extends Component {
         :
         <div className="row m-0">
                         {blogs.map((m, key) => 
-                                <BlogCard
+                                <div className="col-md-5">
+                                    <BlogCard
                                 key={key}
                                 image = {base + 'blog/' + m.blogcardImgRoute}
                                 name = {m.name}
@@ -39,7 +40,10 @@ class Blog extends Component {
                                 instaid = {m.instaid}
                                 publishedOn={m.publishedOn}
                                 slug={m.slug}
+                                blogInitialLine={m.blogInitialLine}
+                                color={m.color}
                                 /> 
+                                </div>
                         )}
                     </div>
 
@@ -63,7 +67,7 @@ class Blog extends Component {
                         {/* <a href="/admin/#write-a-blog"><button className="make-blog-button">Write a blog</button></a> */}
                     </div>
                 </div>
-                <div className="home-right offset-md-3 col-md-5">
+                <div className="home-right offset-md-3">
 
                     {el}
                     
