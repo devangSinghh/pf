@@ -6,14 +6,11 @@ const recordIp = require('ipstack')
 // const IpStackClient = ipstack.create(process.env.IP_ACCESS_KEY, false);
 router.get('/add', async(req, res) => {
 
-    let hostIp = req.headers["X-Forwarded-For"] || req.connection.remoteAddress;
-    res.send(hostIp)
       let callback = async(err, res) => {
         if(err) return res.send(err)
 
         const iprecord = new IpRecord({
                 ip : res.ip,
-                hostIp : hostIp,
                 type : res.type,
                 continent_name : res.continent_name,
                 country_name : res.country_name,
