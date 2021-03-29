@@ -193,7 +193,7 @@ class Gears extends Component {
         console.log(this.state.result[3])
         return (
             <div ref={this.topRef} className="container-fluid p-0">
-                { this.state.result.length && 
+                { this.state.result.length === 0 ? false : true && 
                     <div>
                         <Tooltip title="back to top">
                             <div onClick={this.executeTopScroll} className="back-to-top-button">
