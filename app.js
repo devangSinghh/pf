@@ -33,6 +33,7 @@ const blog = require('./routes/blog')
 const editThisBlog = require('./routes/editThisBlog')
 const blogRequest = require('./routes/showcaseBlogRequests')
 const ip = require('./routes/ip')
+const solver = require('./routes/gears')
 
 //Port
 const PORT = 6161
@@ -74,6 +75,7 @@ app.use('/add-blog', blog)
 app.use('/update-blog', editThisBlog)
 app.use('/showcase-blog-request', blogRequest)
 app.use('/record-ip', ip);
+app.use('/solve', solver)
 
 AWS.config = new AWS.Config();
 AWS.config.accessKeyId = process.env.aws_access_key;

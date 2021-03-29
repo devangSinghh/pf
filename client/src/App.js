@@ -13,23 +13,26 @@ import EachBlog from './containers/eachBlog';
 import ShowcaseBlog from './blogEditor/showcaseBlog'
 import BlogEditor from './blogEditor/blogEditor';
 
+//sae urls
+import Gears from './sae/gears'
+
 function App() {
   return (
     <div>
       <Router>
-        <switch>
+        <Switch>
            <Route path="/" exact component={Home} />
-           {/* <Route path="/admin" component={Manage} /> */}
+           <Route path="/admin" component={Manage} />
 
            {/*Blog routes*/}
            <Route path="/blogs/:slug" render={props => <EachBlog {...props} key={props.location.key}/>} />
-           <Route path="/blogs" exact component={Blog} />
-           <Route path="/showcase-your-blog" exact component={ShowcaseBlog} />
+           <Route path="/blogs" component={Blog} />
+           <Route path="/showcase-your-blog" component={ShowcaseBlog} />
 
             {/*Blog editors*/}
            {/* <Route path="/blog-editor" component={BlogEditor} /> */}
-
-        </switch>
+           <Route path="/sae" component={Gears} />
+        </Switch>
       </Router>
     </div>
   );

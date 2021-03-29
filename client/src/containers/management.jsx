@@ -10,6 +10,7 @@ class Management extends Component {
         dateContext: moment(),
         data : {
             name : "",
+            initialLine : "",
             desc : "",
             repo : "",
             blogname:"",
@@ -69,6 +70,7 @@ class Management extends Component {
 
         payload.append('blogfile', data.blogfile)
         payload.append('blogname', data.blogname)
+        payload.append('initialLine', data.initialLine)
         payload.append('blogdesc', data.blogdesc)
         payload.append('author', data.author)
         payload.append('instaid', data.instaid)
@@ -133,6 +135,10 @@ class Management extends Component {
                             <div className="wrapper mb-5">
                                 <input style={{ width:"60%" }} type="text" name="blogname" id="blogname" required="true" onChange={this.handleChange}/>
                                 <div className="placeholder">Blog Name</div>
+                            </div>
+                            <div className="wrapper mb-5">
+                                <input style={{ width:"60%" }} type="text" name="initialLine" id="initialLine" required="true" onChange={this.handleChange}/>
+                                <div className="placeholder">Blog initial line</div>
                             </div>
                             <div className="d-flex flex-column mb-5">
                                     <label htmlFor="desc">Blog description</label>

@@ -148,6 +148,7 @@ class EachBlog extends BLogFunctions {
                 {/* <div className="black-rect-shadow" /> */}
 
                 <h5 style={{ color:this.state.catchLineColor, fontFamily:this.state.catchLineFontFamily, fontWeight:this.state.catchLineFontWeight }} className="blog-heading text-center">{blog.blogCatchLine} 
+                    
                     {/* <i onClick={this.openCatchLineMenu} className="catchLine-menu-bar fa fa-ellipsis-v" aria-hidden="true"></i> */}
                 </h5>
 
@@ -182,8 +183,6 @@ class EachBlog extends BLogFunctions {
                          0.464466 14.1716L3.64645 17.3536ZM3.5 0L3.5 17H4.5L4.5 0L3.5 0Z" fill="white"/>
                     </svg>  
                 </h3>}
-                
-                {/* <img src={colorfulBand} className="img img-fluid w-100 colorful-band" alt=""/> */}
 
                 {/* <img src={mask} className="mask" alt=""/> */}
                 <p id="blog-content" className="blog-content" dangerouslySetInnerHTML={{__html:`${this.state.blog.blogEditorContent}`}}></p>
