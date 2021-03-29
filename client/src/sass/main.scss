@@ -30,9 +30,16 @@
 //dropdown
 @import './components/dropdown';
 
+//table
+@import './components/table';
+
 //radio button
 @import './components/radio';
 
 //sae scss files
 @import './components/sae/gears';
 @import './components/sae/navbar';
+
+html {
+    scroll-behavior: smooth;
+}

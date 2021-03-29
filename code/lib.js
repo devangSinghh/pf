@@ -609,7 +609,6 @@ FOS = (m, N, N2, F, rpm, torque, pr, elasticModulus, hardness, Q, Ko, process, m
 
     var fos_b = St * Yn / (Kt * Kr * Bending_stress);
     var fos_c = Sc * Zn / (Kt * Kr * Contact_stress);
-
     return [fos_b, fos_c]
     // document.getElementById("display").innerHTML = [fos_b, fos_c];
 

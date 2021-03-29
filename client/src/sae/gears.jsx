@@ -1,15 +1,16 @@
 import React, { Component } from 'react'
 import Input from '../common/Input'
 import Dropdown from '../common/dropdown'
-import Form from '../sae/form';
-
+import Table from '../common/Table'
+import Tooltip from '@material-ui/core/Tooltip';
 import axios, {base} from '../axios-pf'
-
+import Chart from '../sae/Chart'
 class Gears extends Component {
 
     state = {
         defaultRadio : "",
         dropdown : false,
+        result : [],
         data : {
             fwidth1:"0.6",
             fwidth2:"1",
@@ -26,10 +27,15 @@ class Gears extends Component {
             module1:"",
             module2:"",
             grade:"2",
-            process:"",
-            material:"",
+            process:"2",
+            material:"0",
             poisson:"0.29",
-            gearbox : "0"
+            gearbox : "",
+            npinioni : "30",
+            npinionf : "70",
+            ngeari : "70",
+            ngearf : "100",
+            minFOS : "1.45"
         }
     }
     materials = [
@@ -86,6 +92,9 @@ class Gears extends Component {
 
     ]
 
+    resultTableHaedings = [
+       "m", "Face Width(inch)", "npinion", "ngear", "reduction", "FOS_bending", "FOS_contact", "L", "Q", "ko",
+    ]
     handleChange = ({currentTarget:input}) => {
         const data = {...this.state.data};
         data[input.name] = input.value;
@@ -101,6 +110,38 @@ class Gears extends Component {
         console.log(material)
         this.state.data[`${field}`] = material
         this.setState(this.state)
+    }
+
+    resetState = (e) => {
+        e.preventDefault()
+        this.setState({ data : {
+            fwidth1:"",
+            fwidth2:"",
+            ko:"",
+            Q:"",
+            L:"",
+            rpm:"",
+            torque:"",
+            power:"",
+            cvt:"",
+            hardness:"",
+            modulus:"200",
+            module:"",
+            module1:"",
+            module2:"",
+            grade:"",
+            process:"",
+            material:"",
+            poisson:"0.29",
+            gearbox : "",
+            npinioni : "",
+            npinionf : "",
+            ngeari : "",
+            ngearf : "",
+            minFOS : "",
+            redi : "1.5",
+            redf :"3"
+        } })
     }
 
     handleSumbit = async e => {
@@ -125,21 +166,47 @@ class Gears extends Component {
             process:data.process,
             material:data.material,
             poisson:data.poisson,
-            gearbox : data.gearbox
+            gearbox : data.gearbox,
+            npinioni : data.npinioni,
+            npinionf : data.npinionf,
+            ngeari : data.ngeari,
+            ngearf : data.ngearf,
+            minFOS : data.minFOS,
+            redi : data.redi,
+            redf : data.redf
         }
 
         const { data : result } = await axios.post('/solve', payload)
-        console.log(result)
+        this.setState({ result }, () => window.scrollTo(0, 400))
     }
 
+    topRef = React.createRef()
+    toEndOfPage = React.createRef()
+
+    executeTopScroll = () => this.topRef.current.scrollIntoView()
+    executeToEndScroll = () => this.toEndOfPage.current.scrollIntoView()
     render() {
 
         let val = this.state.defaultRadio
         const data = this.state.data
         const gearbox = this.state.data.gearbox
-        console.log(this.state.data)
+        console.log(this.state.result[3])
         return (
-            <div className="container-fluid p-0">
+            <div ref={this.topRef} className="container-fluid p-0">
+                { this.state.result.length && 
+                    <div>
+                        <Tooltip title="back to top">
+                            <div onClick={this.executeTopScroll} className="back-to-top-button">
+                                <i className="d-flex justify-content-center align-items-center fa fa-angle-up"></i>
+                            </div>
+                        </Tooltip>
+                        <Tooltip title="to end of page">
+                            <div onClick={this.executeToEndScroll} className="to-end-of-page">
+                                <i className="d-flex justify-content-center align-items-center fa fa-angle-down"></i>
+                            </div>
+                        </Tooltip>
+                    </div>
+                }
                 <div className="row m-0">
                     <div className="col-md-2 qwx-sae-left-side-panel p-0">
                         <h2 className="qwx-sae-left-side-heading">GearsOn</h2>
@@ -181,8 +248,8 @@ class Gears extends Component {
                                             <h6>Steel grade</h6>
                                             {/*Radio button*/}
                                             <div className="toggle_radio">
-                                                <input onChange={this.handleChange} onClick={this.changeRadio} type="radio" value="1" checked={ val==1 ? true : false } className="toggle_option" id="first_toggle"  name="grade" />
-                                                <input onChange={this.handleChange} onClick={this.changeRadio} type="radio" value="2" checked={ val==2 ? true : false } className="toggle_option" id="second_toggle" name="grade" />
+                                                <input onChange={this.handleChange} onClick={this.changeRadio} type="radio" value="1" checked={ val===1 ? true : false } className="toggle_option" id="first_toggle"  name="grade" />
+                                                <input onChange={this.handleChange} onClick={this.changeRadio} type="radio" value="2" checked={ val===2 ? true : false } className="toggle_option" id="second_toggle" name="grade" />
                                                 <label htmlFor="first_toggle"><p>1</p></label>
                                                 <label htmlFor="second_toggle"><p>2</p></label>
                                                 <div className="toggle_option_slider"/>
@@ -195,9 +262,30 @@ class Gears extends Component {
                                 <div className="qwx-sae-form-field-wrapper">
                                     <h3>Gear data</h3>
                                     <Dropdown changeCallback={this.change} title="gearbox" width="200px" array={this.gearbox}/>
-
-                                    {gearbox == "0" && <div className="row m-0">
+                                    {gearbox === "0" && <div className="row m-0">
                                         <Input onChange={this.handleChange} value={data.module} name="module" label="module" placeholder="module" size="col-md-6" text="for eg. 1.25, 1.5, 2, 2.5, 3, 4"/>
+                                        <Input onChange={this.handleChange} value={data.minFOS} name="minFOS" label="min FOS" placeholder="module" size="col-md-6" text="min value of FOS required"/>
+                                        <div className="face-width-range col-md-6">
+                                            <h5>pinion teeth</h5>
+                                            <span>from&nbsp;</span>
+                                            <input min="8" max="101" onChange={this.handleChange} value={data.npinioni} name="npinioni" id="npinioni" type="number"/>&nbsp;
+                                            <span>to&nbsp;</span>&nbsp;
+                                            <input max="250" onChange={this.handleChange} value={data.npinionf} name="npinionf" id="npinionf" type="number"/>
+                                        </div>
+                                        <div className="face-width-range col-md-6 mb-4">
+                                            <h5>Gear teeth</h5>
+                                            <span>from&nbsp;</span>
+                                            <input min="8" max="101" onChange={this.handleChange} value={data.ngeari} name="ngeari" id="ngeari" type="number"/>&nbsp;
+                                            <span>to&nbsp;</span>&nbsp;
+                                            <input min="16" max="250" onChange={this.handleChange} value={data.ngearf} name="ngearf" id="ngearf" type="number"/>
+                                        </div>
+                                        <div className="face-width-range col-md-6 mb-4">
+                                            <h5>Reduction range</h5>
+                                            <span>from&nbsp;</span>
+                                            <input max="12" onChange={this.handleChange} value={data.redi} name="redi" id="redi" type="number"/>&nbsp;
+                                            <span>to&nbsp;</span>&nbsp;
+                                            <input max="12" onChange={this.handleChange} value={data.redf} name="redf" id="redf" type="number"/>
+                                        </div>
                                         <div className="face-width-range col-md-6">
                                             <h5>Face width range(in inch)</h5>
                                             <span>from&nbsp;</span>
@@ -206,7 +294,7 @@ class Gears extends Component {
                                             <input min="0.1" step="0.1" max="2.5" onChange={this.handleChange} value={data.fwidth2} name="fwidth2" id="fwidth2" type="number"/>
                                         </div>
                                     </div>}
-                                    {gearbox == "1" && <div className="row m-0">
+                                    {gearbox === "1" && <div className="row m-0">
                                         <Input onChange={this.handleChange} value={data.module1} name="module1" label="module1" placeholder="module1" size="col-md-6" text="for eg. 1.25, 1.5, 2, 2.5, 3, 4"/>
                                         <Input onChange={this.handleChange} value={data.module2} name="module2" label="module2" placeholder="module2" size="col-md-6" text="for eg. 1.25, 1.5, 2, 2.5, 3, 4"/>
                                         <div className="face-width-range col-md-6">
@@ -215,7 +303,7 @@ class Gears extends Component {
                                             <input min="0.1" max="2.5" onChange={this.handleChange} value={data.fwidth1} name="fwidth1" id="fwidth1" type="number"/>&nbsp;
                                             <span>to&nbsp;</span>&nbsp;
                                             <input min="0.1" max="2.5" onChange={this.handleChange} value={data.fwidth2} name="fwidth2" id="fwidth2" type="number"/>
-                                            {gearbox == "1" && <p className="message-text">face width range is for both pinion and Gear</p>}
+                                            {gearbox === "1" && <p className="message-text">face width range is for both pinion and Gear</p>}
                                         </div>
                                         
                                     </div>}
@@ -232,10 +320,21 @@ class Gears extends Component {
                                 </div>
                             </div>
                             <div className="qwx-button">
-                                <button>Reset</button>
+                                <button onClick={this.resetState}>Reset</button>
                                 <button onClick={this.handleSumbit}>Proceed</button>
                             </div>
                         </form>
+
+                        {this.state.result.length !== 0 && 
+                        <Chart 
+                        data1={this.state.result[1] === undefined ? [] : this.state.result[1]}
+                        data2={this.state.result[2] === undefined ? [] : this.state.result[2]}
+                        />}
+                        {this.state.result.length !== 0 && <Table 
+                        headings={this.resultTableHaedings} 
+                        result={this.state.result[0] === undefined ? [] : this.state.result[0]} 
+                        stats={this.state.result[3] === undefined ? [] : this.state.result[3]}/>}
+                        <div id="123" className="end-of-page" ref={this.toEndOfPage}></div>
                     </div>
                 </div>
             </div>
