@@ -34,6 +34,7 @@ const editThisBlog = require('./routes/editThisBlog')
 const blogRequest = require('./routes/showcaseBlogRequests')
 const ip = require('./routes/ip')
 const solver = require('./routes/gears')
+const analytics = require('./routes/analytics')
 
 //Port
 const PORT = 6161
@@ -74,15 +75,16 @@ app.use('/add-project', project)
 app.use('/add-blog', blog)
 app.use('/update-blog', editThisBlog)
 app.use('/showcase-blog-request', blogRequest)
-app.use('/record-ip', ip);
+app.use('/record-ip', ip)
 app.use('/solve', solver)
+app.use('/api', analytics)
 
 AWS.config = new AWS.Config();
-AWS.config.accessKeyId = process.env.aws_access_key;
-AWS.config.secretAccessKey = process.env.aws_secret_key;
-AWS.config.region = process.env.aws_reigon;
-const email = "devang.iitk@gmail.com";
-let ses = new AWS.SES();
+AWS.config.accessKeyId = process.env.aws_access_key
+AWS.config.secretAccessKey = process.env.aws_secret_key
+AWS.config.region = process.env.aws_reigon
+const email = "devang.iitk@gmail.com"
+let ses = new AWS.SES()
 
 // connect to DB
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, () => console.log("Database is connected!"))
