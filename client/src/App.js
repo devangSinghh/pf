@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
-import {BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import {BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom';
+import ReactGA from 'react-ga';
 
 //Landing Page Component
 import Home from './components/home';
@@ -15,10 +16,16 @@ import BlogEditor from './blogEditor/blogEditor';
 
 //sae urls
 import Gears from './sae/gears'
+import Docs from './sae/Docs';
+
+const TRACKING_ID = `${process.env.REACT_APP_TRACKING_ID}`; // YOUR_OWN_TRACKING_ID
+ReactGA.initialize(TRACKING_ID);
 
 function App() {
+
   return (
     <div>
+      {console.log(TRACKING_ID)}
       <Router>
         <Switch>
            <Route path="/" exact component={Home} />
@@ -31,7 +38,8 @@ function App() {
 
             {/*Blog editors*/}
            {/* <Route path="/blog-editor" component={BlogEditor} /> */}
-           <Route path="/sae" component={Gears} />
+           <Route path="/sae" exact component={Gears} />
+           <Route path="/sae/docs" component={Docs} />
         </Switch>
       </Router>
     </div>

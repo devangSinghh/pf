@@ -12,7 +12,6 @@ class Work extends Component {
     componentDidMount = async() => {
         const { data : projects } = await axios.get('/add-project');
         this.setState({ projects })
-        console.log(projects)
     }
 
     render() {

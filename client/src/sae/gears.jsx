@@ -11,6 +11,7 @@ class Gears extends Component {
         defaultRadio : "",
         dropdown : false,
         result : [],
+        showForm : true,
         data : {
             fwidth1:"0.6",
             fwidth2:"1",
@@ -218,7 +219,7 @@ class Gears extends Component {
                         </ul>
                     </div>
                     <div className="col-md-10 offset-md-2 qwx-sae-right-side-panel">
-                        <form className="p-3 row m-0">
+                        {this.state.showForm && <form className="p-3 row m-0">
                             <div className="col-md-6">
                                 <div className="qwx-sae-form-field-wrapper">
                                     <h3>Loading</h3>
@@ -323,8 +324,12 @@ class Gears extends Component {
                                 <button onClick={this.resetState}>Reset</button>
                                 <button onClick={this.handleSumbit}>Proceed</button>
                             </div>
-                        </form>
-
+                        </form>}
+                        <div className="container">
+                        {this.state.result.length !== 0 && 
+                            <button className="show-hide-btn mb-4" onClick={() => this.setState({ showForm : !this.state.showForm })}>{this.state.showForm === false ? 'Show' : 'Hide'} form</button>
+                        }
+                        </div>
                         {this.state.result.length !== 0 && 
                         <Chart 
                         data1={this.state.result[1] === undefined ? [] : this.state.result[1]}

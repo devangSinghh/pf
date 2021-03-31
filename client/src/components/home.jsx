@@ -19,14 +19,19 @@ import Work from './work'
 import Contact from './contact'
 
 import axios, {base} from '../axios-pf';
-
+import ReactGA from 'react-ga';
 class Home extends Component {
 
     componentDidMount = async() => {
         const {data:recordIp} = await axios.get('/record-ip/add')
-        console.log(recordIp)
     }
     
+    recordClicks = () => {
+        ReactGA.event({
+            category : 'B',
+            action  : 'blog button'
+        })
+    }
 
     render() {
         return (
@@ -54,7 +59,7 @@ class Home extends Component {
                         .
                         <div className="row m-0 d-flex justify-content-center">
                             <img style={{ pointerEvents:"none" }} src={sign} className="m-2" alt=""/>
-                            <Link to="/blogs" style={{ textDecoration:"none" }}><h5 className="m-2 blog-link">Visit the Blog</h5></Link>
+                            <Link to="/blogs" style={{ textDecoration:"none" }} onClick={this.recordClicks}><h5 className="m-2 blog-link">Visit the Blog</h5></Link>
                         </div>
                     </div>
                     <div className="home-right offset-md-3 col-md-6">

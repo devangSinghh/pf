@@ -30,6 +30,9 @@
 //dropdown
 @import './components/dropdown';
 
+//chart
+@import './components/chart';
+
 //table
 @import './components/table';
 
@@ -39,6 +42,7 @@
 //sae scss files
 @import './components/sae/gears';
 @import './components/sae/navbar';
+@import './components/sae/docs';
 
 html {
     scroll-behavior: smooth;

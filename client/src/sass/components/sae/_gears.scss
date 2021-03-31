@@ -199,6 +199,24 @@ input::-webkit-inner-spin-button {
     &:hover {
         cursor: pointer;
     }
+} 
+
+.show-hide-btn {
+    border-radius: 1.4rem;
+    margin-top: 1.3rem;
+    width: 100px;
+    padding: 0.3rem;
+    background-color: rgb(32, 32, 32);
+    color: white;
+    font-family: 'Roboto';
+
+    &:hover {
+        background-color: black;
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
 }
 
 @media (max-width:768px) {
