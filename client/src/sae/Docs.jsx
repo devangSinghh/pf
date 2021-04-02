@@ -84,6 +84,7 @@ class Docs extends Component {
     render() {
         
         const { pageNumber, numPages, docPath, docName } = this.state;
+        const Docs = this.state.Docs === undefined ? null : this.state.Docs
         console.log(base+docPath)
         return (
             <div className="container p-0">
@@ -102,7 +103,7 @@ class Docs extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.Docs.length === 0 ? null : this.state.Docs.map((m, key) => 
+                        {Docs.map((m, key) => 
                             <Tooltip title={m.name} placement="left-start" open={false}>
                                 <tr name={key} key={key} id={key} onClick={e => this.openPdf(e, m.name, m.path)}>
                                     <td>{m.name}</td>
