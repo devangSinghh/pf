@@ -76,10 +76,11 @@ app.use('/add-project', project)
 app.use('/add-blog', blog)
 app.use('/update-blog', editThisBlog)
 app.use('/showcase-blog-request', blogRequest)
+app.use('/upload-doc', SAEDocs)
 app.use('/record-ip', ip)
 app.use('/solve', solver)
 app.use('/api', analytics)
-app.use('/upload-doc', SAEDocs)
+
 
 AWS.config = new AWS.Config();
 AWS.config.accessKeyId = process.env.aws_access_key
