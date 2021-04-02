@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios, { base } from '../axios-pf';
 
-import BLogFunctions from '../blogEditor/blogFunctions';
+import BLogFunctions from '../blog/blogFunctions';
 import { SwatchesPicker  } from 'react-color';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 
-import BlogEditor from '../blogEditor/blogEditor';
+import BlogEditor from '../blog/blogEditor';
 
 //share buttons
 import { FacebookShareButton, TwitterShareButton } from "react-share";

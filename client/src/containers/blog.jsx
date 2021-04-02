@@ -70,8 +70,10 @@ class Blog extends Component {
                 <div className="home-right offset-md-3">
 
                     {el}
-                    
+
                 </div>
+
+
             </div>
             
         </div>

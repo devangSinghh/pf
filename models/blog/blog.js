@@ -8,6 +8,10 @@ const blogSection = new mongoose.Schema({
     image : String,        //filename
 })
 
+const tags = new mongoose.Schema({
+    name : String
+})
+
 //model for the add project form
 const blog = new mongoose.Schema({
     name : String,
@@ -19,6 +23,7 @@ const blog = new mongoose.Schema({
     blogcardImg : String,
     blogInitialLine : String,
     color : String,
+    category : String,
     blogcardImgRoute : String,
     blogBanner : String,
     blogBannerRoute : String,
@@ -31,6 +36,7 @@ const blog = new mongoose.Schema({
     blogEditorContent : String,
     maxParaNumber : Number,
     blogIp : String,
+    tags : [tags],
     blogSections : [blogSection]
 })
 

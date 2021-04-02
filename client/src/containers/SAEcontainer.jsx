@@ -22,9 +22,6 @@ class SAEcontainer extends Component {
             name : "Gears",
         },
         {
-            name : "curve",
-        },
-        {
             name : "shaft",
         },
     ]

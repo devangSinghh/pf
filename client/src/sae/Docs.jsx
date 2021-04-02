@@ -20,7 +20,7 @@ class Docs extends Component {
             saedocs : null,
             filename:""
         },
-        copyClipBoardStatus:false
+        copyClipBoardStatus:false,
     }
 
     componentDidMount = async() => {

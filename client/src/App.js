@@ -11,14 +11,15 @@ import Blog from './containers/blog';
 
 import './sass/main.scss'
 import EachBlog from './containers/eachBlog';
-import ShowcaseBlog from './blogEditor/showcaseBlog'
-import BlogEditor from './blogEditor/blogEditor';
+import ShowcaseBlog from './blog/showcaseBlog'
+import BlogEditor from './blog/blogEditor';
 
 //sae urls
 import SAEcontainer from './containers/SAEcontainer';
 import Gears from './sae/gears'
 import Docs from './sae/Docs';
 import Shaft from './sae/Shafts';
+import DeveloperBlogs from './blog/developerBlogs';
 
 function App() {
 
@@ -37,6 +38,7 @@ function App() {
            {/*Blog routes*/}
            <Route path="/blogs/:slug" render={props => <EachBlog {...props} key={props.location.key}/>} />
            <Route path="/blogs" component={Blog} />
+           <Route path="/d/blogs" component={DeveloperBlogs} />
            <Route path="/showcase-your-blog" component={ShowcaseBlog} />
 
             {/*Blog editors*/}
