@@ -3,7 +3,7 @@ import ShaftBanner from '../assets/sae/shaft-banner.svg';
 import Input from '../common/Input'
 import Dropdown from '../common/dropdown'
 import Table from '../common/Table'
-// import Tooltip from '@material-ui/core/Tooltip';
+import {Tooltip as tt} from '@material-ui/core/Tooltip';
 import { Link, Element, Events, animateScroll as scroll, scrollSpy, scroller } from 'react-scroll'
 import axios, {base} from '../axios-pf'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, Brush, AreaChart, Area, Bar, Tooltip } from 'recharts';
@@ -152,12 +152,32 @@ class Shaft extends Component {
         console.log(data)
     };
 
+    topRef = React.createRef()
+    toEndOfPage = React.createRef()
+
+    executeTopScroll = () => this.topRef.current.scrollIntoView()
+    executeToEndScroll = () => this.toEndOfPage.current.scrollIntoView()
+
     render() {
         const data = this.state.data
         return (
             <React.Fragment>
-                {this.state.showForm && <div className="container-fluid p-0">
-                <div className="row m-0">
+                {this.state.result.length === 0 ? false : true && 
+                            <div>
+                                <tt title="back to top">
+                                    <div onClick={this.executeTopScroll} className="back-to-top-button">
+                                        <i className="d-flex justify-content-center align-items-center fa fa-angle-up" />
+                                    </div>
+                                </tt>
+                                <tt title="to end of page">
+                                    <div onClick={this.executeToEndScroll} className="to-end-of-page">
+                                        <i className="d-flex justify-content-center align-items-center fa fa-angle-down" />
+                                    </div>
+                                </tt>
+                            </div>
+                }
+                {this.state.showForm && <div className="shaft-page container-fluid p-0">
+                <div ref={this.topRef} className="row m-0">
                     <div className="col-md-5 p-0">
                         <div className="col-md-12 mt-3">
                             <div className="qwx-sae-form-field-wrapper">
@@ -267,7 +287,7 @@ class Shaft extends Component {
                 page="shaft"
                 plot = {this.plotGraph}
             />}
-            <div style={{ height:"10vh" }}></div>
+            <div ref={this.toEndOfPage} style={{ height:"10vh" }}></div>
             </React.Fragment>
         );
     }

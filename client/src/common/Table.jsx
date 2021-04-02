@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link, Element, Events, animateScroll as scroll, scrollSpy, scroller } from 'react-scroll'
 import Tooltip from '@material-ui/core/Tooltip';
+import {motion} from 'framer-motion'
 class Table extends Component {
 
     state = {
@@ -48,7 +49,7 @@ class Table extends Component {
                             <p>min contact FOS : {stats.minFOS_contact}<Link className="pl-2" style={{ color:"#555", fontSize:"20px" }} offset={-100} spy={true} to={stats.i_FOSc} onSetActive={this.handleSetActive}><i className="fa fa-external-link"></i></Link></p>
                         </div>
                     <div className="table-wrapper">
-                        <table className="table-component table mx-auto col-md-10">
+                        <motion.table initial={{ y:20 }} animate={{ y:0 }} transition={{ duration:0.5 }} className="table-component table mx-auto col-md-10">
                         <thead>
                             <tr>
                                 {this.props.headings.map(m => 
@@ -74,7 +75,7 @@ class Table extends Component {
                                 </Tooltip> 
                             )}
                             </tbody>
-                        </table>
+                        </motion.table>
                     </div>
                 </div>
                     : 

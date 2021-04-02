@@ -11,11 +11,14 @@ class Docs extends Component {
         numPages: null, 
         modal : false,
         docName : "",
+        docType:"",
+        docContent:[],
         docPath:"",
         pageNumber: 1,
         data : {
             saedocs : null
-        }
+        },
+        copyClipBoardStatus:false
     }
 
     componentDidMount = async() => {
@@ -34,6 +37,7 @@ class Docs extends Component {
         this.setState({ data })
     }
 
+    //uploading doc
     handleSubmit = async e => {
         e.preventDefault()
         const payload  = new FormData()
@@ -46,22 +50,36 @@ class Docs extends Component {
        
     }
 
-    headings = [
-        "name", "uploaded at", ""
-    ]
+    //table headers
+    headings = [ "name", "uploaded at", "" ]
 
     onDocumentLoadSuccess = ({ numPages }) => {
         this.setState({ numPages });
       };
     
-      goToPrevPage = () =>
+    //page change functions after file is loaded
+    goToPrevPage = () =>
         this.setState(state => ({ pageNumber: state.pageNumber - 1 }));
-      goToNextPage = () =>
+    goToNextPage = () =>
         this.setState(state => ({ pageNumber: state.pageNumber + 1 }));
-      openPdf = (e, name, path) => {
+
+    //open current pdf
+      openPdf = async(e, name, path) => {
+        const type = name.split('.')[1]
+        console.log(type)
+        if (type === "txt") {
+            const { data:docContent } = await axios.get(`${path}`)
+            const newContent = docContent.split(';')
+            this.setState({ docType:'txt', docContent:newContent })
+        }
+        else {
+            this.setState({ docType:"pdf" })
+        }
+            
         this.setState({ docName:name, docPath:path, modal:true })
       }
 
+    //download request
     downloadThisFile = async(e, filename) => {
         const {data:res} = await axios.get(`download/${this.state.docPath}`)
         console.log(base + `download/${this.state.docPath}`)
@@ -80,12 +98,22 @@ class Docs extends Component {
         }
     };
 
+    copyTextToClipBoard = () => {
+        navigator.clipboard.writeText(base + this.state.docPath)
+        this.setState({ copyClipBoardStatus : true })
+    }
 
     render() {
         
-        const { pageNumber, numPages, docPath, docName } = this.state;
+        const { pageNumber, numPages, docPath, docName, docType } = this.state;
         const Docs = this.state.Docs === undefined ? null : this.state.Docs
-        console.log(base+docPath)
+        const page = this.state.numPages === null ? [] : this.state.numPages
+        const pages=[]
+        for(let i=0; i<page;i++) {
+            pages.push( 
+                    <Page pageNumber={i} width={1000} />
+            )
+        }
         return (
             <div className="container p-0">
                 <div className="add-docs">
@@ -120,19 +148,39 @@ class Docs extends Component {
                 <Modal size="lg" style={{opacity:1}} aria-labelledby="contained-modal-title-vcenter" centered show={this.state.modal} onHide={() => this.setState({ modal:false })}>
             
             <Modal.Header><Modal.Title id="contained-modal-title-vcenter">
+                {this.state.copyClipBoardStatus && 
+                <p style={{color:"green", backgroundColor:"rgba(206, 206, 206, 0.1)", fontWeight:"600", fontSize:"14px", fontFamily:"Roboto"}}>file url copied to clipboard !!</p>
+                }
                 <i onClick={() => this.setState({modal:false})} className="fa fa-times" />
             </Modal.Title></Modal.Header>
             
             <Modal.Body ref={this.modalRef}>
-                <button onClick={this.goToPrevPage}>Prev</button>
-                <button onClick={this.goToNextPage}>Next</button>
-                <a href={base + `download/` + docPath }><button onClick={e => this.downloadThisFile(e, docName)}>Download</button></a>
-                <Document
-                    file={base + docPath}
-                    onLoadSuccess={this.onDocumentLoadSuccess.bind(this)}
-                >
-                    <Page pageNumber={pageNumber} width={1000} />
-                </Document>
+                {docType != "txt" && <div className="preview-pdf-file">
+                    <div className="download-button">
+                        <a className="" href={base + `download/` + docPath }>
+                            <button onClick={e => this.downloadThisFile(e, docName)}>Download</button>
+                        </a>
+                        <a target="_blank" href={base + docPath }>
+                            <button>Open in new tab</button>
+                        </a>
+                        <Tooltip titl="copy file url" placement="left-top" open={true}>
+                            <button onClick={() => this.copyTextToClipBoard()}>
+                                <i className="fa fa-copy" />
+                            </button>
+                        </Tooltip>
+                    </div>
+                    <Document file={base + docPath} onLoadSuccess={this.onDocumentLoadSuccess.bind(this)}>
+                        {pages.map(m => m)}
+                    </Document>
+                </div>}
+                {docType === "txt" && 
+                    <div className="preview-txt-files">
+                        {/* <code style={{display:"inline-block"}} dangerouslySetInnerHTML={{ __html: `${this.state.docContent}` }}></code> */}
+                        {this.state.docContent.map(str => 
+                            <p>{str}</p>
+                            )}
+                    </div>
+                }
             </Modal.Body>
             
             </Modal>

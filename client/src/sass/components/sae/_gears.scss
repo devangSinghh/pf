@@ -15,7 +15,7 @@
 
     &-input {
         border: 2px solid rgb(179, 179, 179);
-        background-color: rgba(206, 206, 206, 0.1);
+        background-color: #fafafa;
         margin-bottom: 1rem;
         padding: 0.2rem;
         font-size: 14px;
@@ -156,10 +156,15 @@ input::-webkit-inner-spin-button {
 
 }
 
+.gears-page {
+
+}
+
 .qwx-sae-right-side {
     
     &-panel {
-        height: 150vh;
+        // height: 150vh;
+        padding: 0 !important;
         // background-color: rgb(236, 236, 236);
     }
 

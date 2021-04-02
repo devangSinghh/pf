@@ -1,24 +1,12 @@
 import React, { Component } from 'react';
-import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    Brush,
-    AreaChart,
-    Area,
-    Bar,
-    // ResponsiveContainer,
-  } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Brush, AreaChart, Area, Bar } from 'recharts';
+import { motion } from 'framer-motion'
 class Chart extends Component {
     render() {
 
         const page = this.props.page
         return (
-            <div id="chart" className="container-fluid p-0 mb-4">
+            <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ duration:1 }} id="chart" className="container-fluid p-0 mb-4">
                 {/* <ResponsiveContainer width="100%" height={200}> */}
                 {page === 'gear' && <div className="row m-0">
                     <div className="col-md-6">
@@ -54,7 +42,7 @@ class Chart extends Component {
                 </div>}
                     
                     
-            </div>
+            </motion.div>
         );
     }
 }

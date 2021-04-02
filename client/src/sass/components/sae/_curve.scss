@@ -1,0 +1,69 @@
+.curve-content-wrapper {
+    // background-color: black;
+}
+.curve-content {
+    font-size: 16px;
+    font-family:'Roboto';
+    width: 90% !important;
+    .image1 {
+        width: 40%;
+    }
+    .image2 {
+        width: 35%;
+        margin: 2.4rem auto;
+    }
+    .image3 {
+        width: 50%;
+        margin: 0 auto;
+    }
+    .image4 {
+        width: 37%;
+        margin: 1.6rem auto;
+    }
+    .image5 {
+        width: 40%;
+        margin: 2.8rem auto;
+    }
+    .image6 {
+        width: 37%;
+        margin: 2.8rem auto;
+    }
+    .image7 {
+        width: 40%;
+        margin: 2.8rem auto;
+    }
+}
+
+@media (max-width:768px) {
+    .curve-content {
+        font-size: 16px;
+        width: 100% !important;
+        .image1 {
+            width: 100%;
+        }
+        .image2 {
+            width: 100%;
+            margin: 2.4rem auto;
+        }
+        .image3 {
+            width: 100%;
+            margin: 0 auto;
+        }
+        .image4 {
+            width: 100%;
+            margin: 1.6rem auto;
+        }
+        .image5 {
+            width: 100%;
+            margin: 2.8rem auto;
+        }
+        .image6 {
+            width: 100%;
+            margin: 2.8rem auto;
+        }
+        .image7 {
+            width: 100%;
+            margin: 2.8rem auto;
+        }
+    }
+}

@@ -32,3 +32,59 @@
     // object-fit: contain;
     height: 100% !important;
 }
+
+.preview-txt-files {
+    height: 60vh;
+    overflow: auto;
+}
+.preview-pdf-file {
+    height: 66vh;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+.download-button {
+    position: absolute;
+    top: -1.2rem;
+    button {
+        background-color: transparent;
+        color: black;
+        font-family: 'Roboto';
+        margin: 0.2rem;
+        border: 1px solid black;
+        border-radius: 10rem;
+
+        &:active {
+            transform: scale(0.98);
+        }
+    }
+
+}
+
+
+.copy-to-clipboard {
+    font-family: 'Roboto';
+    font-size: 14px;
+    font-weight: 600;
+}
+
+@media (max-width:400px) {
+    .download-button {
+        position: absolute;
+        margin-bottom: 2rem;
+        top: -1.2rem;
+        button {
+            background-color: transparent;
+            color: black;
+            font-family: 'Roboto';
+            margin: 0.2rem;
+            border: 1px solid black;
+            border-radius: 10rem;
+    
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+    
+    }
+}

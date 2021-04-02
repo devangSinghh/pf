@@ -1,5 +1,6 @@
 const router = require('express').Router()
 require('../helperFiles/analytics')
+
 router.get('/', (req, res) => {
     const { metrics, startDate, endDate } = req.query;
     console.log(`Requested metrics: ${metrics}`);

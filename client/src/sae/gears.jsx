@@ -6,6 +6,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { Link, Element, Events, animateScroll as scroll, scrollSpy, scroller } from 'react-scroll'
 import axios, {base} from '../axios-pf'
 import Chart from '../sae/Chart'
+import { motion } from 'framer-motion';
 class Gears extends Component {
 
     state = {
@@ -198,9 +199,9 @@ class Gears extends Component {
         let val = this.state.defaultRadio
         const data = this.state.data
         const gearbox = this.state.data.gearbox
-        console.log(document.getElementById('dropdown') === null ? null : document.getElementById('dropdown').getBoundingClientRect())
+
         return (
-            <div ref={this.topRef} className="container-fluid p-0">
+            <div ref={this.topRef} className="gears-page container-fluid p-0">
                         {this.state.showForm && <form className="p-3 row m-0">
                             <div className="col-md-6">
                                 <div className="qwx-sae-form-field-wrapper">
