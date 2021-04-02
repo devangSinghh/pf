@@ -3,6 +3,7 @@ import axios, {base} from '../axios-pf'
 import Tooltip from '@material-ui/core/Tooltip';
 import { Document, Page, pdfjs } from "react-pdf";
 import { Modal } from 'react-bootstrap'
+import { motion } from 'framer-motion'
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 class Docs extends Component {
 
@@ -16,7 +17,8 @@ class Docs extends Component {
         docPath:"",
         pageNumber: 1,
         data : {
-            saedocs : null
+            saedocs : null,
+            filename:""
         },
         copyClipBoardStatus:false
     }
@@ -34,6 +36,7 @@ class Docs extends Component {
     handleChange = async({currentTarget:input}) => {
         const data = {...this.state.data};
         data[input.name] = input.files[0]
+        data["filename"] = input.files[0].name
         this.setState({ data })
     }
 
@@ -45,13 +48,11 @@ class Docs extends Component {
 
         const config = { headers: { 'content-type': 'multipart/form-data' } }
 
-        const { data:res } = await axios.post('/upload-doc', payload, config)
-        console.log(res)
-       
+        const { data:res } = await axios.post('/upload-doc', payload, config)       
     }
 
     //table headers
-    headings = [ "name", "uploaded at", "" ]
+    headings = [ "name", "created at" ]
 
     onDocumentLoadSuccess = ({ numPages }) => {
         this.setState({ numPages });
@@ -66,7 +67,6 @@ class Docs extends Component {
     //open current pdf
       openPdf = async(e, name, path) => {
         const type = name.split('.')[1]
-        console.log(type)
         if (type === "txt") {
             const { data:docContent } = await axios.get(`${path}`)
             const newContent = docContent.split(';')
@@ -104,25 +104,29 @@ class Docs extends Component {
     }
 
     render() {
-        
+        console.log(this.state.data)
         const { pageNumber, numPages, docPath, docName, docType } = this.state;
         const Docs = this.state.Docs === undefined ? null : this.state.Docs
         const page = this.state.numPages === null ? [] : this.state.numPages
         const pages=[]
         for(let i=0; i<page;i++) {
             pages.push( 
+                
                     <Page pageNumber={i} width={1000} />
             )
         }
         return (
-            <div className="container p-0">
-                <div className="add-docs">
-                    <label className="docs-label" htmlFor="saedocs">Upload file</label>
-                    <input className="docs-input" type="file" name="saedocs" id="saedocs" onChange={this.handleChange}/>
-                    <button onClick={this.handleSubmit}>Submit</button>
+            <motion.div initial={{y:-25}} animate={{y:0}} transition={{ type: "spring", stiffness: 160 }} className="container p-0">
+                <div className="col-md-8 mx-auto mt-3 p-0">
+                    <div className="add-docs p-0">
+                        <label className="docs-label" htmlFor="saedocs">Upload file</label>
+                        <Tooltip title="upload file"><i onClick={this.handleSubmit} className="fa fa-arrow-right" /></Tooltip>
+                        <input className="docs-input" type="file" name="saedocs" id="saedocs" onChange={this.handleChange}/> 
+                    </div>
+                    <p style={{color:"blue", fontFamily:"roboto", fontSize:"14px"}}>{this.state.data.filename}</p>
                 </div>
 
-                <table className="table-component table mx-auto col-md-10">
+                <table className="table-component table mx-auto col-md-8">
                     <thead>
                         <tr>
                             {this.headings.map(m => 
@@ -136,7 +140,6 @@ class Docs extends Component {
                                 <tr name={key} key={key} id={key} onClick={e => this.openPdf(e, m.name, m.path)}>
                                     <td>{m.name}</td>
                                     <td>{m.created_at}</td>
-                                    <td><i className="fa fa-external-link"></i></td>
                                 </tr>   
                             </Tooltip> 
                         )}
@@ -185,7 +188,7 @@ class Docs extends Component {
             
             </Modal>
                 </div>
-            </div>
+            </motion.div>
         );
     }
 }

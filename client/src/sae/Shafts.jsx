@@ -9,6 +9,7 @@ import axios, {base} from '../axios-pf'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, Brush, AreaChart, Area, Bar, Tooltip } from 'recharts';
 import { Modal } from 'react-bootstrap'
 import Chart from '../sae/Chart'
+import {motion} from 'framer-motion'
 
 class Shaft extends Component {
 
@@ -177,7 +178,7 @@ class Shaft extends Component {
                             </div>
                 }
                 {this.state.showForm && <div className="shaft-page container-fluid p-0">
-                <div ref={this.topRef} className="row m-0">
+                <motion.div initial={{y:-25}} animate={{y:0}} transition={{ type: "spring", stiffness: 160 }} ref={this.topRef} className="row m-0">
                     <div className="col-md-5 p-0">
                         <div className="col-md-12 mt-3">
                             <div className="qwx-sae-form-field-wrapper">
@@ -237,16 +238,18 @@ class Shaft extends Component {
                             </div>
                         </div>
                     </div>
-                </div>
+                </motion.div>
                 <div className="qwx-button text-center">
                     <button onClick={this.resetState}>Reset</button>
                     <button onClick={this.handleSumbit}>Proceed</button>
                 </div>
             </div>}
-            {this.state.result.length !== 0 && 
+            {this.state.result.length ? 
                 <Link className="col-md-10 mx-auto text-center" to="chart-2">
                     <button className="show-hide-btn mb-4" onClick={() => this.setState({ showForm : !this.state.showForm })}>{this.state.showForm === false ? 'Show' : 'Hide'} form</button>
                 </Link>
+                :
+                null
             }
             <Modal size="lg" style={{opacity:1}} aria-labelledby="contained-modal-title-vcenter" centered show={this.state.modal} onHide={() => this.setState({ modal:false })}>
             
@@ -255,19 +258,21 @@ class Shaft extends Component {
             </Modal.Title></Modal.Header>
             
             <Modal.Body ref={this.modalRef}>
-                {this.state.showBanner && <img src={ShaftBanner} className="img img-fluid" alt="sae-shaft-calculator-banner-image"/>}
-                {this.state.showPlot && 
+                {this.state.showBanner ? <img src={ShaftBanner} className="img img-fluid" alt="sae-shaft-calculator-banner-image"/> : null}
+                {this.state.showPlot ?
                     <div>
                         <h5>Max shear force in x-z plane : {this.state.plot[4]}</h5>
                         <h5>Max shear force in y-z plane : {this.state.plot[5]}</h5>
                         <h5>Max Bending moment in x-z plane : {this.state.plot[6]}</h5>
                         <h5>Max Bending moment in y-z plane : {this.state.plot[7]}</h5>
-                    </div>
+                    </div> 
+                    :
+                    null
                 }
             </Modal.Body>
             
             </Modal>
-            {this.state.result.length && 
+            {this.state.result.length ? 
                 <div id="chart-2" className="col-md-10 mx-auto mb-5">
                     <LineChart width={600} height={300} data={this.state.result} >
                     <CartesianGrid stroke="#f5f5f5"/>
@@ -279,14 +284,17 @@ class Shaft extends Component {
                     <Line type="monotone" dot={false} dataKey="outer_D" stroke="#339966" />
                 </LineChart>
                 </div>
+                :null
             }
-            {this.state.result.length && <Table 
+            {this.state.result.length ? <Table 
                 headings={this.headings} 
                 result={this.state.result === undefined ? [] : this.state.result} 
                 // stats={this.state.result[3] === undefined ? [] : this.state.result[3]}
                 page="shaft"
                 plot = {this.plotGraph}
-            />}
+            />
+                :null
+        }
             <div ref={this.toEndOfPage} style={{ height:"10vh" }}></div>
             </React.Fragment>
         );

@@ -201,7 +201,7 @@ class Gears extends Component {
         const gearbox = this.state.data.gearbox
 
         return (
-            <div ref={this.topRef} className="gears-page container-fluid p-0">
+            <motion.div initial={{y:-25}} animate={{y:0}} transition={{ type: "spring", stiffness: 160 }} ref={this.topRef} className="gears-page container-fluid p-0">
                         {this.state.showForm && <form className="p-3 row m-0">
                             <div className="col-md-6">
                                 <div className="qwx-sae-form-field-wrapper">
@@ -343,7 +343,7 @@ class Gears extends Component {
                             />}
                             
                         <div className="end-of-page" ref={this.toEndOfPage} />
-            </div>
+            </motion.div>
         );
     }
 }
