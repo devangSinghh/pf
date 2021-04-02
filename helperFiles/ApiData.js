@@ -22,7 +22,19 @@ const storageBlogs = multer.diskStorage({
 })
 const uploadBlog = multer({ storage: storageBlogs }).single('blogfile');
 
+const storageSAEDocs = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'SAEDocs')
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname)
+    }
+})
+const uploadSAEDocs = multer({ storage: storageSAEDocs }).single('saedocs');
+
+
 module.exports = {
     uploadProject : uploadProject,
-    uploadBlog : uploadBlog
+    uploadBlog : uploadBlog,
+    uploadSAEDocs : uploadSAEDocs
 }

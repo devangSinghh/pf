@@ -42,9 +42,10 @@ class Dropdown extends Component {
     render() {
             const dropdown = this.state.dropdown
             const material = this.state.material
+            
         return (
             <div>
-                <div className="dropdown m-3">
+                <div id="dropdown" className="dropdown m-3">
                     <div onClick={this.toggleDropdown} style={{ width: this.props.width, border: dropdown ? "1px solid rgb(139, 139, 139)" : "" }} className="dropdown-wrapper">
                         <div className="d-flex justify-content-start">
                             <h4>{material != ""? `${this.state.material}` : this.props.title}</h4>

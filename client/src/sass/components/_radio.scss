@@ -13,8 +13,9 @@
     width: 100px;
 
     .toggle_option_slider{
-        width: 52px;
-        height: 25px;
+        width: 50px;
+        height: 24px;
+        z-index: -1;
         position: absolute;
         // top: 3px;
         -webkit-border-radius: 50px;
@@ -39,7 +40,7 @@
   .toggle_radio label{
     font: 90%/1.618 "Roboto";
     color: rgba(51, 51, 51, 0.9);
-    z-index: 0;
+    z-index: 10;
     display: inline;
     width: 40px;
     height: 20px;
@@ -56,11 +57,11 @@
 
   
   #first_toggle:checked ~ .toggle_option_slider{
-    background-color: rgba(245, 245, 245, 0.15);
+    background-color: rgba(163, 17, 17, 0.15);
     transition: all .4s ease;
     left: -1px;
   }
   #second_toggle:checked ~ .toggle_option_slider{
     background-color:  transparent;
-    left: 47px;
+    left: 47px !important;
   }

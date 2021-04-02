@@ -29,6 +29,7 @@
     "react-draft-wysiwyg": "^1.14.5",
     "react-ga": "^3.3.0",
     "react-hotkeys": "^2.0.0",
+    "react-pdf": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-router-hash-link": "^2.4.0",
     "react-scripts": "4.0.3",

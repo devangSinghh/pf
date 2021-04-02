@@ -3,6 +3,7 @@ import Input from '../common/Input'
 import Dropdown from '../common/dropdown'
 import Table from '../common/Table'
 import Tooltip from '@material-ui/core/Tooltip';
+import { Link, Element, Events, animateScroll as scroll, scrollSpy, scroller } from 'react-scroll'
 import axios, {base} from '../axios-pf'
 import Chart from '../sae/Chart'
 class Gears extends Component {
@@ -96,6 +97,11 @@ class Gears extends Component {
     resultTableHaedings = [
        "m", "Face Width(inch)", "npinion", "ngear", "reduction", "FOS_bending", "FOS_contact", "L", "Q", "ko",
     ]
+
+    componentDidMount = () => {
+        window.scrollTo(0, 0)
+    }
+    
     handleChange = ({currentTarget:input}) => {
         const data = {...this.state.data};
         data[input.name] = input.value;
@@ -104,6 +110,7 @@ class Gears extends Component {
     };
 
     changeRadio = e => {
+        console.log(e.target.value)
         this.setState({ defaultRadio: e.target.value})
     }
 
@@ -191,34 +198,9 @@ class Gears extends Component {
         let val = this.state.defaultRadio
         const data = this.state.data
         const gearbox = this.state.data.gearbox
-        console.log(this.state.result[3])
+        console.log(document.getElementById('dropdown') === null ? null : document.getElementById('dropdown').getBoundingClientRect())
         return (
             <div ref={this.topRef} className="container-fluid p-0">
-                { this.state.result.length === 0 ? false : true && 
-                    <div>
-                        <Tooltip title="back to top">
-                            <div onClick={this.executeTopScroll} className="back-to-top-button">
-                                <i className="d-flex justify-content-center align-items-center fa fa-angle-up"></i>
-                            </div>
-                        </Tooltip>
-                        <Tooltip title="to end of page">
-                            <div onClick={this.executeToEndScroll} className="to-end-of-page">
-                                <i className="d-flex justify-content-center align-items-center fa fa-angle-down"></i>
-                            </div>
-                        </Tooltip>
-                    </div>
-                }
-                <div className="row m-0">
-                    <div className="col-md-2 qwx-sae-left-side-panel p-0">
-                        <h2 className="qwx-sae-left-side-heading">GearsOn</h2>
-                        <hr/>
-                        <ul>
-                            <li>Docs</li>
-                            <li>Involute curves</li>
-                            <li>Shafts</li>
-                        </ul>
-                    </div>
-                    <div className="col-md-10 offset-md-2 qwx-sae-right-side-panel">
                         {this.state.showForm && <form className="p-3 row m-0">
                             <div className="col-md-6">
                                 <div className="qwx-sae-form-field-wrapper">
@@ -262,7 +244,7 @@ class Gears extends Component {
                             <div className="col-md-6">
                                 <div className="qwx-sae-form-field-wrapper">
                                     <h3>Gear data</h3>
-                                    <Dropdown changeCallback={this.change} title="gearbox" width="200px" array={this.gearbox}/>
+                                    <Dropdown id="dropdown" changeCallback={this.change} title="gearbox" width="200px" array={this.gearbox}/>
                                     {gearbox === "0" && <div className="row m-0">
                                         <Input onChange={this.handleChange} value={data.module} name="module" label="module" placeholder="module" size="col-md-6" text="for eg. 1.25, 1.5, 2, 2.5, 3, 4"/>
                                         <Input onChange={this.handleChange} value={data.minFOS} name="minFOS" label="min FOS" placeholder="module" size="col-md-6" text="min value of FOS required"/>
@@ -327,21 +309,39 @@ class Gears extends Component {
                         </form>}
                         <div className="container">
                         {this.state.result.length !== 0 && 
-                            <button className="show-hide-btn mb-4" onClick={() => this.setState({ showForm : !this.state.showForm })}>{this.state.showForm === false ? 'Show' : 'Hide'} form</button>
+                            <Link to="chart-1"><button className="show-hide-btn mb-4" onClick={() => this.setState({ showForm : !this.state.showForm })}>{this.state.showForm === false ? 'Show' : 'Hide'} form</button></Link>
                         }
                         </div>
+                        {this.state.result.length === 0 ? false : true && 
+                            <div>
+                                <Tooltip title="back to top">
+                                    <div onClick={this.executeTopScroll} className="back-to-top-button">
+                                        <i className="d-flex justify-content-center align-items-center fa fa-angle-up"></i>
+                                    </div>
+                                </Tooltip>
+                                <Tooltip title="to end of page">
+                                    <div onClick={this.executeToEndScroll} className="to-end-of-page">
+                                        <i className="d-flex justify-content-center align-items-center fa fa-angle-down"></i>
+                                    </div>
+                                </Tooltip>
+                            </div>
+                        }
                         {this.state.result.length !== 0 && 
                         <Chart 
+                        id="chart-1"
+                        page="gear"
                         data1={this.state.result[1] === undefined ? [] : this.state.result[1]}
                         data2={this.state.result[2] === undefined ? [] : this.state.result[2]}
                         />}
-                        {this.state.result.length !== 0 && <Table 
-                        headings={this.resultTableHaedings} 
-                        result={this.state.result[0] === undefined ? [] : this.state.result[0]} 
-                        stats={this.state.result[3] === undefined ? [] : this.state.result[3]}/>}
-                        <div id="123" className="end-of-page" ref={this.toEndOfPage}></div>
-                    </div>
-                </div>
+                        {this.state.result.length !== 0 && 
+                        <Table 
+                            headings={this.resultTableHaedings} 
+                            result={this.state.result[0] === undefined ? [] : this.state.result[0]} 
+                            stats={this.state.result[3] === undefined ? [] : this.state.result[3]}
+                            page="gear"
+                            />}
+                            
+                        <div className="end-of-page" ref={this.toEndOfPage} />
             </div>
         );
     }

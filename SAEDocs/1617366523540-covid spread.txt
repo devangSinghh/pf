@@ -1,0 +1,109 @@
+#include <iostream>
+using namespace std;
+
+class queue {
+        int front;
+        int rear;
+        int size;
+        int capacity;
+        
+    public : 
+        int **A;
+        queue(int capacity);
+
+        void Enqueue(int x, int y) {
+            if (size == capacity) return;
+            rear++;
+            A[rear][0] = x;
+            A[rear][1] = y;
+            size++;
+        }
+        int* Dequeue() {
+            if (size == 0) {
+                int *c = new int[2];
+                c[0] = c[1] = -1;
+                return c;
+            }
+            int *v = A[front];
+            front = (front + 1) % capacity;
+            size -= 1;
+            
+            return v;
+        }
+        void getQueue() {
+            for(int i=0;i<capacity;i++) {
+                for(int j=0;j<2;j++)
+                    cout << A[i][j] << " ";
+                cout << "\n";
+            }
+        }
+
+        int Size() {
+            return size;
+        }
+
+};
+
+queue::queue (int capacity) {
+    this->capacity = capacity;
+    this->front = this->size = 0;
+    this->rear = this->size - 1;
+    this->A = new int* [capacity];
+    for(int i=0;i<capacity;i++) {
+        A[i] = new int[2];
+    }
+}
+
+int main() {
+
+    int r, c;
+    cin >> r >> c;
+    int l;
+    int m[r][c];
+    
+    for(int i=0;i<r;i++) {
+        for(int j=0;j<c;j++) {
+            cin >> l;
+            m[i][j] = l;
+        }
+    }
+
+    if (r == 0) return -1;
+    queue Q(1000);
+
+    int unInfected = 0, count = 0;
+    int ranges[4][2]= { {0, 1}, {0, -1}, {-1, 0}, {1, 0} };
+
+    for(int i=0;i<r;i++) {
+        for(int j=0;j<c;j++) {
+            if (m[i][j] == 2)
+                Q.Enqueue(i, j);
+            else if(m[i][j] == 1)
+                unInfected++;
+        }
+    }
+    while( unInfected && Q.Size() ) {    
+        for(int i=0;i<(Q.Size());i++) {
+            for(int j = 0;j<4;j++) {
+                int neighbourX = Q.A[i][0] + ranges[j][0];
+                int neighbourY = Q.A[i][1] + ranges[j][1];
+                if (neighbourX >= 0 && neighbourX < r && neighbourY >= 0 && neighbourY < c) {
+                if (m[neighbourX][neighbourY] == 1) {
+                    m[neighbourX][neighbourY] = 2;
+                    Q.Enqueue(neighbourX, neighbourY);
+                    unInfected--;
+                    }
+                }
+            }
+        }
+        
+        int *k = Q.Dequeue();
+        count++;
+        }
+        int res = 0;
+    
+        if (unInfected == 0) res = count;
+        else res = -1; 
+        cout <<  res;
+    return 0;
+}
