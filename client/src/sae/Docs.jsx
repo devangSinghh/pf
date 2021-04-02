@@ -103,7 +103,7 @@ class Docs extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {Docs.map((m, key) => 
+                        {/* {Docs.map((m, key) => 
                             <Tooltip title={m.name} placement="left-start" open={false}>
                                 <tr name={key} key={key} id={key} onClick={e => this.openPdf(e, m.name, m.path)}>
                                     <td>{m.name}</td>
@@ -111,7 +111,7 @@ class Docs extends Component {
                                     <td><i className="fa fa-external-link"></i></td>
                                 </tr>   
                             </Tooltip> 
-                        )}
+                        )} */}
                     </tbody>
                 </table>
                     
