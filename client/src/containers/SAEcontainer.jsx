@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Gears from '../sae/gears'
 import Shaft from '../sae/Shafts'
 import Docs from '../sae/Docs'
-import Curve from '../sae/Curve'
+// import Curve from '../sae/Curve'
 class SAEcontainer extends Component {
     
     state = {
@@ -43,7 +43,7 @@ class SAEcontainer extends Component {
                         </ul>
                 </div>
                 <div className="col-md-10 offset-md-2 qwx-sae-right-side-panel">
-                    {page === "Gears" ? <Gears/> : page === "shaft" ? <Shaft/> : page === "Docs" ? <Docs /> : <Curve/>}
+                    {page === "Gears" ? <Gears/> : page === "shaft" ? <Shaft/> : page === "Docs" ? <Docs /> : null}
                 </div>
             </div>
         );
