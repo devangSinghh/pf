@@ -62,11 +62,11 @@ class Docs extends Component {
         this.setState({ docName:name, docPath:path, modal:true })
       }
 
-      downloadThisFile = async(e, filename) => {
-          const {data:res} = await axios.get(`download/${this.state.docPath}`)
-          console.log(base + `download/${this.state.docPath}`)
-          console.log(res)
-      }
+    downloadThisFile = async(e, filename) => {
+        const {data:res} = await axios.get(`download/${this.state.docPath}`)
+        console.log(base + `download/${this.state.docPath}`)
+        console.log(res)
+    }
 
       modalRef = React.createRef()
       openModal = () => {
@@ -102,7 +102,7 @@ class Docs extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.Docs.map((m, key) => 
+                        {this.state.Docs.length === 0 ? null : this.state.Docs.map((m, key) => 
                             <Tooltip title={m.name} placement="left-start" open={false}>
                                 <tr name={key} key={key} id={key} onClick={e => this.openPdf(e, m.name, m.path)}>
                                     <td>{m.name}</td>
