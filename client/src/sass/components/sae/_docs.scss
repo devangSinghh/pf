@@ -9,9 +9,16 @@
             font-family: 'Roboto';
             font-size: 17px;
             color: white;
-            background-color: rgb(46, 46, 46);
+            background-color: #10615d;
             border-radius: 0.2rem;
             padding: 0.4rem;
+
+            &:hover {
+                cursor: pointer;
+                span {
+                    background-color: rgb(14, 165, 152);
+                }
+            }
     
             &:active {
                 transform: scaleX(0.99);
@@ -24,20 +31,22 @@
 
     i {
         position: absolute;
-        right: 0.5rem;
-        top: -0.2rem;
+        right: 0rem;
+        top: -0.435rem;
         width: 20px;
-        height: 20px;
-        color: rgb(231, 231, 231);
-        // background-color: black;
+        height: 37px;
+        color: rgba(6, 57, 68, 1);
+        background-color: rgb(19, 168, 99);
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50%;
+        border-top-right-radius: 0.2rem;
+        border-bottom-right-radius: 0.2rem;
+        // border-radius: 50%;
         padding: 1rem;
 
         &:hover {
-            background-color: black;
+            background-color: rgb(34, 185, 122);
         }
     }
 }

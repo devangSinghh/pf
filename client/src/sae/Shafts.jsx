@@ -6,7 +6,7 @@ import Table from '../common/Table'
 import {Tooltip as tt} from '@material-ui/core/Tooltip';
 import { Link, Element, Events, animateScroll as scroll, scrollSpy, scroller } from 'react-scroll'
 import axios, {base} from '../axios-pf'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, Brush, AreaChart, Area, Bar, Tooltip } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, Brush, AreaChart, Area, Bar, Tooltip, ResponsiveContainer } from 'recharts';
 import { Modal } from 'react-bootstrap'
 import Chart from '../sae/Chart'
 import {motion} from 'framer-motion'
@@ -121,7 +121,6 @@ class Shaft extends Component {
 
 
         const { data:result } = await axios.post('/solve/shaft', payload)
-        console.log(result)
         this.setState({ result }, () => window.scrollTo(0, 600))
     }
 
@@ -274,15 +273,17 @@ class Shaft extends Component {
             </Modal>
             {this.state.result.length ? 
                 <div id="chart-2" className="col-md-10 mx-auto mb-5">
-                    <LineChart width={600} height={300} data={this.state.result} >
-                    <CartesianGrid stroke="#f5f5f5"/>
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dot={false} dataKey="inner_D" stroke="#006600" />
-                    <Line type="monotone" dot={false} dataKey="outer_D" stroke="#339966" />
-                </LineChart>
+                    <ResponsiveContainer width={'100%'} height={300} margin={{ left:-30 }}>
+                        <LineChart width={600} height={300} data={this.state.result} >
+                            <CartesianGrid stroke="#063944"/>
+                            <XAxis tick={{ fill: '#d5d5d5' }} dataKey="name" />
+                            <YAxis tick={{ fill: '#d5d5d5' }}/>
+                            <Tooltip />
+                            <Legend />
+                            <Line type="monotone" dot={false} dataKey="inner_D" stroke="#006600" />
+                            <Line type="monotone" dot={false} dataKey="outer_D" stroke="#339966" />
+                        </LineChart>
+                    </ResponsiveContainer>
                 </div>
                 :null
             }

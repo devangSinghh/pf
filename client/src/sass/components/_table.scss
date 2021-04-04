@@ -1,20 +1,29 @@
-//removing default bootstrap styling for table
-.table thead th {
-    border-top : 0 !important;
-    color: rgb(49, 49, 49);
-    
-}
-
 //stats section above table component
 .stats-section {
     font-family: 'Roboto';
+    color: #d5d5d5;
+    .fa {
+        color: rgb(26, 184, 168);
+    }
 }
 
 .table-component {
     transition: all 0.3s;
     font-family: 'Roboto';
-    background-color: rgb(255, 255, 255);
     box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+
+    td {
+        border: 2px solid #1D2527 !important;
+        color: rgba(#d5d5d5, 0.86);
+    }
+
+    //removing default bootstrap styling for table
+    th {
+        background-color: rgba(6, 57, 68, 1);
+        color: #d5d5d5;
+        border-top: 0 !important;
+
+    }
 }
 
 

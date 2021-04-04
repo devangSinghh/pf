@@ -44,7 +44,7 @@ class Table extends Component {
                 <React.Fragment>
                     {page === "gear" ? 
                     <div>
-                        <div style={{ position:this.state.position, top:"0", zIndex:"40000", backgroundColor:"white" }} id="stats" className="mx-auto col-md-10 p-0 stats-section">
+                        <div style={{ position:this.state.position, top:"0", zIndex:"40000" }} id="stats" className="mx-auto col-md-10 p-0 stats-section">
                             <p>min bending FOS : {stats.minFOS_bending}<Link className="pl-2" style={{ color:"#555", fontSize:"20px" }} offset={-100} spy={true} to={stats.i_FOSb} onSetActive={this.handleSetActive}><i className="fa fa-external-link"></i></Link></p>
                             <p>min contact FOS : {stats.minFOS_contact}<Link className="pl-2" style={{ color:"#555", fontSize:"20px" }} offset={-100} spy={true} to={stats.i_FOSc} onSetActive={this.handleSetActive}><i className="fa fa-external-link"></i></Link></p>
                         </div>
@@ -53,7 +53,7 @@ class Table extends Component {
                         <thead>
                             <tr>
                                 {this.props.headings.map(m => 
-                                    <th style={{ position:"sticky", top:"0px", backgroundColor:"white", boxShadow: "0px 0.3px 0px 0px rgb(230, 230, 230)" }}>{m}</th>    
+                                    <th style={{ position:"sticky", top:"0px", boxShadow: "0px 0.3px 0px 0px rgb(230, 230, 230)" }}>{m}</th>    
                                 )}  
                             </tr>
                         </thead>
@@ -85,7 +85,7 @@ class Table extends Component {
                         <thead>
                             <tr>
                                 {this.props.headings.map(m => 
-                                    <th style={{ position:"sticky", top:"0px", backgroundColor:"white", boxShadow: "0px 0.3px 0px 0px rgb(230, 230, 230)" }}>{m}</th>    
+                                    <th style={{ position:"sticky", top:"0px", borderBottom:"0" }}>{m}</th>    
                                 )}  
                             </tr>
                         </thead>

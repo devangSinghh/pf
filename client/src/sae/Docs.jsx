@@ -119,18 +119,18 @@ class Docs extends Component {
             <motion.div initial={{y:-25}} animate={{y:0}} transition={{ type: "spring", stiffness: 160 }} className="container p-0">
                 <div className="col-md-8 mx-auto mt-3 p-0">
                     <div className="add-docs p-0">
-                        <label className="docs-label" htmlFor="saedocs">Upload file</label>
+                        <label className="docs-label" htmlFor="saedocs"><span>Upload file</span></label>
                         <Tooltip title="upload file"><i onClick={this.handleSubmit} className="fa fa-arrow-right" /></Tooltip>
                         <input className="docs-input" type="file" name="saedocs" id="saedocs" onChange={this.handleChange}/> 
                     </div>
                     <p style={{color:"blue", fontFamily:"roboto", fontSize:"14px"}}>{this.state.data.filename}</p>
                 </div>
 
-                <table className="table-component table mx-auto col-md-8">
+                <table className="docs-table table-component table mx-auto col-md-8">
                     <thead>
                         <tr>
                             {this.headings.map(m => 
-                                <th style={{ position:"sticky", top:"0px", backgroundColor:"white", boxShadow: "0px 0.3px 0px 0px rgb(230, 230, 230)" }}>{m}</th>    
+                                <th style={{ position:"sticky", top:"0px", boxShadow: "0px 0.3px 0px 0px rgb(230, 230, 230)", borderBottom:"0" }}>{m}</th>    
                             )}  
                         </tr>
                     </thead>
