@@ -63,26 +63,34 @@
     height: 100% !important;
 }
 
-.preview-txt-files {
-    height: 60vh;
-    overflow: auto;
-}
-.preview-pdf-file {
-    height: 66vh;
-    overflow: auto;
-    overflow-x: hidden;
-}
+// .preview-txt-files {
+//     height: 60vh;
+//     overflow: auto;
+// }
+// .preview-pdf-file {
+//     height: 66vh;
+//     overflow: auto;
+//     overflow-x: hidden;
+// }
 
-.download-button {
-    position: absolute;
-    top: -1.2rem;
+.d-p-n {
+    background-color: rgb(0, 59, 61);
+    // padding: 0.3rem;
+    position: fixed;
+    width: 70%;
+    z-index: 2000;
+    text-align: center;
+    // top: 1rem;
     button {
         background-color: transparent;
-        color: black;
+        color: #d5d5d5;
         font-family: 'Roboto';
-        margin: 0.2rem;
-        border: 1px solid black;
-        border-radius: 10rem;
+        padding: 0.7rem;
+        // margin: 0.2rem;
+
+        &:hover {
+            background-color: rgb(0, 0, 0);
+        }
 
         &:active {
             transform: scale(0.98);
@@ -91,11 +99,10 @@
 
 }
 
-
-.copy-to-clipboard {
-    font-family: 'Roboto';
-    font-size: 14px;
-    font-weight: 600;
+@media (max-width :768px) {
+    .d-p-n {
+        width: 90%;
+    }   
 }
 
 @media (max-width:400px) {
@@ -117,4 +124,14 @@
         }
     
     }
+}
+
+@media (max-width :320px) {
+    .d-p-n {
+        width: 86%;
+        button {
+            font-size: 13px;
+            padding: 0.8rem;
+        }
+    }   
 }

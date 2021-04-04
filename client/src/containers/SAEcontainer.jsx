@@ -6,6 +6,7 @@ import Docs from '../sae/Docs'
 import gicon from '../assets/icons/gear.svg'
 import sicon from '../assets/icons/shaft.svg'
 import dicon from '../assets/icons/docs.svg'
+import logo from '../assets/icons/logo.svg'
 
 import { motion } from 'framer-motion'
 
@@ -39,9 +40,11 @@ class SAEcontainer extends Component {
     render() {
         const page = this.state.page
         return (
-            <div className="row m-0">
+            <div style={{ backgroundColor:"#001015" }} className="row m-0">
                 <motion.div initial={{ left:-100 }} animate={{ left:0 }} transition={{ duration: 0.3 }} className="col-md-2 qwx-sae-left-side-panel p-0">
-                        <h2 className="qwx-sae-left-side-heading">GearsOn</h2>
+                        <div className="d-flex justify-content-center align-items-center">
+                            <img src={logo} className="qwx-sae-left-side-logo" alt=""/> 
+                        </div>                       
                         <hr/>
                         <ul>
                             {this.links.map(m => 

@@ -11,10 +11,21 @@
     transition: all 0.3s;
     font-family: 'Roboto';
     box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-
+    tr {
+        &:hover {
+            cursor: default;
+            background-color: rgba(0, 31, 39, 0.5);
+        }
+    }
     td {
         border: 2px solid #1D2527 !important;
         color: rgba(#d5d5d5, 0.86);
+        &:first-child {
+            border-right: none !important;
+        }
+        &:last-child {
+            border-left: none !important;
+        }
     }
 
     //removing default bootstrap styling for table

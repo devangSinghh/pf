@@ -4,13 +4,24 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { Document, Page, pdfjs } from "react-pdf";
 import { Modal } from 'react-bootstrap'
 import { motion } from 'framer-motion'
+import styled from 'styled-components'
+import Snackbar from '@material-ui/core/Snackbar';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 class Docs extends Component {
 
     state = {
         Docs: [],
         numPages: null, 
+        pageOpacity : 1,
+        snackBarPosition : {
+            vertical : "top",
+            horizontal : "center"
+        },
+        copySuccess : false,
         modal : false,
+        copyMessageState : false,
+        docPreview : false,
+        bodyscroll : "scroll",
         docName : "",
         docType:"",
         docContent:[],
@@ -22,6 +33,8 @@ class Docs extends Component {
         },
         copyClipBoardStatus:false,
     }
+
+    snackPosition = this.state.snackBarPosition
 
     componentDidMount = async() => {
         document.addEventListener('click', this.handleClickOutsideModal, true);
@@ -76,7 +89,7 @@ class Docs extends Component {
             this.setState({ docType:"pdf" })
         }
             
-        this.setState({ docName:name, docPath:path, modal:true })
+        this.setState({ docName:name, docPath:path, modal:false, docPreview:true, bodyscroll:"hidden" })
       }
 
     //download request
@@ -86,25 +99,74 @@ class Docs extends Component {
         console.log(res)
     }
 
-      modalRef = React.createRef()
-      openModal = () => {
-        this.setState({ modal : true, showBanner:true })
+    modalRef = React.createRef()
+    openModal = () => {
+        this.setState({ modal : false, showBanner:true, docPreview:true })
     }
     handleClickOutsideModal = e => {
 
         {/*If clicked outside of modal, it will close*/}
         if (this.modalRef.current && !this.modalRef.current.contains(e.target)) {
-           this.setState({modal : false})
+           this.setState({docPreview : false})
         }
     };
 
     copyTextToClipBoard = () => {
         navigator.clipboard.writeText(base + this.state.docPath)
         this.setState({ copyClipBoardStatus : true })
+        this.copyMessage()
+    }
+
+
+    doc = styled.div`
+        position : fixed;
+        box-shadow: #00799F 0px 5px 15px;
+        top:1.3rem;
+        bottom:0;
+        left:0;
+        right:0;
+        width:70%;
+        background-color:#fff;
+        z-index:3;
+        overflow:scroll;
+        margin : 0 auto;
+        height:100vh;
+
+        ::-webkit-scrollbar {
+            overflow-y: auto; 
+            width: 14px;
+            z-index: 1000;
+            height: 10px; 
+            background-color: rgb(211, 211, 211);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+          overflow: overlay;
+            background:rgba(#a3a3a3, 1); 
+            border-radius: 0px;
+            border-radius: 0rem;
+        }
+          
+        ::-webkit-scrollbar-thumb:hover {
+          overflow: overlay;
+          background:rgba(#a3a3a3, 1); 
+        }
+
+        @media (max-width:808px) {
+            width:90%;
+        }
+    `
+    copyMessage = () => {
+        this.setState({ copyMessageState:true })
+    }
+    copyMessageColse = () => {
+        this.setState({ copyMessageState:false })
     }
 
     render() {
-        console.log(this.state.data)
+        
+        // document.body.style.overflow = this.state.bodyscroll
+        
         const { pageNumber, numPages, docPath, docName, docType } = this.state;
         const Docs = this.state.Docs === undefined ? null : this.state.Docs
         const page = this.state.numPages === null ? [] : this.state.numPages
@@ -117,6 +179,45 @@ class Docs extends Component {
         }
         return (
             <motion.div initial={{y:-25}} animate={{y:0}} transition={{ type: "spring", stiffness: 160 }} className="container p-0">
+                <Snackbar 
+                open={this.state.copyMessageState} 
+                autoHideDuration={4000} 
+                anchorOrigin={{ vertical:this.snackPosition.vertical, horizontal:this.snackPosition.horizontal }}
+                key={this.snackPosition.vertical + this.snackPosition.horizontal}
+                onClose={this.copyMessageColse}>
+                    <p onClose={this.handleClose} style={{ backgroundColor:"#FFF8BE", color:"#444", padding:"0.2rem", borderRadius:"0.1rem" }}>
+                    file url copied!!
+                    </p>
+                </Snackbar>
+                <div className="container position-relative">
+                    {this.state.docPreview &&<this.doc ref={this.modalRef} className="docs-preview-modal">
+                    <div className="preview-pdf-file">
+                    <div className="d-p-n">
+                        <a className="" href={base + `download/` + docPath }>
+                            <button onClick={e => this.downloadThisFile(e, docName)}>Download</button>
+                        </a>
+                        <a target="_blank" href={base + docPath }>
+                            <button>Open in new tab</button>
+                        </a>
+                        <Tooltip title="copy file url" placement="bottom">
+                            <button onClick={() => this.copyTextToClipBoard()}>
+                                <i className="fa fa-copy" />
+                            </button>
+                        </Tooltip>
+                    </div>
+                    { docType != "txt" && <Document file={base + docPath} onLoadSuccess={this.onDocumentLoadSuccess.bind(this)}>
+                        {pages.map(m => m)}
+                    </Document>}
+                </div>
+                {docType === "txt" && 
+                    <div className="preview-txt-files">
+                        {this.state.docContent.map(str => 
+                            <p>{str}</p>
+                            )}
+                    </div>
+                }   
+                    </this.doc>}
+                </div>
                 <div className="col-md-8 mx-auto mt-3 p-0">
                     <div className="add-docs p-0">
                         <label className="docs-label" htmlFor="saedocs"><span>Upload file</span></label>
@@ -147,47 +248,8 @@ class Docs extends Component {
                 </table>
                     
                 <div>
-                
-                <Modal size="lg" style={{opacity:1}} aria-labelledby="contained-modal-title-vcenter" centered show={this.state.modal} onHide={() => this.setState({ modal:false })}>
-            
-            <Modal.Header><Modal.Title id="contained-modal-title-vcenter">
-                {this.state.copyClipBoardStatus && 
-                <p style={{color:"green", backgroundColor:"rgba(206, 206, 206, 0.1)", fontWeight:"600", fontSize:"14px", fontFamily:"Roboto"}}>file url copied to clipboard !!</p>
-                }
-                <i onClick={() => this.setState({modal:false})} className="fa fa-times" />
-            </Modal.Title></Modal.Header>
-            
-            <Modal.Body ref={this.modalRef}>
-                {docType != "txt" && <div className="preview-pdf-file">
-                    <div className="download-button">
-                        <a className="" href={base + `download/` + docPath }>
-                            <button onClick={e => this.downloadThisFile(e, docName)}>Download</button>
-                        </a>
-                        <a target="_blank" href={base + docPath }>
-                            <button>Open in new tab</button>
-                        </a>
-                        <Tooltip titl="copy file url" placement="left-top" open={true}>
-                            <button onClick={() => this.copyTextToClipBoard()}>
-                                <i className="fa fa-copy" />
-                            </button>
-                        </Tooltip>
-                    </div>
-                    <Document file={base + docPath} onLoadSuccess={this.onDocumentLoadSuccess.bind(this)}>
-                        {pages.map(m => m)}
-                    </Document>
-                </div>}
-                {docType === "txt" && 
-                    <div className="preview-txt-files">
-                        {/* <code style={{display:"inline-block"}} dangerouslySetInnerHTML={{ __html: `${this.state.docContent}` }}></code> */}
-                        {this.state.docContent.map(str => 
-                            <p>{str}</p>
-                            )}
-                    </div>
-                }
-            </Modal.Body>
-            
-            </Modal>
                 </div>
+
             </motion.div>
         );
     }

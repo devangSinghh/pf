@@ -53,7 +53,7 @@ class Home extends Component {
                             </div>
 
                             <div className="row m-0 d-flex justify-content-center">
-                                <img style={{ pointerEvents:"none" }} src={my_image} className="mx-auto img img-fluid text-center person_img" alt=""/>
+                                <img style={{ pointerEvents:"none" }} src="https://i.imgur.com/UawpYk6.png" className="mx-auto img img-fluid text-center person_img" alt=""/>
                             </div>
                         </div>
                         .

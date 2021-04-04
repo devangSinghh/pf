@@ -4,7 +4,8 @@
 }
 
 .modal-content {
-    height: 80vh;
+    height: 120vh;
+    overflow-y: auto !important;
     background-color: white !important;
     border: none;
     z-index: 10000 !important;
