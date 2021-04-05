@@ -1,7 +1,7 @@
 {
   "name": "pf",
   "version": "1.0.0",
-  "description": "",
+  "description": "Devang Singh IITK portfolio",
   "main": "index.js",
   "dependencies": {
     "aws-sdk": "^2.860.0",
@@ -12,6 +12,7 @@
     "express": "^4.17.1",
     "externalip": "^1.0.2",
     "googleapis": "^68.0.0",
+    "imgur-upload": "^0.1.2",
     "ipstack": "^0.1.1",
     "ipstackclient": "^0.6.0",
     "js-cookie": "^2.2.1",

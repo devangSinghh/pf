@@ -3,6 +3,9 @@ const fs = require('fs')
 const Blog = require('../models/blog/blog');
 const Apidata = require('../helperFiles/ApiData');
 const slugify = require('slugify');
+const imgur = require('imgur-upload'),
+path = require('path');
+
 
 // post route for blogs
 router.put('/:name', Apidata.uploadBlog , async(req, res) => {
@@ -10,14 +13,19 @@ router.put('/:name', Apidata.uploadBlog , async(req, res) => {
     const tempPath = './media/blog/' + req.file.filename
     const newPath = './media/blog/' + req.params.name + '/banner-' + req.file.filename
 
-    if (fs.readdirSync('./media/blog/' + req.params.name).filter(m => m.includes('banner')).length == 0) {
+    imgur.setClientID("e3e1260deca3963");
+    imgur.upload(path.join(__dirname, "./media/blog/" + req.file.filename),function(err, res){
+        console.log(res.data.link); //log the imgur url
+    });
+
+    if (fs.readdir('./media/blog/' + req.params.name).filter(m => m.includes('banner')).length == 0) {
         fs.rename(tempPath, newPath, err => { 
             if (err) throw err;
             console.log("banner image moved")
          })
     }
     else {
-        const oldFile = './media/blog/' + req.params.name + '/' + fs.readdirSync('./media/blog/' + req.params.name).filter(m => m.includes('banner'))[0]
+        const oldFile = './media/blog/' + req.params.name + '/' + fs.readdir('./media/blog/' + req.params.name).filter(m => m.includes('banner'))[0]
 
         fs.unlink(oldFile, err => {
             if (err) console.log(err)

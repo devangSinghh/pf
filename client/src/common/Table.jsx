@@ -60,7 +60,8 @@ class Table extends Component {
                         <tbody>
                             {this.props.result.map((m, key) => 
                                 <Tooltip open={this.state.tooltipState && this.state.highlight.length && (key === stats.i_FOSb || key === stats.i_FOSc)} title={"minimum FOS " + `${key === stats.i_FOSb ? "bending" : "contact"}` +" in this combination"}>
-                                    <tr style={{ border:this.state.highlight === "" ? null : (key === stats.i_FOSb || key === stats.i_FOSc) ? '3px solid '+this.state.highlight : null, transition:"all 0.4s",  }} name={key} key={key} id={key}>
+                                    <tr style={{ border:this.state.highlight === "" ? null : (key === stats.i_FOSb || key === stats.i_FOSc) ? '3px solid '+this.state.highlight : null, transition:"all 0.4s",  }} 
+                                    name={key} key={key} id={key}>
                                         <td>{m.module}</td>
                                         <td>{m.faceWidth}</td>
                                         <td>{m.n_pinion}</td>
