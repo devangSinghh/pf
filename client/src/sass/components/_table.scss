@@ -38,6 +38,18 @@
 }
 
 
+.docs-table {
+    th {
+        &:first-child {
+            border-right: 0 !important;
+        }
+        &:last-child {
+            border-left: 0 !important;
+        }
+    }
+}
+
+
 @media (max-width:1260px) {
     .table-wrapper {
         width: 99%;

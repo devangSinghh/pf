@@ -32,6 +32,7 @@ class Docs extends Component {
             filename:""
         },
         copyClipBoardStatus:false,
+        docUploadSuccess : false
     }
 
     snackPosition = this.state.snackBarPosition
@@ -61,7 +62,8 @@ class Docs extends Component {
 
         const config = { headers: { 'content-type': 'multipart/form-data' } }
 
-        const { data:res } = await axios.post('/upload-doc', payload, config)       
+        const { data:res } = await axios.post('/upload-doc', payload, config)  
+        if (res.length != 0) this.setState({ docUploadSuccess : true, data : { saedocs : null, filename : "" } })     
     }
 
     //table headers
@@ -128,7 +130,7 @@ class Docs extends Component {
         width:70%;
         background-color:#fff;
         z-index:3;
-        overflow:scroll;
+        // overflow:scroll;
         margin : 0 auto;
         height:100vh;
 
@@ -181,12 +183,22 @@ class Docs extends Component {
             <motion.div initial={{y:-25}} animate={{y:0}} transition={{ type: "spring", stiffness: 160 }} className="container p-0">
                 <Snackbar 
                 open={this.state.copyMessageState} 
-                autoHideDuration={4000} 
+                autoHideDuration={3000} 
                 anchorOrigin={{ vertical:this.snackPosition.vertical, horizontal:this.snackPosition.horizontal }}
                 key={this.snackPosition.vertical + this.snackPosition.horizontal}
                 onClose={this.copyMessageColse}>
                     <p onClose={this.handleClose} style={{ backgroundColor:"#FFF8BE", color:"#444", padding:"0.2rem", borderRadius:"0.1rem" }}>
                     file url copied!!
+                    </p>
+                </Snackbar>
+                <Snackbar 
+                open={this.state.docUploadSuccess} 
+                autoHideDuration={3000} 
+                anchorOrigin={{ vertical:this.snackPosition.vertical, horizontal:this.snackPosition.horizontal }}
+                key={this.snackPosition.vertical + this.snackPosition.horizontal}
+                onClose={this.copyMessageColse}>
+                    <p onClose={this.handleClose} style={{ backgroundColor:"#FFF8BE", color:"#444", padding:"0.2rem", borderRadius:"0.1rem" }}>
+                    file uploaded!!
                     </p>
                 </Snackbar>
                 <div className="container position-relative">
@@ -205,14 +217,12 @@ class Docs extends Component {
                             </button>
                         </Tooltip>
                     </div>
-                    { docType != "txt" && <Document file={base + docPath} onLoadSuccess={this.onDocumentLoadSuccess.bind(this)}>
-                        {pages.map(m => m)}
-                    </Document>}
+                    { docType != "txt" && <iframe style={{width:"100%", height:"100vh"}} src={base + docPath} frameborder="0"/>}
                 </div>
                 {docType === "txt" && 
                     <div className="preview-txt-files">
                         {this.state.docContent.map(str => 
-                            <p>{str}</p>
+                            <p id="p-t-f" style={{ whiteSpace:"pre-wrap", margin:"0", fontFamily:'Roboto Mono' }}>{str}</p>
                             )}
                     </div>
                 }   
@@ -224,14 +234,14 @@ class Docs extends Component {
                         <Tooltip title="upload file"><i onClick={this.handleSubmit} className="fa fa-arrow-right" /></Tooltip>
                         <input className="docs-input" type="file" name="saedocs" id="saedocs" onChange={this.handleChange}/> 
                     </div>
-                    <p style={{color:"blue", fontFamily:"roboto", fontSize:"14px"}}>{this.state.data.filename}</p>
+                    <p style={{color:"#d5d5d5", fontFamily:"roboto", fontSize:"14px"}}>{this.state.data.filename}</p>
                 </div>
 
                 <table className="docs-table table-component table mx-auto col-md-8">
                     <thead>
                         <tr>
                             {this.headings.map(m => 
-                                <th style={{ position:"sticky", top:"0px", boxShadow: "0px 0.3px 0px 0px rgb(230, 230, 230)", borderBottom:"0" }}>{m}</th>    
+                                <th style={{ position:"sticky", top:"0px", border:"2px solid #1D2527", borderBottom:"0" }}>{m}</th>    
                             )}  
                         </tr>
                     </thead>
@@ -249,6 +259,9 @@ class Docs extends Component {
                     
                 <div>
                 </div>
+
+
+                
 
             </motion.div>
         );

@@ -51,28 +51,18 @@
     }
 }
 
-
-
-// .react-pdf__Document {
-//     width: 200% !important;
-// }
+.preview-txt-files {
+    width:95%;
+    height:90vh;
+    margin:4rem auto;
+    overflow-y:scroll;
+}
 
 .react-pdf__Page__canvas {
     width: 100% !important;
     // object-fit: contain;
     height: 100% !important;
 }
-
-// .preview-txt-files {
-//     height: 60vh;
-//     overflow: auto;
-// }
-// .preview-pdf-file {
-//     height: 66vh;
-//     overflow: auto;
-//     overflow-x: hidden;
-// }
-
 .d-p-n {
     background-color: rgb(0, 59, 61);
     // padding: 0.3rem;
