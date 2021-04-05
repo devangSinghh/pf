@@ -9,9 +9,6 @@ import lnkdn from '../assets/socialmedialogo/lnkdn.svg'
 
 import sign from '../assets/sign.svg'
 
-//My image
-import my_image from '../assets/person_img1.png'
-
 import Education from './education'
 import About from './about'
 import Interests from './Interests'
