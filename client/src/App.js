@@ -14,12 +14,7 @@ import EachBlog from './containers/eachBlog';
 import ShowcaseBlog from './blog/showcaseBlog'
 import BlogEditor from './blog/blogEditor';
 
-//sae urls
-import SAEcontainer from './containers/SAEcontainer';
-import Gears from './sae/gears'
-import Docs from './sae/Docs';
-import Shaft from './sae/Shafts';
-import DeveloperBlogs from './blog/developerBlogs';
+import DeveloperBlogs from './blog/developerBlogs'
 
 function App() {
 
@@ -41,11 +36,6 @@ function App() {
            <Route path="/d/blogs" component={DeveloperBlogs} />
            <Route path="/showcase-your-blog" component={ShowcaseBlog} />
 
-            {/*Blog editors*/}
-           {/* <Route path="/blog-editor" component={BlogEditor} /> */}
-           <Route path="/sae" exact component={SAEcontainer} />
-           <Route path="/sae/docs" component={Docs} />
-           <Route path="/sae/shaft" component={Shaft} />
         </Switch>
       </Router>
     </div>

@@ -33,9 +33,7 @@ const blog = require('./routes/blog')
 const editThisBlog = require('./routes/editThisBlog')
 const blogRequest = require('./routes/showcaseBlogRequests')
 const ip = require('./routes/ip')
-const solver = require('./routes/gears')
 const analytics = require('./routes/analytics')
-const SAEDocs = require('./routes/saeDocs')
 const testRoute = require('./routes/test')
 
 //Port
@@ -77,11 +75,8 @@ app.use('/add-project', project)
 app.use('/add-blog', blog)
 app.use('/update-blog', editThisBlog)
 app.use('/showcase-blog-request', blogRequest)
-app.use('/upload-doc', SAEDocs)
 app.use('/record-ip', ip)
-app.use('/solve', solver)
 app.use('/api', analytics)
-app.use('/test', testRoute)
 
 AWS.config = new AWS.Config();
 AWS.config.accessKeyId = process.env.aws_access_key
