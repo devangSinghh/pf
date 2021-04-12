@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/static/css/main.0f50613b.chunk.css",
+    "main.js": "/static/js/main.294ecef9.chunk.js",
+    "runtime-main.js": "/static/js/runtime-main.900dd88b.js",
+    "static/css/2.84ff6824.chunk.css": "/static/css/2.84ff6824.chunk.css",
+    "static/js/2.eed817ee.chunk.js": "/static/js/2.eed817ee.chunk.js",
+    "index.html": "/index.html",
+    "static/js/2.eed817ee.chunk.js.LICENSE.txt": "/static/js/2.eed817ee.chunk.js.LICENSE.txt",
+    "static/media/main.scss": "/static/media/f1.8e288c22.ttf",
+    "static/media/fb.2ac04eda.svg": "/static/media/fb.2ac04eda.svg",
+    "static/media/font-awesome.min.css": "/static/media/fontawesome-webfont.f691f37e.woff",
+    "static/media/glogo.b265292e.svg": "/static/media/glogo.b265292e.svg",
+    "static/media/insta.d8fba9a2.svg": "/static/media/insta.d8fba9a2.svg",
+    "static/media/lnkdn.6302ad74.svg": "/static/media/lnkdn.6302ad74.svg",
+    "static/media/man-svg.7352cb2c.svg": "/static/media/man-svg.7352cb2c.svg",
+    "static/media/sign.9da0e37a.svg": "/static/media/sign.9da0e37a.svg",
+    "static/media/slick-theme.css": "/static/media/slick.c94f7671.ttf",
+    "static/media/tweet.47f89a5a.svg": "/static/media/tweet.47f89a5a.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.900dd88b.js",
+    "static/css/2.84ff6824.chunk.css",
+    "static/js/2.eed817ee.chunk.js",
+    "static/css/main.0f50613b.chunk.css",
+    "static/js/main.294ecef9.chunk.js"
+  ]
+}
