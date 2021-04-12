@@ -35,6 +35,7 @@ const blogRequest = require('./routes/showcaseBlogRequests')
 const ip = require('./routes/ip')
 const analytics = require('./routes/analytics')
 const testRoute = require('./routes/test')
+const sitemap = require("./routes/sitemap")
 
 //Port
 const PORT = 6161
@@ -77,6 +78,7 @@ app.use('/update-blog', editThisBlog)
 app.use('/showcase-blog-request', blogRequest)
 app.use('/record-ip', ip)
 app.use('/api', analytics)
+app.use('/sitemap.xml', sitemap)
 
 AWS.config = new AWS.Config();
 AWS.config.accessKeyId = process.env.aws_access_key

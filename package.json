@@ -16,6 +16,8 @@
     "ipstack": "^0.1.1",
     "ipstackclient": "^0.6.0",
     "js-cookie": "^2.2.1",
+    "js2xmlparser": "^4.0.1",
+    "moment": "^2.29.1",
     "mongo-sanitize": "^1.1.0",
     "mongoose": "^5.11.15",
     "morgan": "^1.10.0",
