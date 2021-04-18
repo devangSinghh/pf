@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const project = new mongoose.Schema({
     name : String,
     desc : String,
-    repo : String,
+    link : String,
     slug : String,
     image:String
 })

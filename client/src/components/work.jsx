@@ -28,7 +28,7 @@ class Work extends Component {
                 <div className="row d-flex justify-content-center m-0">
                     {this.state.projects.map(m => 
                         <div className="col-md-6 p-2 d-flex justify-content-center work-cards p-0">
-                            <WorkCard title={m.name} description={m.desc} repo={m.repo} image={m.image} />
+                            <WorkCard title={m.name} description={m.desc} link={m.link} image={m.image} />
                         </div>    
                     )}
                 </div>
