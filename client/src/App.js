@@ -16,6 +16,8 @@ import BlogEditor from './blog/blogEditor';
 
 import DeveloperBlogs from './blog/developerBlogs'
 
+import DevBlogsAdmin from './containers/devBlogsAdmin'
+
 function App() {
 
   useEffect(() => {
@@ -29,6 +31,7 @@ function App() {
         <Switch>
            <Route path="/" exact component={Home} />
            <Route path="/admin" component={Manage} />
+           <Route path="/d/admin" component={DevBlogsAdmin} />
 
            {/*Blog routes*/}
            <Route path="/blogs/:slug" render={props => <EachBlog {...props} key={props.location.key}/>} />

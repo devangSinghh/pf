@@ -1,0 +1,17 @@
+.dev-blog-admin-container {
+    width: 55%;
+    margin: 0 auto;
+    font-family: $font-6;
+
+    h3 {
+        margin: 1.4rem auto;
+        color: rgb(71, 71, 71);
+    }
+}
+
+@media (max-width :768px) {
+    .dev-blog-admin-container {
+        width: 95%;
+        margin: 0 auto;
+    }
+}

@@ -61,7 +61,7 @@ const BlogEditor = props => {
         wrapperClassName="wrapper-class"
         editorClassName="editor-class"
         toolbarClassName="toolbar-class"
-        placeholder="dfgdfg"
+        placeholder="Write your content here"
         editorStyle = {{ height :"90vh" }}
        mention={{
       separator: ' ',

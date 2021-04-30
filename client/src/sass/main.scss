@@ -39,6 +39,13 @@
 //radio button
 @import './components/radio';
 
+//developer blog
+@import './components/blog/dblog';
+
+@import './components/ripple';
+
+@import './components/blog/dev-admin';
+
 html {
     scroll-behavior: smooth;
 }

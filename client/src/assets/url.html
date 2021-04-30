@@ -1,0 +1,639 @@
+<!DOCTYPE html><html class="no-js" lang="en"><head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"><title>Optimizing React: Virtual DOM explained — Martian Chronicles, Evil Martians’ team blog</title><meta charset="UTF-8" /><meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" /><!--
+
+
+
+     ..                           ..
+    .GP                           YH.
+   GP^Y$b.dBBBBBBBBBBBBBBBBBBBb.d$Y^YD          .dBBBBBBBBBBBBBBBBBBBb.
+       Y$$$$$$$$$$$$$$$$$$$$$$$$$Y            dSSSSSSSSSSSSSSSSSSSSSSSSSb
+      d$$$$$$$$$$$$$$$$$$$$$$$$$$$b          dSYSSSYYSSSYYSSSYYSSSYYSSSYSb
+      M$$$$$$$$$$$$$$$$$$$$$$$$$$$M          MS.`Y´.L`Y´.L`Y´.L`Y´.L`Y´.SM
+      M$$$$$$$$$$$$$$$$$$$$$$$$$$$M          MSSb.dSSb.dSSb.dSSb.dSSb.dSSM
+      M$$$$$$P^^^Y$$$$$P^^^Y$$$$$$M          MSSSSSSP^^^YSSSSSP^^^YSSSSSSM
+      M$$$$$´.qop.`$$$´.qop.`$$$$$M       .qGSSSSSS´.qop.`SSS´.qop.`SSSSSSDp.
+      M$$$$$ G( )D $$$ G( )D $$$$$M       GY´MSSSSS G( )D SSS G( )D SSSSSM`YD
+      M$$$$$.`YPP´.$$$.`YPP´.$$$$$M       Gb.MSSSSS.`YPP´.SSS.`YPP´.SSSSSM.dD
+      M$$$$$$bwwwd$$$$$bwwwd$$$$$$M       `YGSSSSSSSbwwwdSSSSSbwwwdSSSSSSSDY´
+      M$$$$$$$$$$$$$$$$$$$$$$$$$$$M          MSSSSSSSSSSSSSSSSSSSSSSSSSSSM
+      M$$$$$$$$$$$$$$$$$$$$$$$$$$$M          MSSSSSSSSSSSSSSSSSSSSSSSSSSSM
+      MBBBBBBBBBBBBBBBBBBBBBBBBBBBM          MBBBBBBBBBBBBBBBBBBBBBBBBBBBM
+
+      twitter.com/evilmartians  github.com/evilmartians  t.me/evilmartians
+      exercise: cultofmartians.com                       jobs: evl.ms/jobs
+
+                                   since 2006
+
+
+
+
+
+--><link href="https://secure.gravatar.com" rel="preconnect" /><link as="image" href="https://cdn.evilmartians.com/front/posts/optimizing-react-virtual-dom-explained/cover-a1d5b40.png" rel="preload" /><link as="font" crossorigin="crossorigin" href="https://cdn.evilmartians.com/front/fonts/subset-StemText-Bold-06f9cff.woff2" rel="preload" type="font/woff2" /><link as="font" crossorigin="crossorigin" href="https://cdn.evilmartians.com/front/fonts/subset-StemText-Regular-e686be9.woff2" rel="preload" type="font/woff2" /><link as="font" crossorigin="crossorigin" href="https://cdn.evilmartians.com/front/fonts/subset-Stem-Light-02dce3f.woff2" rel="preload" type="font/woff2" /><link as="font" crossorigin="crossorigin" href="https://cdn.evilmartians.com/front/fonts/subset-Stem-Medium-6129e8f.woff2" rel="preload" type="font/woff2" /><script>
+//<![CDATA[
+window.isMobile = false;
+//]]>
+</script><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KMZ2RRL');</script>
+<link rel="stylesheet" media="all" href="https://cdn.evilmartians.com/front/vendor-06162ba.css" /><link rel="stylesheet" media="all" href="https://cdn.evilmartians.com/front/fonts-6d53937.css" /><link rel="stylesheet" media="all" href="https://cdn.evilmartians.com/front/chronicles-81d6734.css" /><script src="https://cdn.evilmartians.com/front/vendor-06162ba.js" defer="defer"></script><script src="https://cdn.evilmartians.com/front/modernizr-c775970.js" defer="defer"></script><script src="https://cdn.evilmartians.com/front/chronicles-81d6734.js" defer="defer"></script><link href="https://cdn.evilmartians.com/front/blocks/common/images/favicon-5e80666.ico" rel="icon" /><link href="https://cdn.evilmartians.com/front/blocks/common/images/favicon-365f15c.svg" rel="icon" type="image/svg+xml" /><link href="https://evilmartians.com/chronicles.atom" rel="alternate" title="Martian Chronicles" type="application/atom+xml" /><meta content="#999e16" name="theme-color" /><meta content="width=device-width, initial-scale=1.0" name="viewport" /><link href="https://cdn.evilmartians.com/front/blocks/common/images/apple-touch-icon-28d6b28.png" rel="apple-touch-icon" sizes="180x180" /><link href="https://cdn.evilmartians.com/front/blocks/common/manifest-cce6af2.json" rel="manifest" /><link href="https://evilmartians.com/chronicles/optimizing-react-virtual-dom-explained" rel="canonical" /><meta content="Learn about React&#39;s Virtual DOM and use this knowledge to speed up your applications. In this thorough beginner-friendly introduction to framework&#39;s internals, we will demystify JSX, show you how React makes rendering decisions, explain how to find bottlenecks, and share some tips to avoid common mistakes." name="description" /><meta content="Optimizing React: Virtual DOM explained — Martian Chronicles" itemprop="name" /><meta content="Learn about React&#39;s Virtual DOM and use this knowledge to speed up your applications. In this thorough beginner-friendly introduction to framework&#39;s internals, we will demystify JSX, show you how React makes rendering decisions, explain how to find bottlenecks, and share some tips to avoid common mistakes." itemprop="description" /><meta content="https://cdn.evilmartians.com/front/posts/optimizing-react-virtual-dom-explained/cover-a1d5b40.png" itemprop="image" /><meta content="Optimizing React: Virtual DOM explained — Martian Chronicles" property="og:title" /><meta content="Learn about React&#39;s Virtual DOM and use this knowledge to speed up your applications. In this thorough beginner-friendly introduction to framework&#39;s internals, we will demystify JSX, show you how React makes rendering decisions, explain how to find bottlenecks, and share some tips to avoid common mistakes." property="og:description" /><meta content="https://evilmartians.com/chronicles/optimizing-react-virtual-dom-explained" property="og:url" /><meta content="article" property="og:type" /><meta content="https://cdn.evilmartians.com/front/posts/optimizing-react-virtual-dom-explained/cover-a1d5b40.png" property="og:image" /><meta content="Martian Chronicles" property="og:site_name" /><meta content="https://www.facebook.com/evilmartians" property="article:author" /><meta content="summary_large_image" name="twitter:card" /><meta content="@evilmartians" name="twitter:site" /><meta content="@iadramelk" name="twitter:creator" /><meta content="Optimizing React: Virtual DOM explained — Martian Chronicles" name="twitter:title" /><meta content="Learn about React&#39;s Virtual DOM and use this knowledge to speed up your applications. In this thorough beginner-friendly introduction to framework&#39;s internals, we will demystify JSX, show you how React makes rendering decisions, explain how to find bottlenecks, and share some tips to avoid common mistakes." name="twitter:description" /><meta content="evilmartians.com" name="twitter:domain" /><meta content="https://cdn.evilmartians.com/front/posts/optimizing-react-virtual-dom-explained/cover-a1d5b40.png" name="twitter:image" /></head><body><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KMZ2RRL"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="ei-sprite" style="display:none"><symbol id='ei-sc-youtube-icon' viewBox='0 0 50 50'><path d="M39.7 18.6s-.3-2.1-1.2-3c-1.1-1.2-2.4-1.2-3-1.3C31.3 14 25 14 25 14s-6.3 0-10.5.3c-.6.1-1.9.1-3 1.3-.9.9-1.2 3-1.2 3S10 21 10 23.4v2.2c0 2.4.3 4.9.3 4.9s.3 2.1 1.2 3c1.1 1.2 2.6 1.2 3.3 1.3 2.4.1 10.2.2 10.2.2s6.3 0 10.5-.3c.6-.1 1.9-.1 3-1.3.9-.9 1.2-3 1.2-3s.3-2.4.3-4.8v-2.2c0-2.4-.3-4.8-.3-4.8zm-17.8 9.8V20l8.1 4.2-8.1 4.2z"></path></symbol><symbol id='ei-camera-icon' viewBox='0 0 50 50'><path d="M39 38H11c-1.7 0-3-1.3-3-3V17c0-1.7 1.3-3 3-3h6c.2 0 .5-.2.6-.3l1.1-2.2c.4-.8 1.4-1.4 2.3-1.4h8c.9 0 1.9.6 2.3 1.4l1.1 2.2c.1.2.4.3.6.3h6c1.7 0 3 1.3 3 3v18c0 1.7-1.3 3-3 3zM11 16c-.6 0-1 .4-1 1v18c0 .6.4 1 1 1h28c.6 0 1-.4 1-1V17c0-.6-.4-1-1-1h-6c-.9 0-1.9-.6-2.3-1.4l-1.1-2.2c-.1-.2-.4-.4-.6-.4h-8c-.2 0-.5.2-.6.3l-1.1 2.2c-.4.9-1.4 1.5-2.3 1.5h-6z"></path><path d="M25 34c-5 0-9-4-9-9s4-9 9-9 9 4 9 9-4 9-9 9zm0-16c-3.9 0-7 3.1-7 7s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7z"></path><circle cx="35" cy="18" r="1"></circle><path d="M12 12h4v1h-4z"></path><path d="M25 21v-1c-2.8 0-5 2.2-5 5h1c0-2.2 1.8-4 4-4z"></path></symbol><symbol id='ei-sc-skype-icon' viewBox='0 0 50 50'><path d="M38 27.3c.1-.8.2-1.6.2-2.4 0-1.8-.3-3.5-1-5.1-.7-1.6-1.6-3-2.8-4.2-1.2-1.2-2.6-2.2-4.2-2.8-1.6-.7-3.4-1-5.1-1-.8 0-1.7.1-2.5.2-1.1-.6-2.4-.9-3.7-.9-2.1 0-4.1.8-5.5 2.3-1.5 1.5-2.3 3.4-2.3 5.5 0 1.3.3 2.6 1 3.8-.1.7-.2 1.5-.2 2.3 0 1.8.3 3.5 1 5.1.7 1.6 1.6 3 2.8 4.2 1.2 1.2 2.6 2.2 4.2 2.8 1.6.7 3.4 1 5.1 1 .8 0 1.6-.1 2.3-.2 1.2.7 2.5 1 3.9 1 2.1 0 4.1-.8 5.5-2.3 1.5-1.5 2.3-3.4 2.3-5.5 0-1.3-.3-2.6-1-3.8zM25.1 33c-4.7 0-6.8-2.3-6.8-4 0-.9.7-1.5 1.6-1.5 2 0 1.5 2.9 5.2 2.9 1.9 0 3-1 3-2.1 0-.6-.3-1.4-1.6-1.7l-4.2-1c-3.4-.8-4-2.7-4-4.4 0-3.6 3.3-4.9 6.5-4.9 2.9 0 6.3 1.6 6.3 3.7 0 .9-.8 1.4-1.7 1.4-1.7 0-1.4-2.4-4.9-2.4-1.7 0-2.7.8-2.7 1.9 0 1.1 1.4 1.5 2.5 1.7l3.1.7c3.4.8 4.2 2.7 4.2 4.6.1 2.9-2.1 5.1-6.5 5.1z"></path></symbol><symbol id='ei-sc-odnoklassniki-icon' viewBox='0 0 50 50'><path d="M25 26c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm0-12.2c-2.3 0-4.2 1.9-4.2 4.2s1.9 4.2 4.2 4.2 4.2-1.9 4.2-4.2-1.9-4.2-4.2-4.2z"></path><path d="M33.6 26.8c-.7-.9-1.9-1-2.8-.4 0 0-2.2 1.6-5.8 1.6-3.6 0-5.8-1.6-5.8-1.6-.9-.7-2.1-.5-2.8.4-.7.9-.5 2.1.4 2.8.1.1 2.2 1.7 5.7 2.2l-5.3 5.4c-.8.8-.8 2.1 0 2.8.4.4.9.6 1.4.6.5 0 1-.2 1.4-.6l5-5.1 5 5.1c.4.4.9.6 1.4.6.5 0 1-.2 1.4-.6.8-.8.8-2 0-2.8l-5.3-5.4c3.5-.6 5.6-2.2 5.7-2.2.9-.7 1.1-2 .4-2.8z"></path></symbol><symbol id='ei-navicon-icon' viewBox='0 0 50 50'><path d="M10 12h30v4H10z"></path><path d="M10 22h30v4H10z"></path><path d="M10 32h30v4H10z"></path></symbol><symbol id='ei-redo-icon' viewBox='0 0 50 50'><path d="M25 38c-7.2 0-13-5.8-13-13s5.8-13 13-13c5.4 0 10.1 3.4 11.9 8.7l-1.9.7c-1.5-4.6-5.4-7.4-10-7.4-6.1 0-11 4.9-11 11s4.9 11 11 11c4.3 0 8.2-2.5 10-6.4l1.8.8C34.7 35 30.1 38 25 38z"></path><path d="M38 22h-8v-2h6v-6h2z"></path></symbol><symbol id='ei-chevron-down-icon' viewBox='0 0 50 50'><path d="M25 32.4l-9.7-9.7 1.4-1.4 8.3 8.3 8.3-8.3 1.4 1.4z"></path></symbol><symbol id='ei-play-icon' viewBox='0 0 50 50'><path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"></path><path d="M20 33.7V16.3L35 25l-15 8.7zm2-14v10.5l9-5.3-9-5.2z"></path></symbol><symbol id='ei-pointer-icon' viewBox='0 0 50 50'><path d="M33 38H21c-.6 0-1-.4-1-1 0-1.5-.7-2.4-1.8-3.8-.6-.7-1.3-1.6-2-2.7-1.9-3-3.6-6.6-4-7.9-.4-1.3-.1-2.2.3-2.7.4-.6 1.2-.9 2.1-.9 1.2 0 2.4 1 3.5 2.3V11c0-1.7 1.3-3 3-3s3 1.3 3 3v4.2c.3-.1.6-.2 1-.2 1.1 0 2 .6 2.5 1.4.4-.3.9-.4 1.4-.4 1.4 0 2.5.9 2.9 2.2.3-.1.7-.2 1.1-.2 1.7 0 3 1.3 3 3v3c0 2.6-.5 4.7-1 6.7s-1 3.9-1 6.3c0 .6-.4 1-1 1zm-11.1-2H32c.1-2.2.6-4 1-5.8.5-2 1-3.9 1-6.2v-3c0-.6-.4-1-1-1s-1 .4-1 1v1c0 .6-.4 1-1 1s-1-.4-1-1v-3c0-.6-.4-1-1-1s-1 .4-1 1v2c0 .6-.4 1-1 1s-1-.4-1-1v-3c0-.6-.4-1-1-1s-1 .4-1 1v2c0 .6-.4 1-1 1s-1-.4-1-1v-9c0-.6-.4-1-1-1s-1 .4-1 1v15c0 .6-.4 1-1 1s-1-.4-1-1v-.8c-.9-2.3-2.8-4.2-3.5-4.2-.2 0-.4 0-.5.1-.1.1-.1.4 0 .9.3 1.1 1.8 4.3 3.8 7.5.6 1 1.2 1.7 1.8 2.5 1.1 1.2 2.1 2.3 2.3 4z"></path></symbol><symbol id='ei-sc-telegram-icon' viewBox='0 0 50 50'><path d="M37.1 13L9.4 24c-.9.3-.8 1.6.1 1.9l7 2.2 2.8 8.8c.2.7 1.1.9 1.6.4l4.1-3.8 7.8 5.7c.6.4 1.4.1 1.6-.6l5.4-23.2c.3-1.7-1.2-3-2.7-2.4zM20.9 29.8L20 35l-2-7.2L37.5 15 20.9 29.8z"></path></symbol><symbol id='ei-spinner-3-icon' viewBox='0 0 50 50'><path d="M41.9 23.9c-.3-6.1-4-11.8-9.5-14.4-6-2.7-13.3-1.6-18.3 2.6-4.8 4-7 10.5-5.6 16.6 1.3 6 6 10.9 11.9 12.5 7.1 2 13.6-1.4 17.6-7.2-3.6 4.8-9.1 8-15.2 6.9-6.1-1.1-11.1-5.7-12.5-11.7-1.5-6.4 1.5-13.1 7.2-16.4 5.9-3.4 14.2-2.1 18.1 3.7 1 1.4 1.7 3.1 2 4.8.3 1.4.2 2.9.4 4.3.2 1.3 1.3 3 2.8 2.1 1.3-.8 1.2-2.5 1.1-3.8 0-.4.1.7 0 0z"></path></symbol><symbol id='ei-star-icon' viewBox='0 0 50 50'><path d="M15.2 40.6c-.2 0-.4-.1-.6-.2-.4-.3-.5-.7-.4-1.1l3.9-12-10.2-7.5c-.4-.3-.5-.7-.4-1.1s.5-.7 1-.7h12.7L25 5.9c.1-.4.5-.7 1-.7s.8.3 1 .7L30.9 18h12.7c.4 0 .8.2 1 .6s0 .9-.4 1.1L34 27.1l3.9 12c.1.4 0 .9-.4 1.1s-.8.3-1.2 0L26 33l-10.2 7.4c-.2.1-.4.2-.6.2zM26 30.7c.2 0 .4.1.6.2l8.3 6.1-3.2-9.8c-.1-.4 0-.9.4-1.1l8.3-6.1H30.1c-.4 0-.8-.3-1-.7L26 9.5l-3.2 9.8c-.1.4-.5.7-1 .7H11.5l8.3 6.1c.4.3.5.7.4 1.1L17.1 37l8.3-6.1c.2-.1.4-.2.6-.2z"></path></symbol><symbol id='ei-unlock-icon' viewBox='0 0 50 50'><path d="M18 23h-2v-4c0-5 4-9 9-9 4.5 0 8.4 3.4 8.9 7.9l-2 .2c-.4-3.5-3.4-6.1-6.9-6.1-3.9 0-7 3.1-7 7v4z"></path><path d="M33 40H17c-1.7 0-3-1.3-3-3V25c0-1.7 1.3-3 3-3h16c1.7 0 3 1.3 3 3v12c0 1.7-1.3 3-3 3zM17 24c-.6 0-1 .4-1 1v12c0 .6.4 1 1 1h16c.6 0 1-.4 1-1V25c0-.6-.4-1-1-1H17z"></path><circle cx="25" cy="28" r="2"></circle><path d="M25.5 28h-1l-1 6h3z"></path></symbol><symbol id='ei-pencil-icon' viewBox='0 0 50 50'><path d="M9.6 40.4l2.5-9.9L27 15.6l7.4 7.4-14.9 14.9-9.9 2.5zm4.3-8.9l-1.5 6.1 6.1-1.5L31.6 23 27 18.4 13.9 31.5z"></path><path d="M17.8 37.3c-.6-2.5-2.6-4.5-5.1-5.1l.5-1.9c3.2.8 5.7 3.3 6.5 6.5l-1.9.5z"></path><path d="M29.298 19.287l1.414 1.414-13.01 13.02-1.414-1.41z"></path><path d="M11 39l2.9-.7c-.3-1.1-1.1-1.9-2.2-2.2L11 39z"></path><path d="M35 22.4L27.6 15l3-3 .5.1c3.6.5 6.4 3.3 6.9 6.9l.1.5-3.1 2.9zM30.4 15l4.6 4.6.9-.9c-.5-2.3-2.3-4.1-4.6-4.6l-.9.9z"></path></symbol><symbol id='ei-sc-instagram-icon' viewBox='0 0 50 50'><path d="M25 12c-3.53 0-3.973.015-5.36.078-1.384.063-2.329.283-3.156.604a6.372 6.372 0 0 0-2.302 1.5 6.372 6.372 0 0 0-1.5 2.303c-.321.826-.54 1.771-.604 3.155C12.015 21.027 12 21.47 12 25c0 3.53.015 3.973.078 5.36.063 1.384.283 2.329.604 3.155.333.855.777 1.58 1.5 2.303a6.372 6.372 0 0 0 2.302 1.5c.827.32 1.772.54 3.156.604 1.387.063 1.83.078 5.36.078 3.53 0 3.973-.015 5.36-.078 1.384-.063 2.329-.283 3.155-.604a6.371 6.371 0 0 0 2.303-1.5 6.372 6.372 0 0 0 1.5-2.303c.32-.826.54-1.771.604-3.155.063-1.387.078-1.83.078-5.36 0-3.53-.015-3.973-.078-5.36-.063-1.384-.283-2.329-.605-3.155a6.372 6.372 0 0 0-1.499-2.303 6.371 6.371 0 0 0-2.303-1.5c-.826-.32-1.771-.54-3.155-.604C28.973 12.015 28.53 12 25 12m0 2.342c3.471 0 3.882.014 5.253.076 1.267.058 1.956.27 2.414.448.607.236 1.04.517 1.495.972.455.455.736.888.972 1.495.178.458.39 1.146.448 2.414.062 1.37.076 1.782.076 5.253s-.014 3.882-.076 5.253c-.058 1.268-.27 1.956-.448 2.414a4.028 4.028 0 0 1-.972 1.495 4.027 4.027 0 0 1-1.495.972c-.458.178-1.147.39-2.414.448-1.37.062-1.782.076-5.253.076s-3.883-.014-5.253-.076c-1.268-.058-1.956-.27-2.414-.448a4.027 4.027 0 0 1-1.495-.972 4.03 4.03 0 0 1-.972-1.495c-.178-.458-.39-1.146-.448-2.414-.062-1.37-.076-1.782-.076-5.253s.014-3.882.076-5.253c.058-1.268.27-1.956.448-2.414.236-.607.517-1.04.972-1.495a4.028 4.028 0 0 1 1.495-.972c.458-.178 1.146-.39 2.414-.448 1.37-.062 1.782-.076 5.253-.076"></path><path d="M25 18a7 7 0 1 0 0 14 7 7 0 0 0 0-14m0 11.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9m8.7-11.4a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0"></path></symbol><symbol id='ei-spinner-2-icon' viewBox='0 0 50 50'><circle cx="25" cy="10" r="2"></circle><circle opacity=".3" cx="25" cy="40" r="2"></circle><circle opacity=".3" cx="32.5" cy="12" r="2"></circle><circle opacity=".3" cx="17.5" cy="38" r="2"></circle><circle opacity=".93" cx="17.5" cy="12" r="2"></circle><circle opacity=".3" cx="32.5" cy="38" r="2"></circle><circle opacity=".65" cx="10" cy="25" r="2"></circle><circle opacity=".3" cx="40" cy="25" r="2"></circle><circle opacity=".86" cx="12" cy="17.5" r="2"></circle><circle opacity=".3" cx="38" cy="32.5" r="2"></circle><circle opacity=".44" cx="12" cy="32.5" r="2"></circle><circle opacity=".3" cx="38" cy="17.5" r="2"></circle></symbol><symbol id='ei-paperclip-icon' viewBox='0 0 50 50'><path d="M13.8 39.6c-1.5 0-3.1-.6-4.2-1.8-2.3-2.3-2.3-6.1 0-8.5l17-17c3.1-3.1 8.2-3.1 11.3 0 3.1 3.1 3.1 8.2 0 11.3L25.1 36.4 23.7 35l12.7-12.7c2.3-2.3 2.3-6.1 0-8.5-2.3-2.3-6.1-2.3-8.5 0l-17 17c-.8.8-1.2 1.8-1.2 2.8 0 1.1.4 2.1 1.2 2.8 1.6 1.6 4.1 1.6 5.7 0l12.7-12.7c.8-.8.8-2 0-2.8-.8-.8-2-.8-2.8 0L18 29.3l-1.4-1.4 8.5-8.5c1.6-1.6 4.1-1.6 5.7 0 1.6 1.6 1.6 4.1 0 5.7L18 37.8c-1.1 1.2-2.7 1.8-4.2 1.8z"></path></symbol><symbol id='ei-tag-icon' viewBox='0 0 50 50'><path d="M22 40.1c-.9 0-1.7-.3-2.3-.9l-8.9-8.9c-1.2-1.2-1.2-3.3 0-4.5l11.9-11.9c1-1 3-1.8 4.5-1.8h7.6c1.8 0 3.2 1.4 3.2 3.2v7.6c0 1.5-.8 3.4-1.8 4.5L24.3 39.2c-.6.6-1.4.9-2.3.9zM27.2 14c-1 0-2.4.6-3 1.3L12.3 27.2c-.5.5-.5 1.2 0 1.7l8.9 8.9c.5.4 1.2.4 1.7 0l11.9-11.9c.7-.7 1.3-2.1 1.3-3v-7.6c0-.7-.5-1.2-1.2-1.2h-7.7z"></path><path d="M30 24c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></symbol><symbol id='ei-chart-icon' viewBox='0 0 50 50'><path d="M18 36h-2V26h-4v10h-2V24h8z"></path><path d="M28 36h-2V20h-4v16h-2V18h8z"></path><path d="M38 36h-2V14h-4v22h-2V12h8z"></path><path d="M8 36h32v2H8z"></path></symbol><symbol id='ei-credit-card-icon' viewBox='0 0 50 50'><path d="M39 38H11c-1.7 0-3-1.3-3-3V15c0-1.7 1.3-3 3-3h28c1.7 0 3 1.3 3 3v20c0 1.7-1.3 3-3 3zM11 14c-.6 0-1 .4-1 1v20c0 .6.4 1 1 1h28c.6 0 1-.4 1-1V15c0-.6-.4-1-1-1H11z"></path><path d="M9 16h32v6H9z"></path><path d="M12 26h1v2h-1z"></path><path d="M14 26h1v2h-1z"></path><path d="M16 26h1v2h-1z"></path><path d="M19 26h1v2h-1z"></path><path d="M21 26h1v2h-1z"></path><path d="M23 26h1v2h-1z"></path><path d="M26 26h1v2h-1z"></path><path d="M28 26h1v2h-1z"></path><path d="M30 26h1v2h-1z"></path><path d="M33 26h1v2h-1z"></path><path d="M35 26h1v2h-1z"></path><path d="M37 26h1v2h-1z"></path></symbol><symbol id='ei-sc-tumblr-icon' viewBox='0 0 50 50'><path d="M30.9 32.4c-.5.2-1.5.5-2.3.5-2.2.1-2.7-1.6-2.7-2.8v-8.7h5.6v-4.2H26V10h-4.1c-.1 0-.2.1-.2.2-.2 2.2-1.3 6-5.5 7.5v3.6H19v9.1c0 3.1 2.3 7.6 8.4 7.5 2.1 0 4.3-.9 4.8-1.6l-1.3-3.9z"></path></symbol><symbol id='ei-sc-soundcloud-icon' viewBox='0 0 50 50'><path d="M40 24h-.2c-.9-4.6-5-8-9.8-8-3.1 0-5.9 1.4-7.7 3.7-.2.3-.3.6-.3 1.2l-.4 9.1.4 5.5c0 .3.3.5.5.5H40c3.3 0 6-2.7 6-6s-2.7-6-6-6z"></path><path d="M18.9 20c-.3 0-.5.2-.5.5l-.8 9v1l.8 5c0 .3.3.5.6.5h.2c.3 0 .5-.2.6-.5l.8-5c0-.3.1-.7 0-1l-.8-9c0-.3-.3-.5-.5-.5h-.4z"></path><path d="M14.9 21c-.3 0-.5.2-.5.5l-.8 8v1l.8 5c0 .3.3.5.6.5h.2c.3 0 .5-.2.6-.5l.8-5c0-.3.1-.7 0-1l-.8-8c0-.3-.3-.5-.5-.5h-.4z"></path><path d="M11 24c-.3 0-.5.2-.6.5l-.8 5v1l.8 5c0 .3.3.5.6.5s.5-.2.6-.5l.8-5v-1l-.8-5c-.1-.3-.3-.5-.6-.5z"></path><path d="M7 23c-.3 0-.5.2-.6.5l-.9 6v1l.8 5c.2.3.4.5.7.5.3 0 .5-.2.6-.5l.8-5c0-.3.1-.7 0-1l-.9-6c0-.3-.2-.5-.5-.5z"></path><path d="M3.3 26c-.3 0-.5.2-.6.5l-.6 3c-.1.3-.1.7 0 1l.6 4c.1.3.3.5.6.5s.5-.2.6-.5l.6-4v-1l-.6-3c-.1-.3-.3-.5-.6-.5z"></path></symbol><symbol id='ei-chevron-up-icon' viewBox='0 0 50 50'><path d="M33.3 28.7L25 20.4l-8.3 8.3-1.4-1.4 9.7-9.7 9.7 9.7z"></path></symbol><symbol id='ei-arrow-up-icon' viewBox='0 0 50 50'><path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"></path><path d="M33.3 26.7L25 18.4l-8.3 8.3-1.4-1.4 9.7-9.7 9.7 9.7z"></path><path d="M24 17h2v17h-2z"></path></symbol><symbol id='ei-calendar-icon' viewBox='0 0 50 50'><path d="M37 38H13c-1.7 0-3-1.3-3-3V13c0-1.7 1.1-3 2.5-3H14v2h-1.5c-.2 0-.5.4-.5 1v22c0 .6.4 1 1 1h24c.6 0 1-.4 1-1V13c0-.6-.3-1-.5-1H36v-2h1.5c1.4 0 2.5 1.3 2.5 3v22c0 1.7-1.3 3-3 3z"></path><path d="M17 14c-.6 0-1-.4-1-1V9c0-.6.4-1 1-1s1 .4 1 1v4c0 .6-.4 1-1 1z"></path><path d="M33 14c-.6 0-1-.4-1-1V9c0-.6.4-1 1-1s1 .4 1 1v4c0 .6-.4 1-1 1z"></path><path d="M20 10h10v2H20z"></path><path d="M12 16h26v2H12z"></path><path d="M34 20h2v2h-2z"></path><path d="M30 20h2v2h-2z"></path><path d="M26 20h2v2h-2z"></path><path d="M22 20h2v2h-2z"></path><path d="M18 20h2v2h-2z"></path><path d="M34 24h2v2h-2z"></path><path d="M30 24h2v2h-2z"></path><path d="M26 24h2v2h-2z"></path><path d="M22 24h2v2h-2z"></path><path d="M18 24h2v2h-2z"></path><path d="M14 24h2v2h-2z"></path><path d="M34 28h2v2h-2z"></path><path d="M30 28h2v2h-2z"></path><path d="M26 28h2v2h-2z"></path><path d="M22 28h2v2h-2z"></path><path d="M18 28h2v2h-2z"></path><path d="M14 28h2v2h-2z"></path><path d="M30 32h2v2h-2z"></path><path d="M26 32h2v2h-2z"></path><path d="M22 32h2v2h-2z"></path><path d="M18 32h2v2h-2z"></path><path d="M14 32h2v2h-2z"></path></symbol><symbol id='ei-location-icon' viewBox='0 0 50 50'><path d="M25 42.5l-.8-.9C23.7 41.1 12 27.3 12 19c0-7.2 5.8-13 13-13s13 5.8 13 13c0 8.3-11.7 22.1-12.2 22.7l-.8.8zM25 8c-6.1 0-11 4.9-11 11 0 6.4 8.4 17.2 11 20.4 2.6-3.2 11-14 11-20.4 0-6.1-4.9-11-11-11z"></path><path d="M25 24c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5zm0-8c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z"></path></symbol><symbol id='ei-archive-icon' viewBox='0 0 50 50'><path d="M42 20h-2v-5c0-.6-.4-1-1-1H11c-.6 0-1 .4-1 1v5H8v-5c0-1.7 1.3-3 3-3h28c1.7 0 3 1.3 3 3v5z"></path><path d="M37 40H13c-1.7 0-3-1.3-3-3V20h2v17c0 .6.4 1 1 1h24c.6 0 1-.4 1-1V20h2v17c0 1.7-1.3 3-3 3z"></path><path d="M29 26h-8c-.6 0-1-.4-1-1s.4-1 1-1h8c.6 0 1 .4 1 1s-.4 1-1 1z"></path><path d="M8 18h34v2H8z"></path></symbol><symbol id='ei-undo-icon' viewBox='0 0 50 50'><path d="M25 38c-5.1 0-9.7-3-11.8-7.6l1.8-.8c1.8 3.9 5.7 6.4 10 6.4 6.1 0 11-4.9 11-11s-4.9-11-11-11c-4.6 0-8.5 2.8-10.1 7.3l-1.9-.7c1.9-5.2 6.6-8.6 12-8.6 7.2 0 13 5.8 13 13s-5.8 13-13 13z"></path><path d="M20 22h-8v-8h2v6h6z"></path></symbol><symbol id='ei-check-icon' viewBox='0 0 50 50'><path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"></path><path d="M23 32.4l-8.7-8.7 1.4-1.4 7.3 7.3 11.3-11.3 1.4 1.4z"></path></symbol><symbol id='ei-sc-github-icon' viewBox='0 0 50 50'><path fill-rule="evenodd" clip-rule="evenodd" d="M25 10c-8.3 0-15 6.7-15 15 0 6.6 4.3 12.2 10.3 14.2.8.1 1-.3 1-.7v-2.6c-4.2.9-5.1-2-5.1-2-.7-1.7-1.7-2.2-1.7-2.2-1.4-.9.1-.9.1-.9 1.5.1 2.3 1.5 2.3 1.5 1.3 2.3 3.5 1.6 4.4 1.2.1-1 .5-1.6 1-2-3.3-.4-6.8-1.7-6.8-7.4 0-1.6.6-3 1.5-4-.2-.4-.7-1.9.1-4 0 0 1.3-.4 4.1 1.5 1.2-.3 2.5-.5 3.8-.5 1.3 0 2.6.2 3.8.5 2.9-1.9 4.1-1.5 4.1-1.5.8 2.1.3 3.6.1 4 1 1 1.5 2.4 1.5 4 0 5.8-3.5 7-6.8 7.4.5.5 1 1.4 1 2.8v4.1c0 .4.3.9 1 .7 6-2 10.2-7.6 10.2-14.2C40 16.7 33.3 10 25 10z"></path></symbol><symbol id='ei-sc-twitter-icon' viewBox='0 0 50 50'><path d="M39.2 16.8c-1.1.5-2.2.8-3.5 1 1.2-.8 2.2-1.9 2.7-3.3-1.2.7-2.5 1.2-3.8 1.5-1.1-1.2-2.7-1.9-4.4-1.9-3.3 0-6.1 2.7-6.1 6.1 0 .5.1.9.2 1.4-5-.2-9.5-2.7-12.5-6.3-.5.7-.8 1.7-.8 2.8 0 2.1 1.1 4 2.7 5-1 0-1.9-.3-2.7-.8v.1c0 2.9 2.1 5.4 4.9 5.9-.5.1-1 .2-1.6.2-.4 0-.8 0-1.1-.1.8 2.4 3 4.2 5.7 4.2-2.1 1.6-4.7 2.6-7.5 2.6-.5 0-1 0-1.4-.1 2.4 1.9 5.6 2.9 9 2.9 11.1 0 17.2-9.2 17.2-17.2V20c1.2-.9 2.2-1.9 3-3.2z"></path></symbol><symbol id='ei-arrow-down-icon' viewBox='0 0 50 50'><path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"></path><path d="M25 34.4l-9.7-9.7 1.4-1.4 8.3 8.3 8.3-8.3 1.4 1.4z"></path><path d="M24 16h2v17h-2z"></path></symbol><symbol id='ei-exclamation-icon' viewBox='0 0 50 50'><path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"></path><path d="M24 32h2v2h-2z"></path><path d="M25.6 30h-1.2l-.4-8v-6h2v6z"></path></symbol><symbol id='ei-chevron-right-icon' viewBox='0 0 50 50'><path d="M22.7 34.7l-1.4-1.4 8.3-8.3-8.3-8.3 1.4-1.4 9.7 9.7z"></path></symbol><symbol id='ei-share-google-icon' viewBox='0 0 50 50'><path d="M15 30c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5zm0-8c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z"></path><path d="M35 20c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5zm0-8c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z"></path><path d="M35 40c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5zm0-8c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z"></path><path d="M19.007 25.885l12.88 6.44-.895 1.788-12.88-6.44z"></path><path d="M30.993 15.885l.894 1.79-12.88 6.438-.894-1.79z"></path></symbol><symbol id='ei-trash-icon' viewBox='0 0 50 50'><path d="M20 18h2v16h-2z"></path><path d="M24 18h2v16h-2z"></path><path d="M28 18h2v16h-2z"></path><path d="M12 12h26v2H12z"></path><path d="M30 12h-2v-1c0-.6-.4-1-1-1h-4c-.6 0-1 .4-1 1v1h-2v-1c0-1.7 1.3-3 3-3h4c1.7 0 3 1.3 3 3v1z"></path><path d="M31 40H19c-1.6 0-3-1.3-3.2-2.9l-1.8-24 2-.2 1.8 24c0 .6.6 1.1 1.2 1.1h12c.6 0 1.1-.5 1.2-1.1l1.8-24 2 .2-1.8 24C34 38.7 32.6 40 31 40z"></path></symbol><symbol id='ei-refresh-icon' viewBox='0 0 50 50'><path d="M25 38c-7.2 0-13-5.8-13-13 0-3.2 1.2-6.2 3.3-8.6l1.5 1.3C15 19.7 14 22.3 14 25c0 6.1 4.9 11 11 11 1.6 0 3.1-.3 4.6-1l.8 1.8c-1.7.8-3.5 1.2-5.4 1.2z"></path><path d="M34.7 33.7l-1.5-1.3c1.8-2 2.8-4.6 2.8-7.3 0-6.1-4.9-11-11-11-1.6 0-3.1.3-4.6 1l-.8-1.8c1.7-.8 3.5-1.2 5.4-1.2 7.2 0 13 5.8 13 13 0 3.1-1.2 6.2-3.3 8.6z"></path><path d="M18 24h-2v-6h-6v-2h8z"></path><path d="M40 34h-8v-8h2v6h6z"></path></symbol><symbol id='ei-like-icon' viewBox='0 0 50 50'><path d="M40 23.2c0-2.1-1.7-3.2-4-3.2h-6.7c.5-1.8.7-3.5.7-5 0-5.8-1.6-7-3-7-.9 0-1.6.1-2.5.6-.3.2-.4.4-.5.7l-1 5.4c-1.1 2.8-3.8 5.3-6 7V36c.8 0 1.6.4 2.6.9 1.1.5 2.2 1.1 3.4 1.1h9.5c2 0 3.5-1.6 3.5-3 0-.3 0-.5-.1-.7 1.2-.5 2.1-1.5 2.1-2.8 0-.6-.1-1.1-.3-1.6.8-.5 1.5-1.4 1.5-2.4 0-.6-.3-1.2-.6-1.7.8-.6 1.4-1.6 1.4-2.6zm-2.1 0c0 1.3-1.3 1.4-1.5 2-.2.7.8.9.8 2.1 0 1.2-1.5 1.2-1.7 1.9-.2.8.5 1 .5 2.2v.2c-.2 1-1.7 1.1-2 1.5-.3.5 0 .7 0 1.8 0 .6-.7 1-1.5 1H23c-.8 0-1.6-.4-2.6-.9-.8-.4-1.6-.8-2.4-1V23.5c2.5-1.9 5.7-4.7 6.9-8.2v-.2l.9-5c.4-.1.7-.1 1.2-.1.2 0 1 1.2 1 5 0 1.5-.3 3.1-.8 5H27c-.6 0-1 .4-1 1s.4 1 1 1h9c1 0 1.9.5 1.9 1.2z"></path><path d="M16 38h-6c-1.1 0-2-.9-2-2V22c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2zm-6-16v14h6V22h-6z"></path></symbol><symbol id='ei-close-o-icon' viewBox='0 0 50 50'><path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"></path><path d="M32.283 16.302l1.414 1.415-15.98 15.98-1.414-1.414z"></path><path d="M17.717 16.302l15.98 15.98-1.414 1.415-15.98-15.98z"></path></symbol><symbol id='ei-sc-vk-icon' viewBox='0 0 50 50'><path fill-rule="evenodd" clip-rule="evenodd" d="M25.1 35.9h2s.6-.1.9-.4c.3-.3.3-.9.3-.9s0-2.6 1.2-3c1.2-.4 2.8 2.6 4.4 3.7 1.2.9 2.1.7 2.1.7l4.4-.1s2.3-.1 1.2-2c-.1-.1-.6-1.3-3.3-3.8-2.8-2.6-2.4-2.1.9-6.6 2-2.7 2.8-4.3 2.6-5.1-.2-.7-1.7-.5-1.7-.5h-5s-.4-.1-.6.1c-.3.2-.4.5-.4.5s-.8 2.1-1.8 3.9c-2.2 3.7-3.1 3.9-3.4 3.7-.8-.5-.6-2.2-.6-3.3 0-3.6.6-5.1-1.1-5.5-.5-.1-.9-.2-2.3-.2-1.8 0-3.3 0-4.1.4-.6.3-1 .9-.7.9.3 0 1.1.2 1.5.7.4.9.4 2.4.4 2.4s.3 4.3-.7 4.8c-.7.4-1.6-.4-3.6-3.8-1-1.7-1.8-3.7-1.8-3.7s-.1-.4-.4-.6c-.3-.2-.8-.3-.8-.3H10s-.7 0-1 .3c-.2.3 0 .8 0 .8s3.7 8.6 7.9 13c3.9 4.2 8.2 3.9 8.2 3.9z"></path></symbol><symbol id='ei-user-icon' viewBox='0 0 50 50'><path d="M25.1 42c-9.4 0-17-7.6-17-17s7.6-17 17-17 17 7.6 17 17-7.7 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.8-15-15-15z"></path><path d="M15.3 37.3l-1.8-.8c.5-1.2 2.1-1.9 3.8-2.7 1.7-.8 3.8-1.7 3.8-2.8v-1.5c-.6-.5-1.6-1.6-1.8-3.2-.5-.5-1.3-1.4-1.3-2.6 0-.7.3-1.3.5-1.7-.2-.8-.4-2.3-.4-3.5 0-3.9 2.7-6.5 7-6.5 1.2 0 2.7.3 3.5 1.2 1.9.4 3.5 2.6 3.5 5.3 0 1.7-.3 3.1-.5 3.8.2.3.4.8.4 1.4 0 1.3-.7 2.2-1.3 2.6-.2 1.6-1.1 2.6-1.7 3.1V31c0 .9 1.8 1.6 3.4 2.2 1.9.7 3.9 1.5 4.6 3.1l-1.9.7c-.3-.8-1.9-1.4-3.4-1.9-2.2-.8-4.7-1.7-4.7-4v-2.6l.5-.3s1.2-.8 1.2-2.4v-.7l.6-.3c.1 0 .6-.3.6-1.1 0-.2-.2-.5-.3-.6l-.4-.4.2-.5s.5-1.6.5-3.6c0-1.9-1.1-3.3-2-3.3h-.6l-.3-.5c0-.4-.7-.8-1.9-.8-3.1 0-5 1.7-5 4.5 0 1.3.5 3.5.5 3.5l.1.5-.4.5c-.1 0-.3.3-.3.7 0 .5.6 1.1.9 1.3l.4.3v.5c0 1.5 1.3 2.3 1.3 2.4l.5.3v2.6c0 2.4-2.6 3.6-5 4.6-1.1.4-2.6 1.1-2.8 1.6z"></path></symbol><symbol id='ei-search-icon' viewBox='0 0 50 50'><path d="M23 36c-7.2 0-13-5.8-13-13s5.8-13 13-13 13 5.8 13 13-5.8 13-13 13zm0-24c-6.1 0-11 4.9-11 11s4.9 11 11 11 11-4.9 11-11-4.9-11-11-11z"></path><path d="M32.682 31.267l8.98 8.98-1.414 1.414-8.98-8.98z"></path></symbol><symbol id='ei-sc-linkedin-icon' viewBox='0 0 50 50'><path d="M36.1 12H13.9c-1.1 0-1.9.8-1.9 1.9v22.2c0 1 .9 1.9 1.9 1.9h22.2c1.1 0 1.9-.8 1.9-1.9V13.9c0-1.1-.9-1.9-1.9-1.9zM20 34h-4V22h4v12zm-2-13.6c-1.3 0-2.4-1.1-2.4-2.4 0-1.3 1.1-2.4 2.4-2.4 1.3 0 2.4 1.1 2.4 2.4 0 1.3-1.1 2.4-2.4 2.4zM34 34h-4v-6c0-1.6-.4-3.2-2-3.2s-2 1.6-2 3.2v6h-4V22h4v1.4h.2c.5-1 1.8-1.8 3.3-1.8 3.7 0 4.5 2.4 4.5 5.4v7z"></path></symbol><symbol id='ei-sc-vimeo-icon' viewBox='0 0 50 50'><path d="M38 19.6c-.1 2.7-2 6.4-5.6 11.1-3.8 4.9-7 7.4-9.6 7.4-1.6 0-3-1.5-4.1-4.5-.7-2.7-1.5-5.5-2.2-8.2-.8-3-1.7-4.5-2.7-4.5-.2 0-.9.4-2.2 1.3l-1.3-1.7c1.4-1.2 2.7-2.4 4-3.6 1.8-1.6 3.2-2.4 4.1-2.5 2.2-.2 3.5 1.3 4 4.4.5 3.4.9 5.5 1.1 6.4.6 2.8 1.3 4.2 2.1 4.2.6 0 1.5-.9 2.6-2.8 1.2-1.8 1.8-3.2 1.9-4.2.2-1.6-.5-2.4-1.9-2.4-.7 0-1.3.2-2 .5 1.4-4.5 4-6.6 7.8-6.5 2.8.1 4.2 1.9 4 5.6z"></path></symbol><symbol id='ei-image-icon' viewBox='0 0 50 50'><path d="M39 38H11c-1.7 0-3-1.3-3-3V15c0-1.7 1.3-3 3-3h28c1.7 0 3 1.3 3 3v20c0 1.7-1.3 3-3 3zM11 14c-.6 0-1 .4-1 1v20c0 .6.4 1 1 1h28c.6 0 1-.4 1-1V15c0-.6-.4-1-1-1H11z"></path><path d="M30 24c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path><path d="M35.3 37.7L19 22.4 9.7 31l-1.4-1.4 10.7-10 17.7 16.7z"></path><path d="M40.4 32.7L35 28.3 30.5 32l-1.3-1.6 5.8-4.7 6.6 5.4z"></path></symbol><symbol id='ei-sc-google-plus-icon' viewBox='0 0 50 50'><path d="M18 23v4.8h7.9c-.3 2.1-2.4 6-7.9 6-4.8 0-8.7-4-8.7-8.8s3.9-8.8 8.7-8.8c2.7 0 4.5 1.2 5.6 2.2l3.8-3.7C24.9 12.4 21.8 11 18 11c-7.7 0-14 6.3-14 14s6.3 14 14 14c8.1 0 13.4-5.7 13.4-13.7 0-.9-.1-1.6-.2-2.3H18z"></path><path d="M48 23h-4v-4h-4v4h-4v4h4v4h4v-4h4z"></path></symbol><symbol id='ei-close-icon' viewBox='0 0 50 50'><path d="M37.304 11.282l1.414 1.414-26.022 26.02-1.414-1.413z"></path><path d="M12.696 11.282l26.022 26.02-1.414 1.415-26.022-26.02z"></path></symbol><symbol id='ei-arrow-left-icon' viewBox='0 0 50 50'><path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"></path><path d="M25.3 34.7L15.6 25l9.7-9.7 1.4 1.4-8.3 8.3 8.3 8.3z"></path><path d="M17 24h17v2H17z"></path></symbol><symbol id='ei-spinner-icon' viewBox='0 0 50 50'><path d="M25 18c-.6 0-1-.4-1-1V9c0-.6.4-1 1-1s1 .4 1 1v8c0 .6-.4 1-1 1z"></path><path opacity=".3" d="M25 42c-.6 0-1-.4-1-1v-8c0-.6.4-1 1-1s1 .4 1 1v8c0 .6-.4 1-1 1z"></path><path opacity=".3" d="M29 19c-.2 0-.3 0-.5-.1-.4-.3-.6-.8-.3-1.3l4-6.9c.3-.4.8-.6 1.3-.3.4.3.6.8.3 1.3l-4 6.9c-.2.2-.5.4-.8.4z"></path><path opacity=".3" d="M17 39.8c-.2 0-.3 0-.5-.1-.4-.3-.6-.8-.3-1.3l4-6.9c.3-.4.8-.6 1.3-.3.4.3.6.8.3 1.3l-4 6.9c-.2.2-.5.4-.8.4z"></path><path opacity=".93" d="M21 19c-.3 0-.6-.2-.8-.5l-4-6.9c-.3-.4-.1-1 .3-1.3.4-.3 1-.1 1.3.3l4 6.9c.3.4.1 1-.3 1.3-.2.2-.3.2-.5.2z"></path><path opacity=".3" d="M33 39.8c-.3 0-.6-.2-.8-.5l-4-6.9c-.3-.4-.1-1 .3-1.3.4-.3 1-.1 1.3.3l4 6.9c.3.4.1 1-.3 1.3-.2.1-.3.2-.5.2z"></path><path opacity=".65" d="M17 26H9c-.6 0-1-.4-1-1s.4-1 1-1h8c.6 0 1 .4 1 1s-.4 1-1 1z"></path><path opacity=".3" d="M41 26h-8c-.6 0-1-.4-1-1s.4-1 1-1h8c.6 0 1 .4 1 1s-.4 1-1 1z"></path><path opacity=".86" d="M18.1 21.9c-.2 0-.3 0-.5-.1l-6.9-4c-.4-.3-.6-.8-.3-1.3.3-.4.8-.6 1.3-.3l6.9 4c.4.3.6.8.3 1.3-.2.3-.5.4-.8.4z"></path><path opacity=".3" d="M38.9 33.9c-.2 0-.3 0-.5-.1l-6.9-4c-.4-.3-.6-.8-.3-1.3.3-.4.8-.6 1.3-.3l6.9 4c.4.3.6.8.3 1.3-.2.3-.5.4-.8.4z"></path><path opacity=".44" d="M11.1 33.9c-.3 0-.6-.2-.8-.5-.3-.4-.1-1 .3-1.3l6.9-4c.4-.3 1-.1 1.3.3.3.4.1 1-.3 1.3l-6.9 4c-.1.2-.3.2-.5.2z"></path><path opacity=".3" d="M31.9 21.9c-.3 0-.6-.2-.8-.5-.3-.4-.1-1 .3-1.3l6.9-4c.4-.3 1-.1 1.3.3.3.4.1 1-.3 1.3l-6.9 4c-.2.2-.3.2-.5.2z"></path></symbol><symbol id='ei-sc-pinterest-icon' viewBox='0 0 50 50'><path d="M25 10c-8.3 0-15 6.7-15 15 0 6.4 4 11.8 9.5 14-.1-1.2-.2-3 .1-4.3.3-1.2 1.8-7.5 1.8-7.5s-.4-.9-.4-2.2c0-2.1 1.2-3.6 2.7-3.6 1.3 0 1.9 1 1.9 2.1 0 1.3-.8 3.2-1.2 5-.4 1.5.7 2.7 2.2 2.7 2.7 0 4.7-2.8 4.7-6.9 0-3.6-2.6-6.1-6.3-6.1-4.3 0-6.8 3.2-6.8 6.5 0 1.3.5 2.7 1.1 3.4.1.1.1.3.1.4-.1.5-.4 1.5-.4 1.7-.1.3-.2.3-.5.2-1.9-.9-3-3.6-3-5.8 0-4.7 3.4-9.1 9.9-9.1 5.2 0 9.2 3.7 9.2 8.7 0 5.2-3.3 9.3-7.8 9.3-1.5 0-2.9-.8-3.4-1.7 0 0-.8 2.9-.9 3.6-.3 1.3-1.3 2.9-1.9 3.9 1.4.5 2.9.7 4.4.7 8.3 0 15-6.7 15-15s-6.7-15-15-15z"></path></symbol><symbol id='ei-link-icon' viewBox='0 0 50 50'><path d="M24 30.2c0 .2.1.5.1.8 0 1.4-.5 2.6-1.5 3.6l-2 2c-1 1-2.2 1.5-3.6 1.5-2.8 0-5.1-2.3-5.1-5.1 0-1.4.5-2.6 1.5-3.6l2-2c1-1 2.2-1.5 3.6-1.5.3 0 .5 0 .8.1l1.5-1.5c-.7-.3-1.5-.4-2.3-.4-1.9 0-3.6.7-4.9 2l-2 2c-1.3 1.3-2 3-2 4.9 0 3.8 3.1 6.9 6.9 6.9 1.9 0 3.6-.7 4.9-2l2-2c1.3-1.3 2-3 2-4.9 0-.8-.1-1.6-.4-2.3L24 30.2z"></path><path d="M33 10.1c-1.9 0-3.6.7-4.9 2l-2 2c-1.3 1.3-2 3-2 4.9 0 .8.1 1.6.4 2.3l1.5-1.5c0-.2-.1-.5-.1-.8 0-1.4.5-2.6 1.5-3.6l2-2c1-1 2.2-1.5 3.6-1.5 2.8 0 5.1 2.3 5.1 5.1 0 1.4-.5 2.6-1.5 3.6l-2 2c-1 1-2.2 1.5-3.6 1.5-.3 0-.5 0-.8-.1l-1.5 1.5c.7.3 1.5.4 2.3.4 1.9 0 3.6-.7 4.9-2l2-2c1.3-1.3 2-3 2-4.9 0-3.8-3.1-6.9-6.9-6.9z"></path><path d="M20 31c-.3 0-.5-.1-.7-.3-.4-.4-.4-1 0-1.4l10-10c.4-.4 1-.4 1.4 0s.4 1 0 1.4l-10 10c-.2.2-.4.3-.7.3z"></path></symbol><symbol id='ei-chevron-left-icon' viewBox='0 0 50 50'><path d="M27.3 34.7L17.6 25l9.7-9.7 1.4 1.4-8.3 8.3 8.3 8.3z"></path></symbol><symbol id='ei-retweet-icon' viewBox='0 0 50 50'><path d="M38 35h-2V17c0-.6-.4-1-1-1H18v-2h17c1.7 0 3 1.3 3 3v18z"></path><path d="M37 36.5l-6.8-7.8 1.6-1.4 5.2 6.2 5.2-6.2 1.6 1.4z"></path><path d="M32 36H15c-1.7 0-3-1.3-3-3V15h2v18c0 .6.4 1 1 1h17v2z"></path><path d="M18.2 22.7L13 16.5l-5.2 6.2-1.6-1.4 6.8-7.8 6.8 7.8z"></path></symbol><symbol id='ei-share-apple-icon' viewBox='0 0 50 50'><path d="M30.3 13.7L25 8.4l-5.3 5.3-1.4-1.4L25 5.6l6.7 6.7z"></path><path d="M24 7h2v21h-2z"></path><path d="M35 40H15c-1.7 0-3-1.3-3-3V19c0-1.7 1.3-3 3-3h7v2h-7c-.6 0-1 .4-1 1v18c0 .6.4 1 1 1h20c.6 0 1-.4 1-1V19c0-.6-.4-1-1-1h-7v-2h7c1.7 0 3 1.3 3 3v18c0 1.7-1.3 3-3 3z"></path></symbol><symbol id='ei-lock-icon' viewBox='0 0 50 50'><path d="M34 23h-2v-4c0-3.9-3.1-7-7-7s-7 3.1-7 7v4h-2v-4c0-5 4-9 9-9s9 4 9 9v4z"></path><path d="M33 40H17c-1.7 0-3-1.3-3-3V25c0-1.7 1.3-3 3-3h16c1.7 0 3 1.3 3 3v12c0 1.7-1.3 3-3 3zM17 24c-.6 0-1 .4-1 1v12c0 .6.4 1 1 1h16c.6 0 1-.4 1-1V25c0-.6-.4-1-1-1H17z"></path><circle cx="25" cy="28" r="2"></circle><path d="M25.5 28h-1l-1 6h3z"></path></symbol><symbol id='ei-arrow-right-icon' viewBox='0 0 50 50'><path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"></path><path d="M24.7 34.7l-1.4-1.4 8.3-8.3-8.3-8.3 1.4-1.4 9.7 9.7z"></path><path d="M16 24h17v2H16z"></path></symbol><symbol id='ei-envelope-icon' viewBox='0 0 50 50'><path opacity=".9" d="M31.796 24.244l9.97 9.97-1.415 1.414-9.97-9.97z"></path><path opacity=".9" d="M18.278 24.287l1.414 1.414-9.9 9.9-1.414-1.41z"></path><path d="M25 29.9c-1.5 0-3.1-.6-4.2-1.8L8.3 15.7l1.4-1.4 12.5 12.5c1.6 1.6 4.1 1.6 5.7 0l12.5-12.5 1.4 1.4-12.6 12.5c-1.1 1.1-2.7 1.7-4.2 1.7z"></path><path d="M39 38H11c-1.7 0-3-1.3-3-3V15c0-1.7 1.3-3 3-3h28c1.7 0 3 1.3 3 3v20c0 1.7-1.3 3-3 3zM11 14c-.6 0-1 .4-1 1v20c0 .6.4 1 1 1h28c.6 0 1-.4 1-1V15c0-.6-.4-1-1-1H11z"></path></symbol><symbol id='ei-eye-icon' viewBox='0 0 50 50'><path d="M25 36C13.5 36 8.3 25.9 8.1 25.4c-.1-.3-.1-.6 0-.9C8.3 24.1 13.5 14 25 14s16.7 10.1 16.9 10.6c.1.3.1.6 0 .9-.2.4-5.4 10.5-16.9 10.5zM10.1 25c1.1 1.9 5.9 9 14.9 9s13.7-7.1 14.9-9c-1.1-1.9-5.9-9-14.9-9s-13.7 7.1-14.9 9z"></path><path d="M25 34c-5 0-9-4-9-9s4-9 9-9 9 4 9 9-4 9-9 9zm0-16c-3.9 0-7 3.1-7 7s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7z"></path><path d="M25 30c-2.8 0-5-2.2-5-5 0-.6.4-1 1-1s1 .4 1 1c0 1.7 1.3 3 3 3s3-1.3 3-3-1.3-3-3-3c-.6 0-1-.4-1-1s.4-1 1-1c2.8 0 5 2.2 5 5s-2.2 5-5 5z"></path></symbol><symbol id='ei-sc-facebook-icon' viewBox='0 0 50 50'><path d="M26 20v-3c0-1.3.3-2 2.4-2H31v-5h-4c-5 0-7 3.3-7 7v3h-4v5h4v15h6V25h4.4l.6-5h-5z"></path></symbol><symbol id='ei-heart-icon' viewBox='0 0 50 50'><path d="M25 39.7l-.6-.5C11.5 28.7 8 25 8 19c0-5 4-9 9-9 4.1 0 6.4 2.3 8 4.1 1.6-1.8 3.9-4.1 8-4.1 5 0 9 4 9 9 0 6-3.5 9.7-16.4 20.2l-.6.5zM17 12c-3.9 0-7 3.1-7 7 0 5.1 3.2 8.5 15 18.1 11.8-9.6 15-13 15-18.1 0-3.9-3.1-7-7-7-3.5 0-5.4 2.1-6.9 3.8L25 17.1l-1.1-1.3C22.4 14.1 20.5 12 17 12z"></path></symbol><symbol id='ei-question-icon' viewBox='0 0 50 50'><path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"></path><path d="M19.8 19.6c.3-.8.6-1.4 1.2-1.9.5-.5 1.1-.9 1.9-1.2s1.6-.4 2.5-.4c.7 0 1.4.1 2 .3.6.2 1.2.5 1.7.9s.9.9 1.1 1.5c.3.6.4 1.3.4 2 0 1-.2 1.8-.6 2.5s-1 1.3-1.6 2l-1.3 1.3c-.3.3-.6.6-.7.9-.2.3-.3.7-.3 1.1-.1.4-.1.7-.1 1.5h-1.6c0-.8 0-1.1.1-1.7.1-.5.3-1 .5-1.5.2-.4.5-.8.9-1.2.4-.4.9-.8 1.4-1.4.5-.5.9-1 1.2-1.5s.5-1.2.5-1.8c0-.5-.1-1-.3-1.4-.2-.4-.5-.8-.8-1.1-.3-.3-.7-.5-1.2-.7-.5-.2-.9-.3-1.4-.3-.7 0-1.3.1-1.8.4-.5.2-1 .6-1.3 1-.3.4-.6.9-.8 1.5s-.4.9-.4 1.6h-1.6c0-.9.1-1.6.4-2.4zM26 32v2h-2v-2h2z"></path></symbol><symbol id='ei-comment-icon' viewBox='0 0 50 50'><path d="M15 42h-2l1.2-1.6c.8-1.1 1.3-2.5 1.6-4.2C10.8 33.9 8 29.6 8 24c0-8.6 6.5-14 17-14s17 5.4 17 14c0 8.8-6.4 14-17 14h-.7c-1.6 1.9-4.4 4-9.3 4zm10-30c-9.4 0-15 4.5-15 12 0 6.4 3.9 9.4 7.2 10.7l.7.3-.1.8c-.2 1.6-.5 3-1.1 4.2 3.3-.4 5.2-2.1 6.3-3.5l.3-.4H25c13.5 0 15-8.4 15-12C40 16.5 34.4 12 25 12z"></path></symbol><symbol id='ei-cart-icon' viewBox='0 0 50 50'><path d="M35 34H13c-.3 0-.6-.2-.8-.4s-.2-.6-.1-.9l1.9-4.8L12.1 10H6V8h7c.5 0 .9.4 1 .9l2 19c0 .2 0 .3-.1.5L14.5 32H36l-1 2z"></path><path d="M15.2 29l-.4-2L38 22.2V14H14v-2h25c.6 0 1 .4 1 1v10c0 .5-.3.9-.8 1l-24 5z"></path><path d="M36 40c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path><path d="M12 40c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></symbol><symbol id='ei-minus-icon' viewBox='0 0 50 50'><path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"></path><path d="M16 24h18v2H16z"></path></symbol><symbol id='ei-trophy-icon' viewBox='0 0 50 50'><path d="M28.6 29.4c3-2.3 7.4-5.7 7.4-18.4v-1H14v1c0 12.7 4.5 16.1 7.4 18.4 1.7 1.3 2.6 2 2.6 3.6v3c-1.6.2-3.2.8-3.8 2H18c-1.1 0-2 .9-2 2h18c0-1.1-.9-2-2-2h-2.2c-.6-1.2-2.1-1.8-3.8-2v-3c0-1.6.8-2.3 2.6-3.6zm-3.6.5c-.6-.8-1.5-1.5-2.3-2.1-2.7-2.1-6.4-4.9-6.6-15.8h18c-.2 10.8-3.9 13.7-6.6 15.8-1 .7-1.9 1.3-2.5 2.1z"></path><path d="M18.8 27C18.7 27 8 24.7 8 13v-1h7v2h-5c.6 9.2 9.1 11 9.2 11l-.4 2z"></path><path d="M31.2 27l-.4-2c.4-.1 8.6-1.9 9.2-11h-5v-2h7v1c0 11.7-10.7 14-10.8 14z"></path></symbol><symbol id='ei-bell-icon' viewBox='0 0 50 50'><path d="M42 36c-6.5 0-7.4-6.3-8.2-11.9C32.9 17.9 32.1 12 25 12s-7.9 5.9-8.8 12.1C15.4 29.7 14.5 36 8 36v-2c4.6 0 5.3-3.9 6.2-10.1.9-6.2 2-13.9 10.8-13.9s9.9 7.7 10.8 13.9C36.7 30.1 37.4 34 42 34v2z"></path><path d="M25 40c-2.8 0-5-2.2-5-5h2c0 1.7 1.3 3 3 3s3-1.3 3-3h2c0 2.8-2.2 5-5 5z"></path><path d="M8 34h34v2H8z"></path><path d="M27 10c0 1.1-.9 1.5-2 1.5s-2-.4-2-1.5.9-2 2-2 2 .9 2 2z"></path></symbol><symbol id='ei-clock-icon' viewBox='0 0 50 50'><path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"></path><path d="M30.3 33.7L24 27.4V16h2v10.6l5.7 5.7z"></path></symbol><symbol id='ei-gear-icon' viewBox='0 0 50 50'><path d="M25 34c-5 0-9-4-9-9s4-9 9-9 9 4 9 9-4 9-9 9zm0-16c-3.9 0-7 3.1-7 7s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7z"></path><path d="M27.7 44h-5.4l-1.5-4.6c-1-.3-2-.7-2.9-1.2l-4.4 2.2-3.8-3.8 2.2-4.4c-.5-.9-.9-1.9-1.2-2.9L6 27.7v-5.4l4.6-1.5c.3-1 .7-2 1.2-2.9l-2.2-4.4 3.8-3.8 4.4 2.2c.9-.5 1.9-.9 2.9-1.2L22.3 6h5.4l1.5 4.6c1 .3 2 .7 2.9 1.2l4.4-2.2 3.8 3.8-2.2 4.4c.5.9.9 1.9 1.2 2.9l4.6 1.5v5.4l-4.6 1.5c-.3 1-.7 2-1.2 2.9l2.2 4.4-3.8 3.8-4.4-2.2c-.9.5-1.9.9-2.9 1.2L27.7 44zm-4-2h2.6l1.4-4.3.5-.1c1.2-.3 2.3-.8 3.4-1.4l.5-.3 4 2 1.8-1.8-2-4 .3-.5c.6-1 1.1-2.2 1.4-3.4l.1-.5 4.3-1.4v-2.6l-4.3-1.4-.1-.5c-.3-1.2-.8-2.3-1.4-3.4l-.3-.5 2-4-1.8-1.8-4 2-.5-.3c-1.1-.6-2.2-1.1-3.4-1.4l-.5-.1L26.3 8h-2.6l-1.4 4.3-.5.1c-1.2.3-2.3.8-3.4 1.4l-.5.3-4-2-1.8 1.8 2 4-.3.5c-.6 1-1.1 2.2-1.4 3.4l-.1.5L8 23.7v2.6l4.3 1.4.1.5c.3 1.2.8 2.3 1.4 3.4l.3.5-2 4 1.8 1.8 4-2 .5.3c1.1.6 2.2 1.1 3.4 1.4l.5.1 1.4 4.3z"></path></symbol><symbol id='ei-external-link-icon' viewBox='0 0 50 50'><path d="M38.288 10.297l1.414 1.415-14.99 14.99-1.414-1.414z"></path><path d="M40 20h-2v-8h-8v-2h10z"></path><path d="M35 38H15c-1.7 0-3-1.3-3-3V15c0-1.7 1.3-3 3-3h11v2H15c-.6 0-1 .4-1 1v20c0 .6.4 1 1 1h20c.6 0 1-.4 1-1V24h2v11c0 1.7-1.3 3-3 3z"></path></symbol><symbol id='ei-plus-icon' viewBox='0 0 50 50'><path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"></path><path d="M16 24h18v2H16z"></path><path d="M24 16h2v18h-2z"></path></symbol></svg><nav class="navigation fixed navigation--blog" data-trigger="100"><a class="navigation__logo" data-track="home" href="/">Home</a><div class="navigation__buttons"><a class="navigation__button" data-sections="solutions" data-track="solutions" href="/#solutions">Solutions</a><a class="navigation__button" data-sections="clients" data-track="case-studies" href="/#clients">Case Studies</a><a class="navigation__button" data-sections="services,services-slider" data-track="services" href="/#services">Services</a><a class="navigation__button" data-add-section="#oss-tiles" data-sections="oss,oss-tiles" data-track="oss" href="/#oss">Open Source</a><a class="navigation__button navigation__button--blog navigation__button--active" data-track="blog" href="/chronicles" itemscope="" itemtype="http://schema.org/Blog"><span aria-hidden="true" class="navigation__icon navigation__icon--blog navigation__icon--desktop"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="m1 0c-.552285 0-1 .447716-1 1v16c0 .5523.447716 1 1 1h16c.5523 0 1-.4477 1-1v-16c0-.552285-.4477-1-1-1zm1.5 2.5h13v6h-13zm-.5-.5h.5 13 .5v.5 6 .5h-.5-13-.5v-.5-6zm5.5 9.5h-5v4h5zm-5-.5h-.5v.5 4 .5h.5 5 .5v-.5-4-.5h-.5zm13.5 0h-6v.5h6zm-6 2h6v.5h-6zm6 2h-6v.5h6z" fill="currentColor" fill-rule="evenodd"/></svg></span><span aria-hidden="true" class="navigation__icon navigation__icon--blog navigation__icon--mobile"><svg fill="none" height="14" viewBox="0 0 14 14" width="14" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="m0 1c0-.552284.447715-1 1-1h12c.5523 0 1 .447715 1 1v12c0 .5523-.4477 1-1 1h-12c-.552284 0-1-.4477-1-1zm11.5 1.5h-9v4h9zm-9-.5h-.5v.5 4 .5h.5 9 .5v-.5-4-.5h-.5zm0 7.5h3v2h-3zm-.5-.5h.5 3 .5v.5 2 .5h-.5-3-.5v-.5-2zm6 0h4v.5h-4zm4 2h-4v.5h4z" fill="currentColor" fill-rule="evenodd"/></svg></span>Blog</a></div><a class="navigation__button navigation__button--contact-us" data-sections="talk-to-us" data-track="talk-to-us" href="/#talk-to-us"><span aria-hidden="true" class="navigation__icon navigation__icon--talk-to-us navigation__icon--desktop"><svg fill="none" height="21" viewBox="0 0 22 21" width="22" xmlns="http://www.w3.org/2000/svg"><path d="m3.23529 21h1.29412c3.17059 0 4.98235-1.3781 6.01769-2.625h.4529c6.8588 0 11-3.4125 11-9.1875 0-5.64375-4.2059-9.1875-11-9.1875-6.79412 0-11 3.54375-11 9.1875 0 3.675 1.81176 6.4969 5.04706 8.0063-.19412 1.1156-.51765 2.0343-1.0353 2.7562z" fill="currentColor"/></svg></span><span aria-hidden="true" class="navigation__icon navigation__icon--talk-to-us navigation__icon--mobile"><svg fill="none" height="15" viewBox="0 0 16 15" width="16" xmlns="http://www.w3.org/2000/svg"><path d="m2.35294 15h.94118c2.30588 0 3.62353-.9844 4.37647-1.875h.32941c4.9882 0 8-2.4375 8-6.5625 0-4.03125-3.0588-6.5625-8-6.5625-4.94118 0-8 2.53125-8 6.5625 0 2.625 1.31765 4.6406 3.67059 5.7188-.14118.7968-.37647 1.4531-.75294 1.9687z" fill="currentColor"/></svg></span>Talk to us</a></nav><div class="post__root" itemscope="" itemtype="http://schema.org/Blog"><meta content="https://evilmartians.com/chronicles" itemprop="url" /><div itemprop="blogPost" itemscope="" itemtype="http://schema.org/BlogPosting"><meta content="https://evilmartians.com/chronicles/optimizing-react-virtual-dom-explained" itemprop="mainEntityOfPage" /><style>#post-optimizing-react-virtual-dom-explained .post-cover__title { color: #CEE9FA } #post-optimizing-react-virtual-dom-explained .post-cover__category { color: #09A1A5 } #post-optimizing-react-virtual-dom-explained .post-cover__date { color: #09A1A5 } #post-optimizing-react-virtual-dom-explained { background: black }</style><article class="post-cover post-cover--with-image" id="post-optimizing-react-virtual-dom-explained"><img class="post-cover__img" alt="" src="https://cdn.evilmartians.com/front/posts/optimizing-react-virtual-dom-explained/cover-a1d5b40.png" /><meta content="https://cdn.evilmartians.com/front/posts/optimizing-react-virtual-dom-explained/cover-a1d5b40.png" itemprop="image" /><div class="post-cover__category">Frontend</div><h1 class="post-cover__title" itemprop="name headline"><b>Optimizing React:</b> Virtual DOM explained</h1><div class="post-cover__date" itemprop="datePublished" title="Sol Jovis, 12 Rishabha 217">March 28, 2018</div><meta content="2021-04-29 11:45:17 +0300" itemprop="dateModified" /><meta content="https://evilmartians.com/chronicles/optimizing-react-virtual-dom-explained" itemprop="mainEntityOfPage" /></article><section class="post"><div class="post__wrapper"><div class="post__side-block"><section class="post-authors"><div class="post-authors__author" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><img class="post-authors__avatar" alt="Alexey Ivanov" itemprop="image" src="https://secure.gravatar.com/avatar/b49e275a0c556f32ac8ee54813d234e5?default=identicon&size=200" width="200" height="200" /><div class="post-authors__text"><div class="post-authors__name" itemprop="name">Alexey Ivanov</div><div class="post-authors__about" itemprop="description">Frontend Developer at Evil Martians</div><ul class="post-authors__links"><li class="post-authors__link"><a aria-label="Social link" content="https://github.com/iAdramelk" itemprop="sameAs"></a><a title="https://github.com/iAdramelk" aria-label="GitHub" href="https://github.com/iAdramelk">
+        <div class='icon icon--ei-sc-github  '>
+          <svg class='icon__cnt'><use xlink:href='#ei-sc-github-icon'/></svg>
+        </div>
+      </a></li><li class="post-authors__link"><a aria-label="Social link" content="https://twitter.com/iadramelk" itemprop="sameAs"></a><a title="https://twitter.com/iadramelk" aria-label="Twitter" href="https://twitter.com/iadramelk">
+        <div class='icon icon--ei-sc-twitter  '>
+          <svg class='icon__cnt'><use xlink:href='#ei-sc-twitter-icon'/></svg>
+        </div>
+      </a></li></ul></div></div><div class="post-authors__author" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><img class="post-authors__avatar" alt="Andy Barnov" itemprop="image" src="https://secure.gravatar.com/avatar/4e21a6a563f4eafee632c0b139d28af4?default=identicon&size=200" width="200" height="200" /><div class="post-authors__text"><div class="post-authors__name" itemprop="name">Andy Barnov</div><div class="post-authors__about" itemprop="description">Writer at Evil Martians. Teacher at Le Wagon. Former international TV correspondent</div><ul class="post-authors__links"><li class="post-authors__link"><a aria-label="Social link" content="https://github.com/progapandist" itemprop="sameAs"></a><a title="https://github.com/progapandist" aria-label="GitHub" href="https://github.com/progapandist">
+        <div class='icon icon--ei-sc-github  '>
+          <svg class='icon__cnt'><use xlink:href='#ei-sc-github-icon'/></svg>
+        </div>
+      </a></li><li class="post-authors__link"><a aria-label="Social link" content="https://twitter.com/progapandist" itemprop="sameAs"></a><a title="https://twitter.com/progapandist" aria-label="Twitter" href="https://twitter.com/progapandist">
+        <div class='icon icon--ei-sc-twitter  '>
+          <svg class='icon__cnt'><use xlink:href='#ei-sc-twitter-icon'/></svg>
+        </div>
+      </a></li></ul></div></div></section><div class="post-beware post-beware--border"><p class="post-beware__parapgraph">If you’re interested in translating or adapting this post, please<a itemprop="email" class="post-beware__email" data-track="email" href="mailto:surrender@evilmartians.com?subject=Translation%20Request%3A%20https://evilmartians.com/chronicles/optimizing-react-virtual-dom-explained?utm_campaign=Frontend%2BWeekly&amp;utm_medium=web&amp;utm_source=Frontend_Weekly_105">email us first</a>.</p></div></div><div itemprop="articleBody"><article class="post__intro">
+  <p>Learn about React’s Virtual DOM and use this knowledge to speed up your applications. In this thorough beginner-friendly introduction to framework’s internals, we will demystify JSX, show you how React makes rendering decisions, explain how to find bottlenecks, and share some tips to avoid common mistakes.</p>
+</article>
+
+<p>One of the reasons React keeps rocking the frontend world and shows no sign of decline is its approachable learning curve: after wrapping your head around <a href="https://reactjs.org/docs/introducing-jsx.html">JSX</a> and the whole “<a href="https://reactjs.org/docs/state-and-lifecycle.html">State</a> vs. <a href="https://reactjs.org/docs/components-and-props.html">Props</a>” concept, you are good to go.</p>
+
+<div class="post__note">
+  <p>If you are already familiar with the way React works, you can skip straight to <a href="#fixing-things-mountingunmounting">“Fixing things”</a>.</p>
+</div>
+
+<p>But to truly master React, you need to <em>think in React</em>. This article is an attempt to help you with that. Take a look at the React table made for <a href="https://ebaymag.com/">one of our projects</a>:</p>
+
+<figure class="post-media post-media--centered">
+  <p><img class="post-media__object" alt="A huge React table" width="1280" height="800" src="https://cdn.evilmartians.com/front/posts/optimizing-react-virtual-dom-explained/ebay_table-4023632.png"></p>
+  <figcaption class="post-media__caption">
+    <p>A huge React table on <a href="https://ebaymag.com/">eBay for business</a></p>
+  </figcaption>
+</figure>
+
+<p>With hundreds of dynamic, filterable rows, understanding framework’s finer points becomes essential to guarantee smooth user experience.</p>
+
+<blockquote>
+  <p>And you can certainly feel when things go wrong. Input fields get laggy, checkboxes take a second to be checked, modals have a hard time showing up.</p>
+</blockquote>
+
+<p>To be able to solve these kinds of problems, we need to cover the whole journey a React component takes from being defined by you to being rendered (and then updated) on a page. Buckle up!</p>
+
+<h2 id="behind-jsx">Behind JSX</h2>
+
+<div class="post__note">
+  <p>Process known in frontend circles as “transpiling”, even though “compilation” would be a more correct term.</p>
+</div>
+
+<p>React developers urge you to use a mix of HTML and JavaScript known as JSX when you write your components. Browsers, though, have no clue about JSX and its syntax. Browsers only understand plain JavaScript, so JSX will have to be transformed into it. Here is the JSX code for a <code>div</code> that has a class and some content:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">'cn'</span><span class="nt">&gt;</span>
+  Content!
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<p>The same code in “formal” JavaScript is just a function call with a number of arguments:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span>
+  <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">,</span>
+  <span class="p">{</span> <span class="na">className</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cn</span><span class="dl">'</span> <span class="p">},</span>
+  <span class="dl">'</span><span class="s1">Content!</span><span class="dl">'</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<p>Let’s take a closer look at these arguments. The first one is a <em>type of element</em>. For HTML tags it will be a string with a tag’s name. A second argument is an object with all of the <em>element’s attributes</em>. It can also be an empty object if there are none. All the following arguments are <em>element’s children</em>. Text inside an element also counts as a child, so a string ‘Content!’ is placed as the third argument to a function call.</p>
+
+<p>You can already imagine what happens when we have more children:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">'cn'</span><span class="nt">&gt;</span>
+  Content 1!
+  <span class="nt">&lt;br</span> <span class="nt">/&gt;</span>
+  Content 2!
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span>
+  <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">,</span>
+  <span class="p">{</span> <span class="na">className</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cn</span><span class="dl">'</span> <span class="p">},</span>
+  <span class="dl">'</span><span class="s1">Content 1!</span><span class="dl">'</span><span class="p">,</span>              <span class="c1">// 1st child</span>
+  <span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">br</span><span class="dl">'</span><span class="p">),</span> <span class="c1">// 2nd child</span>
+  <span class="dl">'</span><span class="s1">Content 2!</span><span class="dl">'</span>               <span class="c1">// 3rd child</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Our function now has five arguments: an element’s type, an attributes object, and three children. As one of our children is also an HTML tag known to React, it will be portrayed as a function call as well.</p>
+
+<p>By now, we have covered two types of children: a plain <code>String</code> or another call to <code>React.createElement</code>. However, other values can also serve as arguments:</p>
+
+<ul>
+  <li>Primitives <code>false</code>, <code>null</code>, <code>undefined</code> and <code>true</code>
+</li>
+  <li>Arrays</li>
+  <li>React <em>components</em>
+</li>
+</ul>
+
+<p>Arrays are used because children can be grouped and passed as one argument:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span>
+  <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">,</span>
+  <span class="p">{</span> <span class="na">className</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cn</span><span class="dl">'</span> <span class="p">},</span>
+  <span class="p">[</span><span class="dl">'</span><span class="s1">Content 1!</span><span class="dl">'</span><span class="p">,</span> <span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">br</span><span class="dl">'</span><span class="p">),</span> <span class="dl">'</span><span class="s1">Content 2!</span><span class="dl">'</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>The power of React comes, of course, not from the tags described in the HTML spec, but from the user-created components such as:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">Table</span><span class="p">({</span> <span class="nx">rows</span> <span class="p">})</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span>
+    <span class="o">&lt;</span><span class="nx">table</span><span class="o">&gt;</span>
+      <span class="p">{</span><span class="nx">rows</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">row</span> <span class="o">=&gt;</span> <span class="p">(</span>
+        <span class="o">&lt;</span><span class="nx">tr</span> <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">row</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="o">&gt;</span>
+          <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">row</span><span class="p">.</span><span class="nx">title</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/td</span><span class="err">&gt;
+</span>        <span class="o">&lt;</span><span class="sr">/tr</span><span class="err">&gt;
+</span>      <span class="p">))}</span>
+    <span class="o">&lt;</span><span class="sr">/table</span><span class="err">&gt;
+</span>  <span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Components allow us to break our templates into reusable chunks. In the example of a <a href="https://reactjs.org/docs/components-and-props.html#functional-and-class-components">“functional”</a> component above we accept an array of objects holding table row data and return a single <code>React.createElement</code> call for a <code>&lt;table&gt;</code> element and its rows as children.</p>
+
+<p>Whenever we place our component into a layout like so:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;Table</span> <span class="na">rows=</span><span class="s">{rows}</span> <span class="nt">/&gt;</span>
+</code></pre></div></div>
+
+<p>from the browsers’ perspective, we wrote this:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="nx">Table</span><span class="p">,</span> <span class="p">{</span> <span class="na">rows</span><span class="p">:</span> <span class="nx">rows</span> <span class="p">});</span>
+</code></pre></div></div>
+
+<p>Note that this time our first argument is not a <code>String</code> describing an HTML element, but <em>a reference to a function that we defined</em> when we coded our component. Our attributes are now our <a href="https://reactjs.org/docs/components-and-props.html"><code>props</code></a>.</p>
+
+<h2 id="putting-components-on-a-page">Putting components on a page</h2>
+
+<p>So, we have transpiled all our JSX components into pure JavaScript, and now we have a bunch of function calls with arguments that are other function calls, holding yet other function calls… How does it all get transformed into DOM elements that form a web page?</p>
+
+<p>For that, we have a <code>ReactDOM</code> library and its <code>render</code> method:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">Table</span><span class="p">({</span> <span class="nx">rows</span> <span class="p">})</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span> <span class="c1">// defining a component</span>
+
+<span class="c1">// rendering a component</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
+  <span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="nx">Table</span><span class="p">,</span> <span class="p">{</span> <span class="na">rows</span><span class="p">:</span> <span class="nx">rows</span> <span class="p">}),</span> <span class="c1">// "creating" a component</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">#root</span><span class="dl">'</span><span class="p">)</span> <span class="c1">// inserting it on a page</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<p>When <code>ReactDOM.render</code> is called, <code>React.createElement</code> is finally called too and it returns the following object:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// There are more fields, but these are most important to us</span>
+<span class="p">{</span>
+  <span class="nl">type</span><span class="p">:</span> <span class="nx">Table</span><span class="p">,</span>
+  <span class="nx">props</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nl">rows</span><span class="p">:</span> <span class="nx">rows</span>
+  <span class="p">},</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>These objects constitute Virtual DOM in React’s sense.</p>
+</blockquote>
+
+<p>They will be compared to each other on all further renders and eventually translated into a <em>real</em> DOM (as opposed to <em>virtual</em>).</p>
+
+<p>Here’s another example: this time with a <code>div</code> that has a class attribute and several children:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span>
+  <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">,</span>
+  <span class="p">{</span> <span class="na">className</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cn</span><span class="dl">'</span> <span class="p">},</span>
+  <span class="dl">'</span><span class="s1">Content 1!</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">Content 2!</span><span class="dl">'</span><span class="p">,</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<p>Turns into:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+  <span class="nl">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">,</span>
+  <span class="nx">props</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nl">className</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cn</span><span class="dl">'</span><span class="p">,</span>
+    <span class="nx">children</span><span class="p">:</span> <span class="p">[</span>
+      <span class="dl">'</span><span class="s1">Content 1!</span><span class="dl">'</span><span class="p">,</span>
+      <span class="dl">'</span><span class="s1">Content 2!</span><span class="dl">'</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Note that children who used to be separate arguments to the <code>React.createElement</code> function have found their place under a <code>children</code> key inside <code>props</code>. So it <em>does not matter</em> whether children are passed as an array or a list of arguments—in a resulting Virtual DOM object they will all end up together anyway.</p>
+
+<p>What’s more, we could add children to the props directly in the JSX code, and the result would still be the same:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">className=</span><span class="s">'cn'</span> <span class="na">children=</span><span class="s">{['Content</span> <span class="err">1!',</span> <span class="err">'</span><span class="na">Content</span> <span class="err">2!']}</span> <span class="nt">/&gt;</span>
+</code></pre></div></div>
+
+<p>After a Virtual DOM object is built, <code>ReactDOM.render</code> will try to transform it into a DOM node our browser can display according to those rules:</p>
+
+<ul>
+  <li>
+    <p>If a <code>type</code> attribute holds a <em>string</em> with a tag name—create a tag with all attributes listed under <code>props</code>.</p>
+  </li>
+  <li>
+    <p>If we have a function or a class under <code>type</code>—call it and repeat the process recursively on a result.</p>
+  </li>
+  <li>
+    <p>If there are any <code>children</code> under <code>props</code>—repeat the process for each child one by one and place results inside the parent’s DOM node.</p>
+  </li>
+</ul>
+
+<p>As a result, we get the following HTML (for our table example):</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;table&gt;</span>
+  <span class="nt">&lt;tr&gt;</span>
+    <span class="nt">&lt;td&gt;</span>Title<span class="nt">&lt;/td&gt;</span>
+  <span class="nt">&lt;/tr&gt;</span>
+  ...
+<span class="nt">&lt;/table&gt;</span>
+</code></pre></div></div>
+
+<h2 id="rebuilding-the-dom">Rebuilding the DOM</h2>
+
+<div class="post__note">
+  <p>In practice, <code>render</code> is usually called on a root element once and further updates are applied through <code>state</code>.</p>
+</div>
+
+<p>Note that “re” in the heading! The real magic in React starts when we want to <em>update</em> a page without replacing everything. There are few ways how we can achieve it. Let’s start with the simplest one—call <code>ReactDOM.render</code> for the same node <em>again</em>.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Second call</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
+  <span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="nx">Table</span><span class="p">,</span> <span class="p">{</span> <span class="na">rows</span><span class="p">:</span> <span class="nx">rows</span> <span class="p">}),</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">#root</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<p>This time, the piece of code above will behave differently to what we’ve already seen. Instead of creating all DOM nodes from scratch and putting them on the page, React will start the <a href="https://reactjs.org/docs/reconciliation.html">reconciliation</a> (or “diffing”) algorithm to determine which parts of the node tree have to be updated and which can be left untouched.</p>
+
+<p>So, how does it work? There is just a handful of simple scenarios and <em>understanding them</em> will help us a lot with our optimization. Keep in mind that we are now looking at objects that serve as a representation of a node in the React Virtual DOM.</p>
+
+<ul>
+  <li><strong>Scenario 1: <code>type</code> is a string, <code>type</code> stayed the same across calls, <code>props</code> did not change either.</strong></li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// before update</span>
+<span class="p">{</span> <span class="nl">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">,</span> <span class="nx">props</span><span class="p">:</span> <span class="p">{</span> <span class="nl">className</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cn</span><span class="dl">'</span> <span class="p">}</span> <span class="p">}</span>
+
+<span class="c1">// after update</span>
+<span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">,</span> <span class="na">props</span><span class="p">:</span> <span class="p">{</span> <span class="na">className</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cn</span><span class="dl">'</span> <span class="p">}</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>That is the simplest case: DOM stays the same.</p>
+
+<ul>
+  <li><strong>Scenario 2: <code>type</code> is still the same string, <code>props</code> are different.</strong></li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// before update:</span>
+<span class="p">{</span> <span class="nl">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">,</span> <span class="nx">props</span><span class="p">:</span> <span class="p">{</span> <span class="nl">className</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cn</span><span class="dl">'</span> <span class="p">}</span> <span class="p">}</span>
+
+<span class="c1">// after update:</span>
+<span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">,</span> <span class="na">props</span><span class="p">:</span> <span class="p">{</span> <span class="na">className</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cnn</span><span class="dl">'</span> <span class="p">}</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>As our <code>type</code> still represents an HTML <em>element</em>, React knows how to change its properties through standard DOM API calls, without removing the node from a DOM tree.</p>
+
+<ul>
+  <li><strong>Scenario 3: <code>type</code> has changed to a different <code>String</code>, or from <code>String</code> to a component.</strong></li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// before update:</span>
+<span class="p">{</span> <span class="nl">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">,</span> <span class="nx">props</span><span class="p">:</span> <span class="p">{</span> <span class="nl">className</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cn</span><span class="dl">'</span> <span class="p">}</span> <span class="p">}</span>
+
+<span class="c1">// after update:</span>
+<span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">span</span><span class="dl">'</span><span class="p">,</span> <span class="na">props</span><span class="p">:</span> <span class="p">{</span> <span class="na">className</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cn</span><span class="dl">'</span> <span class="p">}</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>As React now sees that the type is different, it would not even try to update our node: old element will be removed (<em>unmounted</em>) <strong>together with all its children</strong>. Thus, replacing an element for something entirely different high up the DOM tree can be quite expensive. Luckily, that rarely happens in the real world.</p>
+
+<p>It is important to remember that React uses <code>===</code> (triple equals) to compare <code>type</code> values, so they have to be the same <em>instances</em> of the same class or the <em>same</em> function.</p>
+
+<p>Next scenario is much more interesting, as that is how we use React most often.</p>
+
+<ul>
+  <li><strong>Scenario 4: <code>type</code> is a component.</strong></li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// before update:</span>
+<span class="p">{</span> <span class="nl">type</span><span class="p">:</span> <span class="nx">Table</span><span class="p">,</span> <span class="nx">props</span><span class="p">:</span> <span class="p">{</span> <span class="nl">rows</span><span class="p">:</span> <span class="nx">rows</span> <span class="p">}</span> <span class="p">}</span>
+
+<span class="c1">// after update:</span>
+<span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="nx">Table</span><span class="p">,</span> <span class="na">props</span><span class="p">:</span> <span class="p">{</span> <span class="na">rows</span><span class="p">:</span> <span class="nx">rows</span> <span class="p">}</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>“But nothing had changed!”, you might say, and you will be wrong.</p>
+</blockquote>
+
+<div class="post__note">
+  <p>Note that a component’s <code>render</code> (only class components have this method explicitly defined) is not the same as <code>ReactDOM.render</code>. The word “render” is indeed a bit overused in React’s world.</p>
+</div>
+
+<p>If <code>type</code> is a reference to a function or a class (that is, your regular React component), and we started tree reconciliation process, then React will always try to look <em>inside</em> the component to make sure that the values returned on <code>render</code> did not change (sort of a precaution against side-effects). Rinse and repeat for each component down the tree—yes, with complicated renders that might become expensive too!</p>
+
+<h2 id="taking-care-of-children">Taking care of children</h2>
+
+<p>Besides four common scenarios described above, we also need to account for React’s behavior when an element has more than one child. Let’s say we have such an element:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ...</span>
+<span class="nx">props</span><span class="p">:</span> <span class="p">{</span>
+  <span class="nl">children</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span> <span class="p">},</span>
+      <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">span</span><span class="dl">'</span> <span class="p">},</span>
+      <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">br</span><span class="dl">'</span> <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">},</span>
+<span class="c1">// ...</span>
+</code></pre></div></div>
+
+<p>And we want to shuffle those children around:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ...</span>
+<span class="nx">props</span><span class="p">:</span> <span class="p">{</span>
+  <span class="nl">children</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">span</span><span class="dl">'</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">br</span><span class="dl">'</span> <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">},</span>
+<span class="c1">// ...</span>
+</code></pre></div></div>
+
+<p>What happens then?</p>
+
+<p>If, while “diffing”, React sees <em>any</em> array inside <code>props.children</code>, it starts comparing elements in it with the ones in the array it saw before by looking at them in order: index 0 will be compared to index 0, index 1 to index 1, etc. For each pair, React will apply the set of rules described above. In our case, it sees that <code>div</code> became a <code>span</code> so <em>Scenario 3</em> will be applied. That is not very efficient: imagine that we have removed the first row from a 1000-row table. React will have to “update” remaining 999 children, as their content will now not be equal if compared to previous representation index-by-index.</p>
+
+<p>Luckily, React has a <a href="https://reactjs.org/docs/lists-and-keys.html">built-in way</a> to solve this problem. If an element has a <code>key</code> property, elements will be compared by a value of a <code>key</code>, not by index. As long as keys are unique, React will move elements around <em>without</em> removing them from DOM tree and then putting them back (a process known in React as <em>mounting/unmounting</em>).</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ...</span>
+<span class="nx">props</span><span class="p">:</span> <span class="p">{</span>
+  <span class="nl">children</span><span class="p">:</span> <span class="p">[</span> <span class="c1">// Now React will look on key, not index</span>
+    <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">,</span> <span class="na">key</span><span class="p">:</span> <span class="dl">'</span><span class="s1">div</span><span class="dl">'</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">span</span><span class="dl">'</span><span class="p">,</span> <span class="na">key</span><span class="p">:</span> <span class="dl">'</span><span class="s1">span</span><span class="dl">'</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">br</span><span class="dl">'</span><span class="p">,</span> <span class="na">key</span><span class="p">:</span> <span class="dl">'</span><span class="s1">bt</span><span class="dl">'</span> <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">},</span>
+<span class="c1">// ...</span>
+</code></pre></div></div>
+
+<h2 id="when-state-changes">When state changes</h2>
+
+<p>Up until now we only touched the <code>props</code> part of React philosophy but ignored the <code>state</code>. Here is a simple “stateful” component:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">App</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">counter</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span>
+
+  <span class="nx">increment</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+    <span class="na">counter</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="p">})</span>
+
+  <span class="nx">render</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">increment</span><span class="p">}</span><span class="o">&gt;</span>
+    <span class="p">{</span><span class="dl">'</span><span class="s1">Counter: </span><span class="dl">'</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">counter</span><span class="p">}</span>
+  <span class="o">&lt;</span><span class="sr">/button&gt;</span><span class="err">)
+</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>So, we have a <code>counter</code> key in our state object. A click on a button increments its value and changes button text. But what happens in a DOM when we do that? Which part of it will be recalculated and updated?</p>
+
+<p>Calling <code>this.setState</code> causes a re-render too, but not of the whole page, but <em>only of a component itself and its children</em>. Parents and siblings are spared. That is convenient when we have a large tree, and we want to redraw only a part of it.</p>
+
+<h2 id="pinning-down-problems">Pinning down problems</h2>
+
+<p>We have prepared a <a href="https://iadramelk.github.io/optimizing-react-demo/dist/before.html">little demo app</a> so you can see most common problems in the wild before we go about fixing them. You can take a look at its source code <a href="https://github.com/iAdramelk/optimizing-react-demo">here</a>. You will also need <a href="https://github.com/facebook/react-devtools">React Developer Tools</a>, so make sure you have them installed for your browser.</p>
+
+<p>The first thing we want to take a look at is <em>which elements and when</em> cause Virtual DOM to be updated. Navigate to the React panel in your browser’s Dev Tools and select the “Highlight Updates” checkbox:</p>
+
+<figure class="post-media post-media--centered">
+  <p><img class="post-media__object" alt="React DevTools in Chrome with 'Highlight updates' checkbox selected" width="1124" height="740" src="https://cdn.evilmartians.com/front/posts/optimizing-react-virtual-dom-explained/react_dev_tools-e78197e.png"></p>
+  <figcaption class="post-media__caption">
+    <p>React DevTools in Chrome with “Highlight updates” checkbox selected</p>
+  </figcaption>
+</figure>
+
+<p>Now try adding a row to the table. As you can see, a border appears around each element on the page. That means that React is calculating and comparing the whole Virtual DOM tree each time we add a row. Now try to hit a counter button inside a row. You see how Virtual DOM updates on change of <code>state</code>—only the concerned element and its children are affected.</p>
+
+<p>React DevTools hints at where the problem might be, but tells us nothing about details: especially whether the update in question means “diffing” elements or mounting/unmounting them. To find out more, we need to use React’s built-in <a href="https://reactjs.org/docs/optimizing-performance.html#profiling-components-with-the-chrome-performance-tab">profiler</a> (note it won’t work in production mode).</p>
+
+<p>Add <code>?react_perf</code> to any URL of your app and go to “Performance” tab in your Chrome DevTools. Hit the recording button and click around the table. Add some rows, change some counters, then hit “stop”.</p>
+
+<figure class="post-media post-media--centered">
+  <p><img class="post-media__object" alt="React DevTools' &quot;Performance&quot; tab" width="1124" height="740" src="https://cdn.evilmartians.com/front/posts/optimizing-react-virtual-dom-explained/react_perf_tools-ba86f5e.png"></p>
+  <figcaption class="post-media__caption">
+    <p>React DevTools’ “Performance” tab</p>
+  </figcaption>
+</figure>
+
+<p>In the resulting output, we are interested in “User timing”. Zoom onto timeline until you see “React Tree Reconciliation” group and its children. These are all names of our components with <em>[update]</em> or <em>[mount]</em> next to them.</p>
+
+<blockquote>
+  <p>Most of our performance problems fall into one of those two categories.</p>
+</blockquote>
+
+<p>Either a component (and everything branching from it) is for some reason re-mounted on each update, and we didn’t want it (re-mounting is slow), or we are performing an expensive reconciliation on large branches, even though nothing has changed.</p>
+
+<h2 id="fixing-things-mountingunmounting">Fixing things: Mounting/Unmounting</h2>
+
+<p>Now when we have caught up on some theory about how React makes decisions to update Virtual DOM and figured out how to see what is happening behind the scenes, we are finally ready to fix things! First, let’s deal with mounts/unmounts.</p>
+
+<p>You can get a very noticeable speed improvement if you simply mind the fact that multiple children of any element/component are represented as an <em>array</em> internally.</p>
+
+<p>Consider this:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div&gt;</span>
+  <span class="nt">&lt;Message</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;Table</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;Footer</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<p>Inside our Virtual DOM that will be represented as:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ...</span>
+<span class="nx">props</span><span class="p">:</span> <span class="p">{</span>
+  <span class="nl">children</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="nx">Message</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="nx">Table</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="nx">Footer</span> <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+<span class="c1">// ...</span>
+</code></pre></div></div>
+
+<p>We have a simple <code>Message</code> which is a <code>div</code> holding some text (think your garden variety notification) and a huge <code>Table</code> spanning, let’s say, 1000+ rows. They are both children of the enclosing <code>div</code>, so they are placed under <code>props.children</code> of the parent node, and they don’t happen to have a key. And React will not even remind us to assign keys through console warnings, as children are being passed to the parent’s <code>React.createElement</code> as a list of arguments, not an array.</p>
+
+<p>Now our user has dismissed a notification and <code>Message</code> is removed from a tree. <code>Table</code> and <code>Footer</code> are all that’s left.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ...</span>
+<span class="nx">props</span><span class="p">:</span> <span class="p">{</span>
+  <span class="nl">children</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="nx">Table</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="nx">Footer</span> <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+<span class="c1">// ...</span>
+</code></pre></div></div>
+
+<p>How does React see it? It sees it as an array of children changing shape: <code>children[0]</code> held a <code>Message</code> and now it holds <code>Table</code>. There were no keys to compare against, so it compares <code>type</code>s, and as they are both references to functions (and <em>different</em> functions), it <em>unmounts</em> the whole <code>Table</code> and mounts it again, rendering all its children: 1000+ rows!</p>
+
+<p>So, you can either add unique keys (but in this particular case using keys is not the best choice) or go for a smarter trick: use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_Operators">short circuit boolean evaluation</a>, which is a feature of JavaScript and many other modern languages. Look:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Using a boolean trick</span>
+<span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+  <span class="p">{</span><span class="nx">isShown</span> <span class="o">&amp;&amp;</span> <span class="o">&lt;</span><span class="nx">Message</span> <span class="o">/&gt;</span><span class="p">}</span>
+  <span class="o">&lt;</span><span class="nx">Table</span> <span class="o">/&gt;</span>
+  <span class="o">&lt;</span><span class="nx">Footer</span> <span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span></code></pre></div></div>
+
+<p>Even if the <code>Message</code> goes out of the picture, <code>props.children</code> of a parent <code>div</code> will still hold <em>three</em> elements, <code>children[0]</code> having a value <code>false</code> (a boolean primitive). Remember that <code>true</code>/<code>false</code>, <code>null</code> and <code>undefined</code> are all permitted values of a Virtual DOM object’s <code>type</code> property? We end up with something like that:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ...</span>
+<span class="nx">props</span><span class="p">:</span> <span class="p">{</span>
+  <span class="nl">children</span><span class="p">:</span> <span class="p">[</span>
+    <span class="kc">false</span><span class="p">,</span> <span class="c1">//  isShown &amp;&amp; &lt;Message /&gt; evaluates to false</span>
+    <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="nx">Table</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="nx">Footer</span> <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+<span class="c1">// ...</span>
+</code></pre></div></div>
+
+<p>So, <code>Message</code> or not, our indexes will not change, and <code>Table</code> will, of course, still be compared to <code>Table</code> (having references to components as <code>type</code> starts reconciliation anyway), but <em>just comparing Virtual DOM is often a lot faster than removing DOM nodes and creating them from scratch again</em>.</p>
+
+<p>Now let’s look at something more evolved. We know you like <a href="https://reactjs.org/docs/higher-order-components.html">HOC</a>s. A higher-order component is a function that takes a component as an argument, does something, and returns a different function:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">withName</span><span class="p">(</span><span class="nx">SomeComponent</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Computing name, possibly expensive...</span>
+  <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">SomeComponent</span> <span class="p">{...</span><span class="nx">props</span><span class="p">}</span> <span class="nx">name</span><span class="o">=</span><span class="p">{</span><span class="nx">name</span><span class="p">}</span> <span class="sr">/&gt;</span><span class="err">;
+</span>  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>That is a very common pattern, but you need to be careful with it. Consider:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">App</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Creates a new instance on each render</span>
+    <span class="kd">const</span> <span class="nx">ComponentWithName</span> <span class="o">=</span> <span class="nx">withName</span><span class="p">(</span><span class="nx">SomeComponent</span><span class="p">);</span>
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">SomeComponentWithName</span> <span class="o">/&gt;</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>We are creating a HOC inside of a parent’s <code>render</code> method. When we re-render the tree, our Virtual DOM will look like this:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// On first render:</span>
+<span class="p">{</span>
+  <span class="nl">type</span><span class="p">:</span> <span class="nx">ComponentWithName</span><span class="p">,</span>
+  <span class="nx">props</span><span class="p">:</span> <span class="p">{},</span>
+<span class="p">}</span>
+
+<span class="c1">// On second render:</span>
+<span class="p">{</span>
+  <span class="na">type</span><span class="p">:</span> <span class="nx">ComponentWithName</span><span class="p">,</span> <span class="c1">// Same name, but different instance</span>
+  <span class="na">props</span><span class="p">:</span> <span class="p">{},</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now, React would love to just run a diffing algorithm on <code>ComponentWithName</code>, but as this time the same name references a <em>different instance</em>, triple equals comparison fails and, instead of a reconciliation, a full re-mount has to happen. Note it will also result in a loss of state, <a href="https://github.com/facebook/react/blob/044015760883d03f060301a15beef17909abbf71/docs/docs/higher-order-components.md#dont-use-hocs-inside-the-render-method">as described here</a>. Luckily, it is easy to fix: you need to always create a HOC outside of <code>render</code>:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Creates a new instance just once</span>
+<span class="kd">const</span> <span class="nx">ComponentWithName</span> <span class="o">=</span> <span class="nx">withName</span><span class="p">(</span><span class="nx">Component</span><span class="p">);</span>
+
+<span class="kd">class</span> <span class="nx">App</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">ComponentWithName</span> <span class="o">/&gt;</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<h2 id="fixing-things-updating">Fixing things: Updating</h2>
+
+<p>So, now we make sure not to re-mount stuff, unless necessary. However, any change to a component located close to the root of the DOM tree will cause diffing and reconciliation of all its children. With complicated structures that is expensive and can often be avoided.</p>
+
+<blockquote>
+  <p>Would be great to have a way to tell React not to look at a certain branch, as we are confident there were no changes in it.</p>
+</blockquote>
+
+<p>That way exists, and it involves a method called <code>shouldComponentUpdate</code> which is a part of the <a href="https://reactjs.org/docs/react-component.html#the-component-lifecycle">component’s lifecycle</a>. This method is called  <em>before</em> each call to a component’s <code>render</code> and receives new values of props and state. Then we are free to compare them with our current values and decide whether we should update our component or not (return <code>true</code> or <code>false</code>). If we return <code>false</code>, React will not re-render the component in question and will not look at its children.</p>
+
+<p>Usually to compare both sets of <code>props</code> and <code>state</code> a simple <em>shallow</em> comparison is enough: if we get different values at the top level, we have to update anyway—no need to dig deeper. Shallow comparison is not a feature of JavaScript, but there are numerous <a href="https://github.com/dashed/shallowequal">utilities</a> for that.</p>
+
+<p>With their help, we can write our code like this:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">TableRow</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+
+  <span class="c1">// will return true if new props/state are different from old ones</span>
+  <span class="nx">shouldComponentUpdate</span><span class="p">(</span><span class="nx">nextProps</span><span class="p">,</span> <span class="nx">nextState</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="p">{</span> <span class="nx">props</span><span class="p">,</span> <span class="nx">state</span> <span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">!</span><span class="nx">shallowequal</span><span class="p">(</span><span class="nx">props</span><span class="p">,</span> <span class="nx">nextProps</span><span class="p">)</span>
+           <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">shallowequal</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">nextState</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>But you don’t even have to code it yourself, as React has this feature built-in in a <a href="https://reactjs.org/docs/react-api.html#reactpurecomponent">class called</a> <code>React.PureComponent</code>. It is similar to <code>React.Component</code>, only <code>shouldComponentUpdate</code> is already implemented for you with a <em>shallow</em> props/state comparison in mind.</p>
+
+<p>It sounds like a no-brainer, just swap <code>Component</code> for <code>PureComponent</code> in the <code>extends</code> part of your class definition and enjoy efficiency. Not so fast, though! Consider these examples:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">Table</span>
+    <span class="c1">// map returns a new instance of array so shallow comparison will fail</span>
+    <span class="nx">rows</span><span class="o">=</span><span class="p">{</span><span class="nx">rows</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="cm">/* ... */</span><span class="p">)}</span>
+    <span class="c1">// object literal is always "different" from predecessor</span>
+    <span class="nx">style</span><span class="o">=</span><span class="p">{</span> <span class="p">{</span> <span class="na">color</span><span class="p">:</span> <span class="dl">'</span><span class="s1">red</span><span class="dl">'</span> <span class="p">}</span> <span class="p">}</span>
+    <span class="c1">// arrow function is a new unnamed thing in the scope, so there will always be a full diffing</span>
+    <span class="nx">onUpdate</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}}</span>
+<span class="sr">/</span><span class="err">&gt;
+</span></code></pre></div></div>
+
+<p>The code snippet above demonstrates three most common <nobr>anti-patterns</nobr>. Try to avoid them!</p>
+
+<blockquote>
+  <p>If you are mindful of creating all objects, arrays, and functions outside of <code>render</code> definition and making sure they don’t change between calls—you are safe.</p>
+</blockquote>
+
+<p>You can observe the effect of <code>PureComponent</code> in the <a href="https://iadramelk.github.io/optimizing-react-demo/dist/after.html">updated demo</a> where all table’s <code>Row</code>s are “purified”. If you turn on “Highlight Updates” in React DevTools, you will notice that only the table itself and the new row are being rendered on row insertion, all other rows stay untouched.</p>
+
+<p>However, if you can not wait to <em>go all in</em> on pure components and implement them everywhere in your app—stop yourself. Comparing two sets of <code>props</code> and <code>state</code> is not free and for most basic components is not even worth it: it will take more time to run <code>shallowCompare</code> than the diffing algorithm.</p>
+
+<p>Use this rule of thumb: pure components are good for complicated forms and tables, but they generally slow things down for simpler elements like buttons or icons.</p>
+
+<hr>
+
+<p>Thank you for reading! Now you are ready to apply these insights in your applications. You can use the <a href="https://github.com/iAdramelk/optimizing-react-demo">repository</a> for our little demo (<a href="https://iadramelk.github.io/optimizing-react-demo/dist/after.html">with</a> and <a href="https://iadramelk.github.io/optimizing-react-demo/dist/before.html">without</a> <code>PureComponent</code>) as a starting point for your experiments. Also, stay tuned for the next part of the series, where we plan to cover Redux and optimizing your <em>data</em> to increase the application’s general performance.</p>
+</div></div><div class="post__footer"><div class="post__footer-social-wrapper"><div class="social social--inline"><div class="social__item social__item--twitter"><a class="twitter-share-button" data-show-count="true" data-text="Optimizing React: Virtual DOM explained" data-via="evilmartians" href="https://evilmartians.com/chronicles/optimizing-react-virtual-dom-explained">Share the post on Twitter</a></div><div id="fb-root"></div><div class="social__item social__item--facebook"><div class="fb-like" data-action="like" data-href="https://evilmartians.com/chronicles/optimizing-react-virtual-dom-explained" data-layout="button_count" data-share="true" data-show-faces="false"></div></div></div></div><div class="post__footer-beware-wrapper"><div class="post__footer-beware-inner"><div class="post-beware"><p class="post-beware__parapgraph">If you’re interested in translating or adapting this post, please<a itemprop="email" class="post-beware__email" data-track="email" href="mailto:surrender@evilmartians.com?subject=Translation%20Request%3A%20https://evilmartians.com/chronicles/optimizing-react-virtual-dom-explained?utm_campaign=Frontend%2BWeekly&amp;utm_medium=web&amp;utm_source=Frontend_Weekly_105">email us first</a>.</p></div></div></div></div></section><section itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><meta content="Evil Martians" itemprop="name" /><meta content="https://evilmartians.com" itemprop="url" /><section itemprop="logo" itemscope="" itemtype="https://schema.org/ImageObject"><link href="https://cdn.evilmartians.com/front/blocks/common/images/evilmartians-b4a203a.png" itemprop="url" /><meta content="350 px" itemprop="width" /><meta content="350 px" itemprop="height" /></section><meta content="+1 888 400 5485" itemprop="telephone" /><meta content="+7 499 938 5800" itemprop="telephone" /><meta content="+81 6 4560 5490" itemprop="telephone" /><section itemprop="address" itemscope="" itemtype="http://schema.org/PostalAddress"><meta content="195 Montague St." itemprop="streetAddress" /><meta content="Brooklyn, NY" itemprop="addressLocality" /><meta content="11201" itemprop="postalCode" /></section><section itemprop="address" itemscope="" itemtype="http://schema.org/PostalAddress"><meta content="535 Mission St." itemprop="streetAddress" /><meta content="San Francisco, CA" itemprop="addressLocality" /><meta content="94105" itemprop="postalCode" /></section><section itemprop="address" itemscope="" itemtype="http://schema.org/PostalAddress"><meta content="Botanichesky Lane, 5" itemprop="streetAddress" /><meta content="Moscow, Russia" itemprop="addressLocality" /><meta content="129090" itemprop="postalCode" /></section><section itemprop="address" itemscope="" itemtype="http://schema.org/PostalAddress"><meta content="3-6-1 Kitakyuhojimachi, Chuo-Ku" itemprop="streetAddress" /><meta content="Osaka, Japan" itemprop="addressLocality" /><meta content="541-0057" itemprop="postalCode" /></section></section><section itemscope="" itemtype="http://schema.org/BreadcrumbList"><section itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem"><meta content="1" itemprop="position" /><a aria-label="Martian Chronicles" href="https://evilmartians.com/chronicles" itemid="https://evilmartians.com/chronicles" itemprop="item" itemscope="" itemtype="http://schema.org/Thing"><meta content="Martian Chronicles" itemprop="name" /></a></section><section itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem"><meta content="2" itemprop="position" /><a aria-label="Optimizing React: Virtual DOM explained" href="https://evilmartians.com/chronicles/optimizing-react-virtual-dom-explained" itemid="https://evilmartians.com/chronicles/optimizing-react-virtual-dom-explained" itemprop="item" itemscope="" itemtype="http://schema.org/Thing"><meta content="Optimizing React: Virtual DOM explained" itemprop="name" /></a></section></section></div></div><footer class="blog-footer"><div class="footer-socials"><div class="footer-socials__links"><p class="footer-socials__team">Extraterrestrial product development consultancy</p><span class="footer-socials__separator">•</span><a class="footer-socials__link" href="/#talk-to-us">Talk to us</a></div><div class="footer-socials__icons"><div class="social-icons"><a class="social-icons__item" data-track="twitter" href="https://twitter.com/evilmartians" itemprop="sameAs" target="_blank">
+        <div class='icon icon--ei-sc-twitter  '>
+          <svg class='icon__cnt'><use xlink:href='#ei-sc-twitter-icon'/></svg>
+        </div>
+      Twitter link</a><a class="social-icons__item" data-track="facebook" href="https://www.facebook.com/evilmartians" itemprop="sameAs" target="_blank">
+        <div class='icon icon--ei-sc-facebook  '>
+          <svg class='icon__cnt'><use xlink:href='#ei-sc-facebook-icon'/></svg>
+        </div>
+      Facebook link</a><a class="social-icons__item" data-track="instagram" href="https://www.instagram.com/evil.martians/" itemprop="sameAs" target="_blank">
+        <div class='icon icon--ei-sc-instagram  '>
+          <svg class='icon__cnt'><use xlink:href='#ei-sc-instagram-icon'/></svg>
+        </div>
+      Instagram link</a><a class="social-icons__item" data-track="linkedin" href="https://www.linkedin.com/company/evil-martians" itemprop="sameAs" target="_blank">
+        <div class='icon icon--ei-sc-linkedin  '>
+          <svg class='icon__cnt'><use xlink:href='#ei-sc-linkedin-icon'/></svg>
+        </div>
+      LinkedIn link</a><a class="social-icons__item" data-track="github" href="https://github.com/evilmartians" itemprop="sameAs" target="_blank">
+        <div class='icon icon--ei-sc-github  '>
+          <svg class='icon__cnt'><use xlink:href='#ei-sc-github-icon'/></svg>
+        </div>
+      GitHub link</a><a class="social-icons__item" data-track="dribbble" href="https://dribbble.com/evilmartians" itemprop="sameAs" target="_blank"><div class="icon icon_with-background icon_dribbble"></div>Dribbble link</a></div></div></div><a class="blog-footer__em" href="/">Evil Martians</a><div class="blog-footer__humanoids"><a aria-label="Evil Martians" href="/"><div class="humanoids"><div class="humanoids__martian"><svg viewBox="0 0 108 98" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414"><path d="M26 88L8 78l18-10" fill="#e2cbb5" fill-rule="nonzero"/><path d="M94 98V86H44c-5.5 0-10-4.5-10-10s4.5-10 10-10h50V32c0-14-7.9-22-22-22H48c-14.1 0-22 8-22 22v66h68z" fill="#9fa628" fill-rule="nonzero"/><circle cx="48" cy="50" r="8" fill="#fff"/><circle cx="72" cy="50" r="8" fill="#fff"/><circle cx="48" cy="50" r="4" fill="#bf6c35"/><circle cx="72" cy="50" r="4" fill="#bf6c35"/><g fill="#663f4c" fill-rule="nonzero"><path d="M48 60c-5.5 0-10-4.5-10-10s4.5-10 10-10 10 4.5 10 10-4.5 10-10 10zm0-16c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm34 6c0 5.5-4.5 10-10 10s-10-4.5-10-10 4.5-10 10-10 10 4.5 10 10zm-16 0c0 3.3 2.7 6 6 6s6-2.7 6-6-2.7-6-6-6-6 2.7-6 6z"/><path d="M102 8c-3.8 0-6-2.2-6-6 0-1.1-.9-2-2-2s-2 .9-2 2c0 2.2.5 4.1 1.5 5.7L88.2 13c-4-3.3-9.5-5-16.2-5H48c-6.7 0-12.2 1.7-16.2 4.9l-5.3-5.3C27.5 6.1 28 4.2 28 2c0-1.1-.9-2-2-2s-2 .9-2 2c0 3.8-2.2 6-6 6-1.1 0-2 .9-2 2s.9 2 2 2c2.2 0 4.1-.5 5.7-1.5l5.3 5.3c-3.2 4-4.9 9.5-4.9 16.2v34.8L3.9 78 24 89v9h4V32c0-12.9 7.1-20 20-20h24c12.9 0 20 7.1 20 20v33H44c-6.6 0-12 5.4-12 12s5.4 12 12 12h48v9h4V85h-2l-4-8-4 8h-4l-4-8-4 8h-4l-4-8-4 8h-4l-4-8-4 8h-4l-4-8-3.1 6.2C37.1 81.7 36 79.5 36 77c0-4.4 3.6-8 8-8l4 8 4-8h4l4 8 4-8h4l4 8 4-8h4l4 8 4-8h8V32c0-6.7-1.7-12.2-4.9-16.2l5.3-5.3c1.6 1 3.5 1.5 5.7 1.5 1.1 0 2-.9 2-2s-1-2-2.1-2zM24 84.4L12.1 78 24 71.4v13z"/></g></svg></div><div class="humanoids__human"><svg viewBox="0 0 108 98" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414"><path d="M14 62v36h68V86H32c-5.5 0-10-4.5-10-10s4.5-10 10-10h50v-4c4 0 8-3.6 8-8s-4-8-8-8V32c0-14-7.9-22-22-22H36c-14.1 0-22 8-22 22v14c-4 0-8 3.6-8 8s4 8 8 8z" fill="#e2cbb5" fill-rule="nonzero"/><circle cx="36" cy="50" r="8" fill="#fff"/><circle cx="60" cy="50" r="8" fill="#fff"/><circle cx="36" cy="50" r="4" fill="#9fa628"/><circle cx="60" cy="50" r="4" fill="#9fa628"/><path d="M60 10H36c-14.1 0-22 8-22 22v2l4-4 6 6 6-6 6 6 6-6 6 6 6-6 6 6 6-6 6 6 6-6 4 4v-2c0-14-7.9-22-22-22z" fill="#bf6c35" fill-rule="nonzero"/><g fill="#663f4c" fill-rule="nonzero"><path d="M36 60c-5.5 0-10-4.5-10-10s4.5-10 10-10 10 4.5 10 10-4.5 10-10 10zm0-16c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm24 16c-5.5 0-10-4.5-10-10s4.5-10 10-10 10 4.5 10 10-4.5 10-10 10zm0-16c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6z"/><path d="M12 63.8V98h4V32c0-12.9 7.1-20 20-20h24c12.9 0 20 7.1 20 20v33H32c-6.6 0-12 5.4-12 12s5.4 12 12 12h48v9h4V85H74v-1c0-1.7-1.3-3-3-3s-3 1.3-3 3v1h-6v-1c0-1.7-1.3-3-3-3s-3 1.3-3 3v1h-6v-1c0-1.7-1.3-3-3-3s-3 1.3-3 3v1h-6v-1c0-1.7-1.3-3-3-3s-3 1.3-3 3v1c-4 0-8-3.6-8-8s3.6-8 8-8h6v1c0 1.7 1.3 3 3 3s3-1.3 3-3v-1h6v1c0 1.7 1.3 3 3 3s3-1.3 3-3v-1h6v1c0 1.7 1.3 3 3 3s3-1.3 3-3v-1h6v1c0 1.7 1.3 3 3 3s3-1.3 3-3v-1h4v-5.2c5-.9 8-5 8-9.8 0-4.8-3-8.9-8-9.8V32c0-15.3-8.7-24-24-24H36c-15.3 0-24 8.7-24 24v12.2c-5 .9-8 5-8 9.8 0 4.8 3 8.9 8 9.8zm72-15.5c2 .8 4 3 4 5.7s-2 4.8-4 5.7V48.3zm-72 0v11.3c-2-.8-4-3-4-5.7s2-4.7 4-5.6z"/></g></svg></div></div></a></div></footer><div class="privacy-policy-modal"><button class="privacy-policy-modal__close"><div class="privacy-policy-modal__cross"></div></button><div class="privacy-policy-modal__text">Humans! We come in peace and bring cookies. We also care about your privacy: if&nbsp;you want to know more or withdraw your consent, please see&nbsp;the&nbsp;<a href="https://evilmartians.com/privacy" target="_blank" class="privacy-policy-modal__link">Privacy&nbsp;Policy</a>.</div></div></body></html>
