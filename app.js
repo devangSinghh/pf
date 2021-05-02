@@ -30,12 +30,14 @@ const Blog = require('./models/blog/blog')
 //routes
 const project = require('./routes/addProject')
 const blog = require('./routes/blog')
+const devblog = require('./routes/devblog')
 const editThisBlog = require('./routes/editThisBlog')
 const blogRequest = require('./routes/showcaseBlogRequests')
 const ip = require('./routes/ip')
 const analytics = require('./routes/analytics')
 const testRoute = require('./routes/test')
 const sitemap = require("./routes/sitemap")
+const admin = require('./routes/auth')
 
 //Port
 const PORT = 6161
@@ -74,11 +76,13 @@ app.use(passport.session())
 //routes
 app.use('/add-project', project)
 app.use('/add-blog', blog)
+app.use('/devblog', devblog)
 app.use('/update-blog', editThisBlog)
 app.use('/showcase-blog-request', blogRequest)
 app.use('/record-ip', ip)
 app.use('/api', analytics)
 app.use('/sitemap.xml', sitemap)
+app.use('/auth', admin)
 
 AWS.config = new AWS.Config();
 AWS.config.accessKeyId = process.env.aws_access_key
@@ -154,14 +158,10 @@ app.get('/add-project/:file_name', (req,res) => {
 app.get('/blog/:blogname/:file_name', (req,res) => {
   res.sendFile(path.join(__dirname+"/media/blog/"+ req.params.blogname + '/' +req.params.file_name))
 })
-app.get('/docs/:name', (req,res) => {
-  res.sendFile(path.join(__dirname+"/SAEDocs/"+ req.params.name ))
+app.get('/devblog/:blogname/:file_name', (req,res) => {
+  res.sendFile(path.join(__dirname+"/media/devblog/"+ req.params.blogname + '/' +req.params.file_name))
 })
 
-//download file
-app.get('/download/docs/:name', (req, res) => {
-  res.download(path.join(__dirname+"/SAEDocs/"+ req.params.name ))
-})
 //facebook login routes
 app.get('/facebook/login', passport.authenticate('facebook', { scope : 'email' } ))
 

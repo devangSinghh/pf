@@ -17,7 +17,7 @@ const RippleButton = ({ children, onClick }) => {
   
     return (
       <button
-        className="ripple-button"
+        className="ripple-button w-100"
         onClick={e => {
           const rect = e.target.getBoundingClientRect();
           setCoords({ x: e.clientX - rect.left, y: e.clientY - rect.top });
@@ -35,7 +35,7 @@ const RippleButton = ({ children, onClick }) => {
         ) : (
           ''
         )}
-        <span className="content">{children}</span>
+        <div className="w-100 content">{children}</div>
       </button>
     );
   };

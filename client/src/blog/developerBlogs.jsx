@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
-import DevCard from '../common/developerBlogCard'
+
 import axios, { base } from '../axios-pf'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
-
-import RippleButton from '../common/Ripple'
-import useLongPress from '../common/uselongPress'
 
 import Test from '../assets/test-img.png'
+
+import DevCard from '../common/developerBlogCard'
 
 class DeveloperBlogs extends Component {
 
@@ -17,13 +15,12 @@ class DeveloperBlogs extends Component {
     }
 
     componentDidMount = async() => {
-        const { data:blogs } = await axios.get('/dev/blogs')
+        const { data:blogs } = await axios.get('/devblog')
         this.setState({ blogs })
     }
     
 
     render() {
-
         const blogs = this.state.blogs === undefined ? null : this.state.blogs
         return (
             <div className="container-fluid p-0">
@@ -37,20 +34,7 @@ class DeveloperBlogs extends Component {
                     </div>
                     <div className="d-blog-right offset-md-3 col-md-9">
                         <div className="row m-0">
-                            <div className="col-md-4">
-                                <div className="d-blog-card">
-                                    <img src={Test} className="d-blog-card-img" alt=""/>
-                                    <div className="row m-0 wrapper d-flex align-items-center">
-                                        <h5 className="d-blog-card-heading">wewefdsf</h5>
-                                        <h6 className="blog-date d-flex justify-content-end">Apr 28, 2021</h6>
-                                    </div>
-                                    <RippleButton children={<p className="text-left hidden-with-shadow d-blog-card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                                        Eum soluta assumenda culpa commodi dolorem totam unde, impedit accusantium a 
-                                        recusandae illo ullam delectus quisquam odio tempore quae quas aliquam maiores.
-                                    </p>} />
-                                    <h6 className="read-more">Read more...</h6>
-                                </div>
-                            </div>
+                            {blogs.map((m, key) => <DevCard key={key} title={m.cardtitle} content={m.content} date={m.publishedOn} slug={m.slug} card={base + m.cardBanner}/>)}
                         </div>
                     </div>
                 </div>

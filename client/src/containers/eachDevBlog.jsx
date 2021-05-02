@@ -1,0 +1,200 @@
+import React, { Component } from 'react'
+import axios, { base } from '../axios-pf'
+import Cookies from 'js-cookie'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
+import OutlinedInput from '@material-ui/core/OutlinedInput'
+import InputLabel from '@material-ui/core/InputLabel'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import IconButton from '@material-ui/core/IconButton'
+import FormControl from '@material-ui/core/FormControl'
+import KeyboardArrowRightOutlinedIcon from '@material-ui/icons/KeyboardArrowRightOutlined'
+import BlogEditor from '../blog/blogEditor'
+import EmbedGist from '../common/EmbedGist'
+import EmbeddedGist from '../common/EmbedGist'
+
+import { renderToString } from 'react-dom/server'
+
+import reactStringReplace  from 'react-string-replace'
+
+class EachDevBlog extends Component {
+    
+    state = {
+        showEditor : false,
+        blog : [],
+        data : {
+            title : "",
+            subtitle : "",
+            blogBanner : null
+        }
+    }
+
+    componentDidMount = async() => {
+        const { match: { params } } = this.props;
+        const { data : blog } = await axios.get('/devblog/' + params.slug)
+        this.setState({ blog })
+    }
+    
+    handleChange = ({ currentTarget : input }) => {
+        const data = {...this.state.data};
+        data[input.name] = input.value;
+        if(input.name === 'blogBanner')data[input.name] = input.files[0]
+        this.setState({ data });    
+    }
+
+    UploadDevBlogBanner = async() => {
+        const payload = new FormData()
+        const blog = this.state.blog
+        payload.append('devblogfile', this.state.data.blogBanner)
+        const config = { headers: { 'content-type': 'multipart/form-data' } }
+
+        const { data : resp } = await axios.post(`/devblog/banner/${blog.slug}`, payload, config)
+        console.log(resp)
+
+    }
+
+    replaceGistLink = () => {
+
+        // Match URLs
+        let replacedText = reactStringReplace(this.state.blog.body, /(#https?:\/\/\S+)/g, (match, i) => (
+            <EmbedGist gist={match.split('/')[match.split('/').indexOf('gist.github.com') + 2].split('@')[0].slice(0, -3)} file={match.split('@')[1].split('<')[0]} />
+        ))
+        for(let i = 0;i<replacedText.length;i++) {
+            if(typeof replacedText[i] !== 'object') {
+                console.log(replacedText[i])
+                replacedText[i] = <p dangerouslySetInnerHTML={{ __html : replacedText[i] }}></p>
+            }
+        }
+        
+        return <div>{replacedText}</div>
+    }
+
+    updateBlogTitle = async() => {
+        const payload = {
+            title : this.state.data.title
+        }
+        const { data : res } = await axios.post('/devblog/update-title/' + this.state.blog._id, payload)
+    }
+    updateBlogSubTitle = async() => {
+        const payload = {
+            subtitle : this.state.data.subtitle
+        }
+        const { data : res } = await axios.post('/devblog/update-subtitle/' + this.state.blog._id, payload)
+    }
+
+    addGist = (id, file) => {
+        
+        return <EmbedGist gist={id} file={file}/>
+    }
+    render() {
+        const ifAdmin = Cookies.get('admin')
+        const blog = this.state.blog === undefined ? null : this.state.blog
+        return (
+            <div className="container-fluid p-0">
+                {ifAdmin && <Button className="show-hide-b-d" onClick={() => this.setState({ showEditor:!this.state.showEditor })} variant="outlined" color="primary">
+                    {this.state.showEditor ? "Hide editor" : "Show editor"}
+                </Button>}
+                <div className="container">
+                
+                {this.state.showEditor && 
+                <div className="row m-0">
+                    <h3>Blog details</h3>
+                    <div className="col-md-12 p-0 mb-3">
+                            <Button variant="contained" color="primary" component="label">
+                                Choose Blog Banner Image
+                                <input type="file" name="blogBanner" onChange={this.handleChange} hidden/>
+                            </Button>
+                            <div className="mt-3 p-0 col-md-12">
+                            <FormControl className="w-100" variant="outlined">
+                                <InputLabel htmlFor="blog-title">Blog title</InputLabel>
+                                <OutlinedInput
+                                    onChange={this.handleChange}
+                                    value={this.state.data.title}
+                                    id="blog-title"
+                                    name ="title"
+                                    endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                        aria-label="blog title"
+                                        edge="end"
+                                        onClick={this.updateBlogTitle}
+                                        >
+                                            <KeyboardArrowRightOutlinedIcon />
+                                        {/* {values.showPassword ? <Visibility /> : <VisibilityOff />} */}
+                                        </IconButton>
+                                    </InputAdornment>
+                                    }
+                                    labelWidth={70}
+                                />
+                                </FormControl>
+                            </div>
+                            <div className="mt-3 p-0 col-md-12">
+                            <FormControl className="w-100" variant="outlined">
+                                <InputLabel htmlFor="blog-sub-title">Blog Sub title</InputLabel>
+                                <OutlinedInput
+                                    onChange={this.handleChange}
+                                    value={this.state.data.subtitle}
+                                    id="blog-sub-title"
+                                    name ="subtitle"
+                                    endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                        aria-label="blog sub title"
+                                        edge="end"
+                                        onClick={this.updateBlogSubTitle}
+                                        >
+                                            <KeyboardArrowRightOutlinedIcon />
+                                        {/* {values.showPassword ? <Visibility /> : <VisibilityOff />} */}
+                                        </IconButton>
+                                    </InputAdornment>
+                                    }
+                                    labelWidth={70}
+                                />
+                                </FormControl>
+                            </div>
+                            <p>{this.state.data.blogBanner === null ? "" :this.state.data.blogBanner.name}</p>
+                            {this.state.data.blogBanner !== null && 
+                            <Button onClick={this.UploadDevBlogBanner} 
+                            variant="outlined" color="secondary" 
+                            className="m-2">Upload this Image
+                            </Button>}
+                        </div>
+                    <BlogEditor route="/devblog/content/" blogName={blog.name} blogId={blog._id}/>
+                </div>}
+                </div>
+
+                <div className="devblog-e-page">
+                    <div className="banner-img">
+                        <img src={base + blog.blogBanner} alt=""/>
+                    </div>
+                    <div className="title-wrapper">
+                        <h3>{blog.title}</h3>
+                        <h6>{blog.subtitle}</h6>
+                        <svg width="35" height="2" viewBox="0 0 10 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="35" height="2" fill="#F9A441"/>
+                            <rect width="8" height="2" fill="#1BECEC"/>
+                        </svg>
+                    </div>
+                    <div className="author">
+                        <h6 className="date">{blog.publishedOn}</h6>
+                        <h6 className="author-name">by {blog.author}</h6>
+                    </div>
+
+                    <div className="body-wrapper">
+                        <ul className="blog-share">
+                            <li>SHARE</li>
+                            <li><i className="fa fa-facebook"/></li>
+                            <li><i className="fa fa-twitter"/></li>
+                            <li><i className="fa fa-linkedin"/></li>
+                        </ul>
+                        {/* <p id="blog-body" className="body" dangerouslySetInnerHTML={{__html:`${blog.body}`}}></p> */}
+                        {this.replaceGistLink()}
+                    </div>
+                </div>
+                
+            </div>
+        );
+    }
+}
+
+export default EachDevBlog;

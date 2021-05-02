@@ -128,7 +128,6 @@ class EachBlog extends BLogFunctions {
     }
 
     render() {
-        console.log(this.state.imagesUsedInBlog)
         const blog = this.state.blog === undefined ? null : this.state.blog
         const el = this.state.loadingBlog === true ? 
         <div style={{ height:"100vh", backgroundColor:"#000" }} className="d-flex justify-content-center align-items-center container-fluid p-0">
@@ -259,9 +258,13 @@ class EachBlog extends BLogFunctions {
                 {/*main blog starts*/}
                 {el}
 
-                <div className="blog-editor container">
-                    {/* <BlogEditor blogId={this.state.blog._id} savedContent={this.state.blog.blogEditorContent} blogName={this.state.blogName}/> */}
-                </div>
+                {/* <div className="blog-editor container">
+                    <BlogEditor 
+                    blogId={this.state.blog._id} 
+                    route='update-blog/save-editor-content/'
+                    savedContent={this.state.blog.blogEditorContent} 
+                    blogName={this.state.blogName}/>
+                </div> */}
                 
             </div>
         );

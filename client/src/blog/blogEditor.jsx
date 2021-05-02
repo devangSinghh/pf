@@ -1,30 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { EditorState, convertToRaw, convertFromRaw, ContentState, convertFromHTML } from 'draft-js';
-import { Editor } from 'react-draft-wysiwyg';
-import { convertToHTML } from 'draft-convert';
-import draftToHtml from "draftjs-to-html";
-import DOMPurify from 'dompurify';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import React, { useState, useEffect } from 'react'
+import { EditorState, convertToRaw, convertFromRaw, ContentState, convertFromHTML } from 'draft-js'
+import { Editor } from 'react-draft-wysiwyg'
+import { convertToHTML } from 'draft-convert'
+import draftToHtml from "draftjs-to-html"
+import DOMPurify from 'dompurify'
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
+import {stateFromHTML} from 'draft-js-import-html'
+import Button from '@material-ui/core/Button'
 
-import axios, {base} from '../axios-pf';
+import axios, {base} from '../axios-pf'
 
 const BlogEditor = props => {
 
-  const [savedContent, setSavedContent] = useState("")
-
-  const [editorState, setEditorState] = useState(EditorState.createEmpty(), )
+  const [editorState, setEditorState] = useState(EditorState.createEmpty())
   const [convertedContent, setConvertedContent] = useState(null);
 
   useEffect(async() => {
-    const { data:blog } = await axios.get(base + `blog/${props.blogName}/`)
-    // const editorState = await EditorState.createWithContent(convertFromRaw(blog === undefined ? "" : blog.blogEditorContent))
-    // setEditorState(editorState)
+    const { data:blog } = await axios.get(base + `devblog/${props.blogName}/`)
+    if (blog.body !== undefined)
+    setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML(blog.body))))
   }, [])
 
   const handleEditorChange = state => {
     setEditorState(state);
     convertContentToHTML();
-    console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())))
   }
 
   const convertContentToHTML = () => {
@@ -32,10 +31,13 @@ const BlogEditor = props => {
     setConvertedContent(currentContentAsHTML);
   }
   
-  const saveEditorContent = async() => {
-      const payload = { blogEditorContent : draftToHtml(convertToRaw(editorState.getCurrentContent())) }
+  const saveEditorContent = async(e, route, id) => {
+      const payload = { 
+        blogEditorContent : draftToHtml(convertToRaw(editorState.getCurrentContent())) ,
+        blogName : props.blogName
+      }
 
-      const { data : res } = await axios.post(`update-blog/save-editor-content/${props.blogId}`, payload)
+      const { data : res } = await axios.post(route + `${id}`, payload)
       console.log(res)
   }
 
@@ -62,7 +64,7 @@ const BlogEditor = props => {
         editorClassName="editor-class"
         toolbarClassName="toolbar-class"
         placeholder="Write your content here"
-        editorStyle = {{ height :"90vh" }}
+        editorStyle = {{ height :"60vh"}}
        mention={{
       separator: ' ',
       trigger: '@',
@@ -81,7 +83,7 @@ const BlogEditor = props => {
       />
       <div className="preview" dangerouslySetInnerHTML={{__html: `${draftToHtml(convertToRaw(editorState.getCurrentContent()))}`}}></div>
 
-      <button className="blog-editor-content-save-button" onClick={saveEditorContent}>Save</button>
+      <Button variant="contained" color="primary" className="mb-4" onClick={e => saveEditorContent(e, props.route, props.blogId)}>Save</Button>
     </div>
   )
 }

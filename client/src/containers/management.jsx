@@ -3,6 +3,7 @@ import { Link, Redirect } from 'react-router-dom';
 
 import axios, { base } from '../axios-pf';
 import moment from 'moment';
+import Cookies from 'js-cookie';
 
 class Management extends Component {
 
@@ -91,6 +92,8 @@ class Management extends Component {
             {this.state.data.file.name}
             <i onClick={this.resetFileInputs} className="fa fa-times" />
         </div>
+
+        if(!Cookies.get('admin')) return <Redirect to="/login"/>
 
         // const blogFileDetails = this.state.data.blogfile === null ? null : <div>
         //     {this.state.data.blogfile.name}

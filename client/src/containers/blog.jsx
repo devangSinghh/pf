@@ -32,17 +32,17 @@ class Blog extends Component {
                         {blogs.map((m, key) => 
                                 <div className="col-md-5">
                                     <BlogCard
-                                key={key}
-                                image = {base + 'blog/' + m.blogcardImgRoute}
-                                name = {m.name}
-                                desc = {m.desc}
-                                author = {m.author}
-                                instaid = {m.instaid}
-                                publishedOn={m.publishedOn}
-                                slug={m.slug}
-                                blogInitialLine={m.blogInitialLine}
-                                color={m.color}
-                                /> 
+                                    key={key}
+                                    image = {base + 'blog/' + m.blogcardImgRoute}
+                                    name = {m.name}
+                                    desc = {m.desc}
+                                    author = {m.author}
+                                    instaid = {m.instaid}
+                                    publishedOn={m.publishedOn}
+                                    slug={m.slug}
+                                    blogInitialLine={m.blogInitialLine}
+                                    color={m.color}
+                                    /> 
                                 </div>
                         )}
                     </div>

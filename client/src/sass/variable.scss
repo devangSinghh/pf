@@ -10,10 +10,14 @@
     font-family: f1;
     src:url('./f1.ttf')
 }
-
+@font-face {
+    font-family: sailec;
+    src:url('./sailec-medium.ttf')
+}
 $font-1:f1;
 $font-2:ubuntu;
 $font-3:Bree Serif;
 $font-4 :Poppins;
 $font-5 :Roboto Mono;
 $font-6 : Roboto;
+$font-7 : sailec;

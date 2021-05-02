@@ -1,0 +1,106 @@
+.show-hide-b-d {
+    position: fixed !important;
+    left: 0;
+}
+.devblog-e-page {
+    font-family: $font-7;
+    .banner-img {
+        img {
+            height: 50vh;
+            width: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+    }
+
+    .title-wrapper {
+        text-align: center;
+        margin-top: 0.6rem;
+        
+    }
+
+    .author {
+        text-align: center;
+        color: grey;
+        .date {
+            font-size: 13px;
+        }
+        &-name {
+            font-size: 13px;
+        }
+    }
+
+    .body-wrapper {
+        width: 55%;
+        margin: 0 auto;
+
+        .gist-meta {
+            display: none !important;
+        }
+
+        .blog-share {
+            list-style: none;
+            font-family: $font-6;
+            position: absolute;
+            font-size: 14px;
+            left: 10rem;
+            li {
+                margin-bottom: 0.3rem;
+                i {
+                    font-size: 19px;
+                    // width: 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    // height: 24px;
+                    padding: 0.7rem;
+                    border-radius: 50%;
+                    &:hover {
+                        cursor: default;
+                        background-color: rgb(243, 243, 243);
+                    }
+                }
+                text-align: center;
+            }
+        }
+
+        .body {
+            font-family: $font-7;
+            margin-bottom: 1.4rem;
+            span {
+                // white-space: pre;
+            }
+            a {
+                span {
+                    color: rgb(54, 54, 54) !important;
+                    font-weight: 600;
+                }
+                color: black !important;
+                text-decoration: none;
+                font-weight: 600;
+                border-bottom: 3px solid rgb(61, 219, 219);
+                transition: all 0.3s cubic-bezier(.17,.67,.99,.6);
+                &:hover {
+                    background-color: rgba(61, 219, 219, 0.4);
+                }
+            }
+        }
+    }
+}
+
+@media (max-width : 1200px) {
+    .body-wrapper {
+        .blog-share {
+            display: none;
+        }
+    }
+}
+
+@media (max-width:768px) {
+    .devblog-e-page {
+        .body-wrapper {
+            width: 93%;
+            margin: 0 auto;
+        }
+    }
+}
