@@ -16,7 +16,7 @@ const BlogEditor = props => {
   const [convertedContent, setConvertedContent] = useState(null);
 
   useEffect(async() => {
-    const { data:blog } = await axios.get(base + `devblog/${props.blogName}/`)
+    const { data:blog } = await axios.get(base + `devblog/${props.slug}/`)
     if (blog.body !== undefined)
     setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML(blog.body))))
   }, [])
@@ -56,7 +56,7 @@ const BlogEditor = props => {
 }
 
   return (
-    <div className="">
+    <div className="editor-main">
       <Editor
         editorState={editorState}
         onEditorStateChange={handleEditorChange}
@@ -81,7 +81,8 @@ const BlogEditor = props => {
     }}
     hashtag={{}}
       />
-      <div className="preview" dangerouslySetInnerHTML={{__html: `${draftToHtml(convertToRaw(editorState.getCurrentContent()))}`}}></div>
+      <h4 className="preivew-head">Preview</h4>
+      <div className="editor-preview" dangerouslySetInnerHTML={{__html: `${draftToHtml(convertToRaw(editorState.getCurrentContent()))}`}} />
 
       <Button variant="contained" color="primary" className="mb-4" onClick={e => saveEditorContent(e, props.route, props.blogId)}>Save</Button>
     </div>

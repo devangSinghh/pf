@@ -122,8 +122,8 @@ router.get('/', async(req, res) => {
     res.send( all_blogs )
 })
 
-router.get('/:name', async(req, res) => {
-    const data = await DevBlog.findOne({ slug : req.params.name })
+router.get('/:slug', async(req, res) => {
+    const data = await DevBlog.findOne({ slug : req.params.slug })
     res.send(data)
 })
 

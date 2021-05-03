@@ -1,0 +1,19 @@
+.dev-blog-footer {
+    padding: 1rem;
+    background-color: #141414;
+    height: 16vh;
+    .dev-blog-footer-wrapper {
+        font-family: $font-7;
+        color: rgb(228, 228, 228);
+        h2 {
+            font-size: 20px;
+        }
+        a {
+            text-decoration: none;
+            color: rgba(228, 228, 228);
+        }
+        h3 {
+            font-size: 16px;
+        }
+    }
+}

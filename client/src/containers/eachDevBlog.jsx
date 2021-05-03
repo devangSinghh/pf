@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import axios, { base } from '../axios-pf'
 import Cookies from 'js-cookie'
 import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
 import OutlinedInput from '@material-ui/core/OutlinedInput'
 import InputLabel from '@material-ui/core/InputLabel'
 import InputAdornment from '@material-ui/core/InputAdornment'
@@ -11,11 +10,9 @@ import FormControl from '@material-ui/core/FormControl'
 import KeyboardArrowRightOutlinedIcon from '@material-ui/icons/KeyboardArrowRightOutlined'
 import BlogEditor from '../blog/blogEditor'
 import EmbedGist from '../common/EmbedGist'
-import EmbeddedGist from '../common/EmbedGist'
-
-import { renderToString } from 'react-dom/server'
-
 import reactStringReplace  from 'react-string-replace'
+
+import Footer from '../blog/footer'
 
 class EachDevBlog extends Component {
     
@@ -53,20 +50,30 @@ class EachDevBlog extends Component {
 
     }
 
-    replaceGistLink = () => {
+    formatEditorContent = () => {
 
-        // Match URLs
+        // Match github gist strings
         let replacedText = reactStringReplace(this.state.blog.body, /(#https?:\/\/\S+)/g, (match, i) => (
             <EmbedGist gist={match.split('/')[match.split('/').indexOf('gist.github.com') + 2].split('@')[0].slice(0, -3)} file={match.split('@')[1].split('<')[0]} />
         ))
+
+        //iterate over the content and format remaining content 
         for(let i = 0;i<replacedText.length;i++) {
-            if(typeof replacedText[i] !== 'object') {
-                console.log(replacedText[i])
-                replacedText[i] = <p dangerouslySetInnerHTML={{ __html : replacedText[i] }}></p>
+            if(typeof replacedText[i] === 'string') {
+                if (replacedText[i].includes('target="_self"'))
+                    replacedText[i] = <p></p>
+                // else if (replacedText[i].includes('https://github.com/'))
+                //     replacedText[i] = <a href={replacedText[i]} dangerouslySetInnerHTML={{ __html : replacedText[i] }}></a>
+                else replacedText[i] = <p dangerouslySetInnerHTML={{ __html : replacedText[i] }}></p>
             }
         }
+
+        let formattedText = reactStringReplace(replacedText, /^([A-Za-z0-9]+@|http(|s)\:\/\/)([A-Za-z0-9.]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git)?/g, (match, i) => (
+            // <a href="">{match}</a>
+            console.log(match)
+        ))
         
-        return <div>{replacedText}</div>
+        return <div>{formattedText}</div>
     }
 
     updateBlogTitle = async() => {
@@ -82,16 +89,16 @@ class EachDevBlog extends Component {
         const { data : res } = await axios.post('/devblog/update-subtitle/' + this.state.blog._id, payload)
     }
 
-    addGist = (id, file) => {
-        
-        return <EmbedGist gist={id} file={file}/>
+    showEditor = () => {
+        this.setState({ showEditor:!this.state.showEditor })
+        window.scrollTo(0, 0)
     }
     render() {
         const ifAdmin = Cookies.get('admin')
         const blog = this.state.blog === undefined ? null : this.state.blog
         return (
             <div className="container-fluid p-0">
-                {ifAdmin && <Button className="show-hide-b-d" onClick={() => this.setState({ showEditor:!this.state.showEditor })} variant="outlined" color="primary">
+                {ifAdmin && <Button className="show-hide-b-d" onClick={this.showEditor} variant="outlined" color="primary">
                     {this.state.showEditor ? "Hide editor" : "Show editor"}
                 </Button>}
                 <div className="container">
@@ -101,7 +108,7 @@ class EachDevBlog extends Component {
                     <h3>Blog details</h3>
                     <div className="col-md-12 p-0 mb-3">
                             <Button variant="contained" color="primary" component="label">
-                                Choose Blog Banner Image
+                                {this.state.blog.blogBanner.length === 0 ? 'Choose ' : 'change '} blog banner
                                 <input type="file" name="blogBanner" onChange={this.handleChange} hidden/>
                             </Button>
                             <div className="mt-3 p-0 col-md-12">
@@ -109,7 +116,7 @@ class EachDevBlog extends Component {
                                 <InputLabel htmlFor="blog-title">Blog title</InputLabel>
                                 <OutlinedInput
                                     onChange={this.handleChange}
-                                    value={this.state.data.title}
+                                    value={this.state.blog.title}
                                     id="blog-title"
                                     name ="title"
                                     endAdornment={
@@ -133,7 +140,7 @@ class EachDevBlog extends Component {
                                 <InputLabel htmlFor="blog-sub-title">Blog Sub title</InputLabel>
                                 <OutlinedInput
                                     onChange={this.handleChange}
-                                    value={this.state.data.subtitle}
+                                    value={this.state.blog.subtitle}
                                     id="blog-sub-title"
                                     name ="subtitle"
                                     endAdornment={
@@ -159,7 +166,7 @@ class EachDevBlog extends Component {
                             className="m-2">Upload this Image
                             </Button>}
                         </div>
-                    <BlogEditor route="/devblog/content/" blogName={blog.name} blogId={blog._id}/>
+                    <BlogEditor route="/devblog/content/" slug={blog.slug} blogId={blog._id}/>
                 </div>}
                 </div>
 
@@ -183,18 +190,19 @@ class EachDevBlog extends Component {
                     <div className="body-wrapper">
                         <ul className="blog-share">
                             <li>SHARE</li>
-                            <li><i className="fa fa-facebook"/></li>
-                            <li><i className="fa fa-twitter"/></li>
-                            <li><i className="fa fa-linkedin"/></li>
+                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.facebook.com/sharer/sharer.php?u=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-facebook"/></li></a>
+                            <a style={{ textDecoration:"none", color:"#444" }} className="twitter-share-button" href={"https://twitter.com/share?url=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-twitter"/></li></a>
+                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.linkedin.com/sharing/share-offsite/?url=thedevang.com/d/blogs/" + this.state.blog.slug}><li><i className="fa fa-linkedin"/></li></a>
                         </ul>
-                        {/* <p id="blog-body" className="body" dangerouslySetInnerHTML={{__html:`${blog.body}`}}></p> */}
-                        {this.replaceGistLink()}
+                        <p id="blog-body" className="body">
+                            {this.formatEditorContent()}
+                        </p>
                     </div>
                 </div>
-                
+                <Footer/>
             </div>
         );
     }
 }
 
-export default EachDevBlog;
+export default EachDevBlog

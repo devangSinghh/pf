@@ -39,7 +39,7 @@ class EmbeddedGist extends Component {
         this.setState({ loading: false, src: gist.div })
         this.addStylesheet(gist.stylesheet)
     }
-    console.log(this.state.gist, this.state.file)
+
     let url = "https://gist.github.com/" + this.state.gist + ".json?callback=" + gistCallback
     if (this.state.file === undefined ? "" : this.state.file.length !== 0) {
       url += "&file=" + this.state.file

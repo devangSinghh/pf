@@ -54,10 +54,19 @@
 
 //editor
 .rdw {
+    &-editor-wrapper {
+        border: 2px solid rgb(192, 192, 192);
+        border-radius: 0.5rem;
+        margin-bottom: 2rem;
+    }
     &-editor-main {
         padding: 0.8rem;
         margin-bottom: 1.4rem;
-        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+        // box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    }
+    &-editor-toolbar {
+        border: 2px solid rgb(192, 192, 192);
+        border-radius: 0.5rem;
     }
     &-fontfamily-wrapper {
     }
@@ -78,6 +87,20 @@
     }
 }
 
+.editor-main {
+    overflow-x: auto;
+}
+.preivew-head {
+    font-size: 17px;
+    font-family: $font-7;
+}
+.editor-preview {
+    overflow: auto;
+    padding: 0.5rem;
+    border: 2px solid rgb(192, 192, 192);
+    border-radius: 0.5rem;
+    margin-bottom: 1.4rem;
+}
 
 @media (max-width:320px) {
     .blog-section-1 {

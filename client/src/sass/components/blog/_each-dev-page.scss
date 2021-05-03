@@ -5,9 +5,12 @@
 .devblog-e-page {
     font-family: $font-7;
     .banner-img {
+        display: flex;
+        justify-content: center;
         img {
             height: 50vh;
             width: 100%;
+            margin: 0 auto;
             object-fit: cover;
             object-position: center;
         }
@@ -65,8 +68,9 @@
         }
 
         .body {
+            min-height: 70vh;
             font-family: $font-7;
-            margin-bottom: 1.4rem;
+            margin-bottom: 3rem;
             span {
                 // white-space: pre;
             }
