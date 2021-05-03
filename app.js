@@ -76,7 +76,6 @@ app.use(passport.session())
 // app.use(cookie())
 
 //routes
-app.use(nocache())
 app.use('/add-project', project)
 app.use('/add-blog', blog)
 app.use('/devblog', devblog)
@@ -195,6 +194,7 @@ app.use(function(req, res, next) {
     res.setHeader("Expires", "0") // Proxies.
     next()
 })
+app.use(nocache())
   
 app.listen(PORT, function() {
       console.log('App running on port 6161')
