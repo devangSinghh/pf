@@ -13,7 +13,8 @@ class Footer extends Component {
                             </div>
                             {/* <div className="col-md-4"></div> */}
                             <div className="col-md-6 align-items-center d-flex justify-content-center">
-                                <Link to="/d/blogs/"><h3>Read more</h3></Link>
+                                <Link to="/d/blogs/"><h3>Read more
+                                    </h3></Link>
                             </div>
                         </div>
                     </div>

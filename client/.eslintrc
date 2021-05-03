@@ -1,8 +1,0 @@
-{
-    "plugins": [
-        "no-link-component"
-    ],
-    "rules": {
-        "no-link-component/no-link-component": "error"
-    }
-}
