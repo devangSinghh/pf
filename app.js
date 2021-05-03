@@ -39,6 +39,8 @@ const testRoute = require('./routes/test')
 const sitemap = require("./routes/sitemap")
 const admin = require('./routes/auth')
 
+const nocache = require('nocache')
+
 //Port
 const PORT = 6161
 
@@ -74,6 +76,7 @@ app.use(passport.session())
 // app.use(cookie())
 
 //routes
+app.use(nocache())
 app.use('/add-project', project)
 app.use('/add-blog', blog)
 app.use('/devblog', devblog)
@@ -83,6 +86,7 @@ app.use('/record-ip', ip)
 app.use('/api', analytics)
 app.use('/sitemap.xml', sitemap)
 app.use('/auth', admin)
+
 
 AWS.config = new AWS.Config();
 AWS.config.accessKeyId = process.env.aws_access_key
@@ -187,8 +191,7 @@ app.get('*', (req,res) =>{
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate") // HTTP 1.1.
-    res.setHeader("Pragma", "no-cache") // HTTP 1.0.
+    res.set("Cache-Control", "no-cache, no-store, must-revalidate") // HTTP 1.1.
     res.setHeader("Expires", "0") // Proxies.
     next()
 })
