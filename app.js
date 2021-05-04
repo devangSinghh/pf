@@ -190,6 +190,7 @@ app.get('/blog/:slug', async(req, res) => {
 const root = require('path').join(__dirname, 'client', 'build')
 app.use('/', express.static(root));
 app.get("*", (req, res) => {
+    res.set("cache-control", "no-cache, no-store, must-revalidate")
     res.sendFile('index.html', { root });
 })
 
