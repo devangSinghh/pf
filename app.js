@@ -201,7 +201,7 @@ app.use(function(req, res, next) {
     // res.setHeader("Expires", "0") // Proxies.
     next()
 })
-// app.use(nocache())
+app.use(nocache())
   
 app.listen(PORT, function() {
       console.log('server running on 6161')
