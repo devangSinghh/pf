@@ -30,13 +30,17 @@ class EachDevBlog extends Component {
         const { match: { params } } = this.props;
         const { data : blog } = await axios.get('/devblog/' + params.slug)
         this.setState({ blog })
+        const data = {...this.state.data}
+        data.title = blog.title
+        data.subtitle = blog.subtitle
+        this.setState({ data })
     }
     
     handleChange = ({ currentTarget : input }) => {
-        const data = {...this.state.data};
-        data[input.name] = input.value;
+        const data = {...this.state.data}
+        data[input.name] = input.value
         if(input.name === 'blogBanner')data[input.name] = input.files[0]
-        this.setState({ data });    
+        this.setState({ data })
     }
 
     UploadDevBlogBanner = async() => {
@@ -46,7 +50,6 @@ class EachDevBlog extends Component {
         const config = { headers: { 'content-type': 'multipart/form-data' } }
 
         const { data : resp } = await axios.post(`/devblog/banner/${blog.slug}`, payload, config)
-        console.log(resp)
 
     }
 
@@ -116,7 +119,7 @@ class EachDevBlog extends Component {
                                 <InputLabel htmlFor="blog-title">Blog title</InputLabel>
                                 <OutlinedInput
                                     onChange={this.handleChange}
-                                    value={this.state.blog.title}
+                                    value={this.state.data.title}
                                     id="blog-title"
                                     name ="title"
                                     endAdornment={
@@ -140,7 +143,7 @@ class EachDevBlog extends Component {
                                 <InputLabel htmlFor="blog-sub-title">Blog Sub title</InputLabel>
                                 <OutlinedInput
                                     onChange={this.handleChange}
-                                    value={this.state.blog.subtitle}
+                                    value={this.state.data.subtitle}
                                     id="blog-sub-title"
                                     name ="subtitle"
                                     endAdornment={

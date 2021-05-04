@@ -29,7 +29,7 @@ class Login extends Component {
         }
 
         const { data : res } = await axios.post('/auth/login', payload)
-        Cookies.set('admin', res)
+        Cookies.set('admin', res, { expires: 2 })
         window.location.reload(false)
         return <Redirect to="/d/admin"/>
     }
