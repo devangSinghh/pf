@@ -103,18 +103,18 @@ app.get('/blog/:slug', async(req, res) => {
   res.send(thisBlog)
 })
 
-// app.use(express.static('client/build'))
+app.use(express.static('client/build'))
 
-// app.get('*', (req,res) =>{
-//   res.sendFile(path.join(__dirname+'/client/build/index.html'))
-// })
-
-const root = require('path').join(__dirname, 'client', 'build')
-app.use(express.static(root));
-app.get("*", (req, res) => {
-    res.setHeader("cache-control", "no-cache")
-    res.sendFile('index.html', { root });
+app.get('*', (req,res) =>{
+  res.sendFile(path.join(__dirname+'/client/build/index.html'))
 })
+
+// const root = require('path').join(__dirname, 'client', 'build')
+// app.use(express.static(root));
+// app.get("*", (req, res) => {
+//     res.setHeader("cache-control", "no-cache")
+//     res.sendFile('index.html', { root });
+// })
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
