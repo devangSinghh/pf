@@ -200,8 +200,8 @@ app.get('/get-csrf', csrfProtection, (req, res) => {
 
 app.get('*', (req, res) =>{
   // res.cookie('XSRF-TOKEN', req.csrfToken())
-  fs.createReadStream(path.join(__dirname+'/client/build/index.html')).pipe(res)
-  // res.sendFile(path.join(__dirname+'/client/build/index.html'))
+  // fs.createReadStream(path.join(__dirname+'/client/build/index.html')).pipe(res)
+  res.sendFile(path.join(__dirname+'/client/build/index.html'))
 })
 
 
