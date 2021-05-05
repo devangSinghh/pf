@@ -195,7 +195,7 @@ class EachDevBlog extends Component {
                             <li>SHARE</li>
                             <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.facebook.com/sharer/sharer.php?u=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-facebook"/></li></a>
                             <a style={{ textDecoration:"none", color:"#444" }} className="twitter-share-button" href={"https://twitter.com/share?url=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-twitter"/></li></a>
-                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.linkedin.com/sharing/share-offsite/?url=thedevang.com/d/blogs/" + this.state.blog.slug}><li><i className="fa fa-linkedin"/></li></a>
+                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.linkedin.com/sharing/share-offsite/?url=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-linkedin"/></li></a>
                         </ul>
                         <p id="blog-body" className="body">
                             {this.formatEditorContent()}

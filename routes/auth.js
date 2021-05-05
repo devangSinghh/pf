@@ -1,5 +1,9 @@
+const mongoose = require('mongoose')
 const admin = require('../models/auth')
+const sessions = require('../models/sessions')
 const Router = require('express').Router()
+
+mongoose.set('useFindAndModify', false);
 
 Router.post('/register', async(req, res) => {
 
@@ -18,10 +22,18 @@ Router.post('/register', async(req, res) => {
     res.send(savedadmin)
 })
 
-Router.post('/login', async(req, res) => {
-    const data = await admin.findOne({ username : req.body.username, password : req.body.password })
-    res.send(data)
-})
+// Router.post('/login', async(req, res) => {
+//     res.redirect(307, '/success')
+//     // const data = await admin.findOne({ username : req.body.username, password : req.body.password })
+//     // if (data) return res.redirect(307, '/success')
+//     // res.send(data)
+// })
+
+
+Router.post('/validate-user-session/:user', async(req, res) => {
+    const data = await admin.findOne({ username : req.params.user })
+    res.send(data.session_id)
+  })
 
 Router.get('/', async(req, res) => {
     const data = await admin.find({})

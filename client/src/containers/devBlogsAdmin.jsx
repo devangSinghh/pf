@@ -20,11 +20,19 @@ class DevBlogsAdmin extends Component {
             devblogfile : null,
             blogBanner : null
         },
-        blogAdded : false
+        blogAdded : false,
+        loggedIn : true
     }
 
     componentDidMount = async() => {
-        
+        const user = Cookies.get('admin')
+        const user_session = Cookies.get('session_id')
+        const { data : session } = await axios.post('/auth/validate-user-session/' + user)
+        if (session !== user_session || session.length === 0) {
+            this.setState({ loggedIn : false })
+            Cookies.remove('admin')
+            Cookies.remove('session_id')
+        }
     }
 
     handleChange = ({ currentTarget : input }) => {
@@ -54,7 +62,6 @@ class DevBlogsAdmin extends Component {
         
         this.setState({ blog : resp, blogAdded : true })
 
-        return <Redirect to="/d/blogs"/>
     }
 
     resetFileInputs = () => {
@@ -78,11 +85,10 @@ class DevBlogsAdmin extends Component {
         const blog = this.state.blog === undefined ? null : this.state.blog
         const data = this.state.data
 
-        if(Cookies.get('admin') === undefined) {
+        if(!Cookies.get('session_id') || !Cookies.get('admin') || !this.state.loggedIn) {
             return <Redirect to="/login" />
         }
-
-        if(this.state.blogAdded) {
+        else if(this.state.blogAdded) {
             return <Redirect to={"/d/blogs/" + blog.name}/>
         }
         return (

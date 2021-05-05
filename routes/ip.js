@@ -36,7 +36,6 @@ router.get('/add', async(req, res) => {
     //     let record = '';
     //     response.on('data', d => { 
     //         record += d
-    //         console.log(record)
     //         record = JSON.parse(record)
     //     })
 
@@ -47,7 +46,6 @@ router.get('/add', async(req, res) => {
     // })
     let resp = '0';
     recordIp(await publicIp.v4(), process.env.IP_ACCESS_KEY, async(e, res) => {
-        console.log(res)
         resp = await res;
 
     })

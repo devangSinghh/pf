@@ -29,9 +29,9 @@ class Login extends Component {
         }
 
         const { data : res } = await axios.post('/auth/login', payload)
-        Cookies.set('admin', res, { expires: 2 })
+        Cookies.set('admin', res.user, { expires: 2 })
+        Cookies.set('session_id', res.session_id, { expires: 2 })
         window.location.reload(false)
-        return <Redirect to="/d/admin"/>
     }
 
     handleChange = e => {
@@ -45,13 +45,13 @@ class Login extends Component {
 
     render() {
 
-        if (Cookies.get('admin')) {
+        if (Cookies.get('session_id') && Cookies.get('session_id').length !== 0 && Cookies.get('admin') && Cookies.get('admin').length !== 0) 
             return <Redirect to="/d/admin"/>
-        }
+
         return (
             <div className="container">
                 <div className="row m-0 mt-4 p-3 border rounded">
-                    <h4>Login to make changes</h4>
+                    <h4 style={{ fontFamily:'Sailec' }}>Login to make changes</h4>
                     <div className="p-0 col-md-12 mt-3">
                         <TextField className="w-100" variant="outlined" label="username" onChange={this.handleChange} name="username" value={this.state.data.username}/>
                     </div>
