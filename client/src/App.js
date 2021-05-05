@@ -1,30 +1,33 @@
 
-import React, { useEffect } from 'react';
-import {BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom';
-import ReactGA, { initialize } from 'react-ga';
+import React, { useEffect } from 'react'
+import {BrowserRouter as Router, Switch, Route, withRouter } from 'react-router-dom'
+import ReactGA, { initialize } from 'react-ga'
+import axios , { base } from './axios-pf'
 
 //Landing Page Component
-import Home from './components/home';
+import Home from './components/home'
 
-import Manage from './containers/management';
-import Blog from './containers/blog';
+import Manage from './containers/management'
+import Blog from './containers/blog'
 
 import './sass/main.scss'
-import EachBlog from './containers/eachBlog';
+import EachBlog from './containers/eachBlog'
 import ShowcaseBlog from './blog/showcaseBlog'
-import BlogEditor from './blog/blogEditor';
+import BlogEditor from './blog/blogEditor'
 
 import DeveloperBlogs from './blog/developerBlogs'
 
 import DevBlogsAdmin from './containers/devBlogsAdmin'
-import EachDevBlog from './containers/eachDevBlog';
-import Login from './auth/login';
+import EachDevBlog from './containers/eachDevBlog'
+import Login from './auth/login'
+import { Cookies } from 'js-cookie'
 
 function App() {
 
-  useEffect(() => {
+  useEffect(async() => {
     ReactGA.initialize(process.env.REACT_APP_TRACKING_ID)
     ReactGA.pageview(window.location.pathname + window.location.search)
+    
   }, [])
 
   return (

@@ -9,13 +9,17 @@
     "body-parser": "^1.19.0",
     "boxen": "^4.2.0",
     "connect-mongo": "~3.2.0",
+    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "crypto-js": "^4.0.0",
+    "csurf": "^1.11.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-rate-limit": "^5.2.6",
     "express-session": "^1.17.1",
     "externalip": "^1.0.2",
     "googleapis": "^68.0.0",
+    "helmet": "^4.6.0",
     "imgur-upload": "^0.1.2",
     "ipstack": "^0.1.1",
     "ipstackclient": "^0.6.0",
@@ -37,7 +41,8 @@
     "public-ip": "^4.0.3",
     "session-file-store": "^1.5.0",
     "slugify": "^1.4.7",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "xss-clean": "^0.1.1"
   },
   "scripts": {
     "start": "nodemon app.js",

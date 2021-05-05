@@ -6,14 +6,25 @@ dotenv.config()
 const express= require('express')
 const path = require('path')
 const app= express()
+
+//disable X-powered-by header
+app.disable('x-powered-by')
+
+const rate_limit = require('express-rate-limit')
+const xss = require('xss-clean')
+const csrf = require('csurf')
 const cors = require('cors')
+const cookie_parser = require('cookie-parser')
 const body_parser = require('body-parser')
 const boxen = require('boxen')
+const helmet = require('helmet')
 const mongoose = require('mongoose')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
 const { v4 : uuidv4 } = require('uuid')
 const nocache = require('nocache')
+const sanitize = require('mongo-sanitize')
+const fs = require('fs')
 
 //models
 const Blog = require('./models/blog/blog')
@@ -34,22 +45,25 @@ const admin = require('./routes/auth')
 //Port
 const PORT = 6161
 
-// let depth_limit = 2; //JSON parse depth 
+let depth_limit = 2; //JSON parse depth 
 
-// let limit_depth = (obj, current_depth, limit) => {
-//     // traversing each key and then checking the depth
-//     for (const key in obj)
-//         if (obj[key] instanceof Object)
-//             if (current_depth + 1 === limit)
-//                 obj[key] = "[object Object]"
-//             else limit_depth(obj[key], current_depth + 1, limit)
-// }
+let limit_depth = (obj, current_depth, limit) => {
+    // traversing each key and then checking the depth
+    for (const key in obj)
+        if (obj[key] instanceof Object)
+            if (current_depth + 1 === limit) {
+              obj[key] = "[object Object]"
+              console.log(boxen('external mongo injection suspected', { borderColor : 'red' }))
+            }
+                
+            else limit_depth(obj[key], current_depth + 1, limit)
+}
 
-//middleware to prevent NoMongo injection
-// app.use((req, res, next) => {
-//     limit_depth(req.body, 0, depth_limit);
-//     next()
-// })
+// middleware to prevent Mongo injection
+app.use((req, res, next) => {
+    limit_depth(req.body, 0, depth_limit);
+    next()
+})
 
 
 // connect to DB
@@ -62,7 +76,8 @@ const mongo_connection = mongoose.connect(db_string, db_options,
    () => {console.log(boxen('Database is connected ', {padding: 0, margin: 0, borderStyle: 'single', backgroundColor : "black", borderColor : "blue", borderStyle :"singleDouble"}))})
 
 const sessionStore = new MongoStore ({
-  mongooseConnection : mongo_connection,
+  // mongooseConnection : mongo_connection,
+  // mongoUrl : db_string,
   url : db_string,
   collection : 'sessions'
 })
@@ -94,15 +109,36 @@ let express_session = {
 }
 
 if (process.env.NODE_ENV === 'production') {
-    express_session.cookie.secure = true //in production serve cookies over https only
+    express_session.cookie.secure = true  //in production serve cookies over https only
     express_session.saveUninitialized = false
 }
   
-  
+const cors_options = {
+  credentials : true
+}
 
+const limiter = rate_limit({
+  windowMs : 15 * 60 * 1000,
+  max : 100
+})
+app.use(limiter)
+
+const csrfProtection = csrf({ cookie : true })
+const csrf_settings = { cookie : true }
 app.use('/success', session(express_session))
 app.use(express.json())
-app.use(cors())
+app.use(cookie_parser())
+app.use(cors(cors_options))
+// app.use(csrf(csrf_settings))
+// app.use(function(req, res, next) {
+//   res.cookie('csrftoken', req.csrfToken())
+//   next()
+// })
+
+app.use(helmet())
+
+//xss attcks prevention
+app.use(xss())
 
 //middlewares
 app.use('/add-project', project)
@@ -117,8 +153,9 @@ app.use('/auth', admin)
 
 
 app.post('/auth/login', async(req, res) => {
-  // res.redirect(307, '/success')
-    const data = await adminModel.findOne({ username : req.body.username, password : req.body.password })
+    const username = sanitize(req.body.username)
+    const password = sanitize(req.body.password)
+    const data = await adminModel.findOne({ username : username, password : password })
 
     if (data.length != 0) {
       res.status(200)
@@ -147,8 +184,8 @@ app.get('/blog/:slug', async(req, res) => {
   res.send(thisBlog)
 })
 app.get('/success', async(req, res, next) => {
+  // const user = sanitize(req.query.u)
   req.session.loggedIn = true
-  
   const update_session_id = await authModel.findOneAndUpdate({ username : req.query.u }, { session_id : req.sessionID })
   res.send({user : req.query.u, session_id : req.sessionID})
   
@@ -157,8 +194,14 @@ app.get('/success', async(req, res, next) => {
 //serve static files
 app.use(express.static('client/build'))
 
+app.get('/get-csrf', csrfProtection, (req, res) => {
+  res.send({ csrfToken : req.csrfToken() })
+})
+
 app.get('*', (req, res) =>{
-  res.sendFile(path.join(__dirname+'/client/build/index.html'))
+  res.cookie('XSRF-TOKEN', req.csrfToken())
+  fs.createReadStream(path.join(__dirname+'/client/build/index.html')).pipe(res)
+  // res.sendFile(path.join(__dirname+'/client/build/index.html'))
 })
 
 
