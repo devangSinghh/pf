@@ -123,14 +123,7 @@ const limiter = rate_limit({
 })
 app.use(limiter)
 
-const csrfProtection = csrf({ 
-  cookie : { 
-      key : '_csrf',
-      path : '/',
-      secure : process.env.NODE_ENV === 'production',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
-   } 
-})
+const csrfProtection = csrf({ cookie : true })
 app.use('/success', session(express_session))
 app.use(express.json())
 app.use(cookie_parser())
