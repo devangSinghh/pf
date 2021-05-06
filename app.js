@@ -13,7 +13,7 @@ app.disable('x-powered-by')
 const rate_limit = require('express-rate-limit')
 const xss = require('xss-clean')
 const csrf = require('csurf')
-const CryptoJS = require("crypto-js");
+const crypto = require('crypto')
 const cors = require('cors')
 const cookie_parser = require('cookie-parser')
 const body_parser = require('body-parser')
@@ -194,8 +194,9 @@ app.get('/success', async(req, res, next) => {
   res.send({user : req.query.u, session_id : req.sessionID})
   
 })
-app.get('/get-csrf', csrfProtection, (req, res) => {
-  res.send({ csrfToken : req.csrfToken() })
+app.get('/get-csrf', (req, res) => {
+  const _csrf = crypto.randomBytes(50).toString('base64').slice(0, 50)
+  res.send({ csrfToken : _csrf })
 })
 
 //csp report logging (in case of XSS attack)
