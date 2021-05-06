@@ -12,7 +12,7 @@ app.disable('x-powered-by')
 
 const rate_limit = require('express-rate-limit')
 const xss = require('xss-clean')
-const csrf = require('csurf')
+// const csrf = require('csurf')
 const crypto = require('crypto')
 const cors = require('cors')
 const cookie_parser = require('cookie-parser')
@@ -42,6 +42,7 @@ const ip = require('./routes/ip')
 const analytics = require('./routes/analytics')
 const sitemap = require("./routes/sitemap")
 const admin = require('./routes/auth')
+const csrf = require('./routes/csrf')
 
 //Port
 const PORT = 6161
@@ -134,7 +135,6 @@ app.use(cors())
 //   next()
 // })
 
-const csrfToken = crypto.randomBytes(50).toString('base64').slice(0, 50)
 
 // app.use(helmet())
 
@@ -151,15 +151,9 @@ app.use('/record-ip', ip)
 app.use('/api', analytics)
 app.use('/sitemap.xml', sitemap)
 app.use('/auth', admin)
+app.use('/csrf', csrf)
 
-app.get('/csrf', async(req, res) => {
-  try {
-    res.send(csrfToken)
-  }
-  catch(e) {
-    console.log(e)
-  }
-})
+
 app.post('/auth/login', async(req, res) => {
     const username = sanitize(req.body.username)
     const password = sanitize(req.body.password)
