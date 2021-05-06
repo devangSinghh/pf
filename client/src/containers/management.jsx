@@ -43,7 +43,6 @@ class Management extends Component {
         const config = { headers: { 'content-type': 'multipart/form-data' } }
         const { data : uploadRes } = await axios.post(base + 'add-project', payload, config );
 
-        console.log(uploadRes)
     }
 
     resetFileInputs = () => {
@@ -80,7 +79,6 @@ class Management extends Component {
         const config = { headers: { 'content-type': 'multipart/form-data' } }
 
         const { data : resp } = await axios.post(base + 'add-blog', payload, config)
-        console.log(resp)
 
         return <Redirect to="/blog"/>
     }

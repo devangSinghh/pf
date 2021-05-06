@@ -17,7 +17,7 @@ const cors = require('cors')
 const cookie_parser = require('cookie-parser')
 const body_parser = require('body-parser')
 const boxen = require('boxen')
-const helmet = require('helmet')
+// const helmet = require('helmet')
 const mongoose = require('mongoose')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
@@ -89,7 +89,7 @@ app.options('*', cors())
 app.use(body_parser.json())
 app.use(body_parser.urlencoded({ extended: true }))
 
-app.set('trust proxy', true)
+// app.set('trust proxy', true)
 
 //create session
 let express_session = {
@@ -121,10 +121,9 @@ const limiter = rate_limit({
   windowMs : 15 * 60 * 1000,
   max : 100
 })
-// app.use(limiter)
+app.use(limiter)
 
 const csrfProtection = csrf({ cookie : true })
-const csrf_settings = { cookie : true }
 app.use('/success', session(express_session))
 app.use(express.json())
 app.use(cookie_parser())
@@ -139,13 +138,7 @@ app.use(cors(cors_options))
 
 //xss attcks prevention
 app.use(xss())
-app.use(function (req, res, next) {
-  res.setHeader(
-    'Content-Security-Policy-Report-Only',
-    "default-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; frame-src 'self'"
-  );
-  next();
-});
+
 //middlewares
 app.use('/add-project', project)
 app.use('/add-blog', blog)

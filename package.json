@@ -20,7 +20,6 @@
     "express-session": "^1.17.1",
     "externalip": "^1.0.2",
     "googleapis": "^68.0.0",
-    "helmet": "^4.6.0",
     "imgur-upload": "^0.1.2",
     "ipstack": "^0.1.1",
     "ipstackclient": "^0.6.0",

@@ -102,8 +102,6 @@ router.post('/content/:id', async(req, res) => {
 router.post('/upload-blog-content/:name', Apidata.uploadBlog, async(req, res) => {
     const tempPath = './media/blog/' + req.file.filename
     const newPath = './media/blog/' + req.params.name + '/' + req.file.filename
-    console.log(tempPath)
-    console.log(newPath)
     fs.rename(tempPath, newPath, err => { 
         if (err) throw err;
         console.log("content image moved")

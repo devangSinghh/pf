@@ -46,9 +46,9 @@
     "web-vitals": "^1.1.0"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -69,9 +69,5 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "csp-html-webpack-plugin": "^5.1.0",
-    "customize-cra": "^1.0.0",
-    "react-app-rewired": "^2.1.8"
-  }
+  "devDependencies": {}
 }

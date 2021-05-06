@@ -15,7 +15,6 @@ class Blog extends Component {
     componentDidMount = async() => {
         const { data : blogs } = await axios.get(base + 'add-blog');
         this.setState({ blogs, loadingBlogs : false })
-        console.log(blogs)
     }
 
     render() {

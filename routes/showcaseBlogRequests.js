@@ -2,7 +2,6 @@ const router = require('express').Router();
 const BlogRequest = require('../models/blog/showcaseBlogRequests');
 
 router.post('/', async(req, res) => {
-    console.log(req.body)
     const blogRequest = new BlogRequest({
         name : req.body.name,
         email : req.body.email,

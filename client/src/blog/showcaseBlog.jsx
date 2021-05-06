@@ -38,7 +38,6 @@ class ShowcaseBlog extends Component {
         }
 
         const { data : res } = await axios.post('/showcase-blog-request', payload)
-        console.log(res)
     }
 
     render() {

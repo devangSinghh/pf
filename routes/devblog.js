@@ -16,52 +16,44 @@ router.post('/', Apidata.uploadDevBlog, async(req, res) => {
     // }
 
     // else {
+    const devblogname = sanitize(req.body.devblogtitle)
 
-        const devblogname = sanitize(req.body.devblogtitle)
+    const slug = slugify(devblogname, {lower: true})
 
-        const slug = slugify(devblogname, {lower: true})
+    const dir = './media/devblog/' + slug
+    const tempPath = './media/devblog/' + req.file.filename
+    const newPath = './media/devblog/' + slug + '/card-' + req.file.filename
 
-        const dir = './media/devblog/' + slug
-        const tempPath = './media/devblog/' + req.file.filename
-        const newPath = './media/devblog/' + slug + '/card-' + req.file.filename
+    const cardBanner = 'devblog/' + slug + '/card-' + req.file.filename
 
-        const cardBanner = 'devblog/' + slug + '/card-' + req.file.filename
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir)
+        fs.mkdirSync(dir + '/content')
+        fs.rename(tempPath, newPath, err => { 
+            if (err) throw err;
+         })
+    }    
 
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir)
-            fs.mkdirSync(dir + '/content')
-            fs.rename(tempPath, newPath, err => { 
-                if (err) throw err;
-             })
-        }
+    const blogItem = new DevBlog({
+        name : devblogname,
+        author : req.body.author,
+        content : req.body.content,
+        cardtitle : req.body.devblogtitle,
+        cardBanner : cardBanner,
+        publishedOn : req.body.publishedOn,
+        blogBanner : "",
+        title : "",
+        body : "",
+        slug : slug
+    })
 
-        
-
-        const blogItem = new DevBlog({
-            name : devblogname,
-            author : req.body.author,
-            content : req.body.content,
-            cardtitle : req.body.devblogtitle,
-            cardBanner : cardBanner,
-            publishedOn : req.body.publishedOn,
-            blogBanner : "",
-            title : "",
-            body : "",
-            slug : slug
-        })
-
-        const savedBlogItem = await blogItem.save()
-        res.send(savedBlogItem)
-    
-    
+    const savedBlogItem = await blogItem.save()
+    res.send(savedBlogItem)
 })
 
 router.post('/:id', async(req, res) => {
-    console.log(req.body)
-
     const data = await DevBlog.findOneAndUpdate({ _id:req.params._id }, { blogBanner : req.file.filename, blogBannerRoute : 'devblog/' + req.params.name + '/banner-' + req.file.filename })
     res.send(data)
-
 })
 
 router.post('/banner/:name', Apidata.uploadDevBlog, async(req, res) => {

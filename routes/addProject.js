@@ -7,7 +7,6 @@ const slugify = require('slugify');
 router.post('/', Apidata.uploadProject , async(req, res) => {
 
         const slug = slugify(req.body.name, {lower: true});
-        console.log(req.body)
         const projectItem = new Project({ 
             name:req.body.name,
             desc:req.body.desc,

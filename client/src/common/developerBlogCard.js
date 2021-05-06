@@ -7,7 +7,6 @@ import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt'
 import Tooltip from '@material-ui/core/Tooltip'
 
 const DevCard = props => {
-    console.log(props)
     return ( 
         <div className="col-md-4">
             <div className="d-blog-card m-2">

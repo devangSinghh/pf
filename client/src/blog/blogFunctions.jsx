@@ -17,10 +17,8 @@ class BlogFunctions extends Component {
         payload = {name : `section-${maxParaNumber + 1}`, val : ""}
 
         const {data : res} = await axios.post(`update-blog/thissection/${this.state.blog._id}`, payload)
-        console.log(res)
         this.setState({ maxParaNumber: maxParaNumber + 1 })
         const { data : totalParaInBlog } = await axios.post(`update-blog/total-blog-sections/${this.state.blog._id}/${this.state.maxParaNumber}`)
-        console.log(totalParaInBlog)
     }
 
     deleteThisSection = async(e, key, section) => {
@@ -56,7 +54,6 @@ class BlogFunctions extends Component {
         const config = { headers: { 'content-type': 'multipart/form-data' } }
 
         const {data : res} = await axios.put(`update-blog/${this.state.blog.name}`, payload, config)
-        console.log(res)
     };
 
     
@@ -66,7 +63,6 @@ class BlogFunctions extends Component {
         }
 
         const { data : res } = await axios.put(`update-blog/section/${this.state.blog._id}/${sectionName}`, payload)
-        console.log(res)
     }
     
     catchLine = () => {
@@ -75,7 +71,6 @@ class BlogFunctions extends Component {
 
     addCatchLine = async() => {
         const {data : res} = await axios.put(`update-blog/${this.state.blog.name}/${this.state.catchLine}`)
-        console.log(res)
     }
 
     openCatchLineMenu = () => {
@@ -88,7 +83,6 @@ class BlogFunctions extends Component {
         const payload = await {color : color.hex}
 
         const {data : res} = await axios.post(`update-blog/catchLine/${this.state.blog._id}`, payload)
-        console.log(res)
       };
 
       changeFontFamilyOfCatchLine = async font => {
@@ -97,7 +91,6 @@ class BlogFunctions extends Component {
         const payload = await {fontFamily : font}
 
         const { data : res } = await axios.post(`update-blog/catchLineFont/${this.state.blog._id}`, payload)
-        console.log(res)
       }
 
       changeFontWeightOfCatchLine = async weight => {
@@ -106,7 +99,6 @@ class BlogFunctions extends Component {
           const payload = await { fontWeight : weight }
 
           const { data : res } = await axios.post(`update-blog/catchLineFontWeight/${this.state.blog._id}`, payload)
-          console.log(res)
       }
 
       changeblogBackground = async background => {
@@ -118,7 +110,6 @@ class BlogFunctions extends Component {
             this.setState({ changeblogBackground : color.hex })
             const payload = { blogBackground : color.hex }
             const { data : res } = await axios.post(`update-blog/blogBackground/${this.state.blog._id}`, payload)
-            console.log(res)
       }
 
       changecontent = async background => {
@@ -130,7 +121,6 @@ class BlogFunctions extends Component {
           this.setState({ contentColor : color.hex })
           const payload = { contentColor : color.hex }
           const { data : res } = await axios.post(`update-blog/content/${this.state.blog._id}`, payload)
-          console.log(res)
     }
 
     handleBlogColorChange = e => {
@@ -141,7 +131,6 @@ class BlogFunctions extends Component {
     sendBlogCustomColorChange = async() => {
         const payload = {blogBackground : '#'+this.state.blogCustomColor}
         const { data : res } = await axios.post(`update-blog/blogBackground/${this.state.blog._id}`, payload)
-        console.log(res)
         
     }
 

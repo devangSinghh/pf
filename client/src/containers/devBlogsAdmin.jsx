@@ -96,10 +96,10 @@ class DevBlogsAdmin extends Component {
                 <h3>Card details</h3>
                 <div className="row m-0">
                     <div className="col-md-12 p-0 mb-3">
-                        <TextField name="devblogtitle" value={data.devblogtitle} onChange={this.handleChange} className="w-100" id="outlined-basic" label="Blog card title" variant="outlined" />
+                        <TextField name="devblogtitle" value={data.devblogtitle} onChange={this.handleChange} className="w-100" id="outlined-basic-1" label="Blog card title" variant="outlined" />
                     </div>
                     <div className="col-md-12 p-0 mb-3">
-                        <TextField name="author" value={data.author} onChange={this.handleChange} className="w-100" id="outlined-basic" label="Blog card author" variant="outlined" />
+                        <TextField name="author" value={data.author} onChange={this.handleChange} className="w-100" id="outlined-basic-2" label="Blog card author" variant="outlined" />
                     </div>
                     <div className="col-md-12 p-0 mb-3">
                         <Button variant="contained" color="primary" component="label">
@@ -108,7 +108,7 @@ class DevBlogsAdmin extends Component {
                         </Button>
                     </div>
                     <div className="col-md-12 p-0 mb-3">
-                        <TextField name="content" onChange={this.handleChange} value={data.content} className="w-100" id="outlined-basic" multiline rows={10} label="Blog card content" variant="outlined" />
+                        <TextField name="content" onChange={this.handleChange} value={data.content} className="w-100" id="outlined-basic-3" multiline rows={10} label="Blog card content" variant="outlined" />
                     </div>
                     <Button onClick={this.AddDevBlog} variant="outlined">Save</Button>
                 </div>

@@ -71,11 +71,11 @@ class Login extends Component {
                 <div className="row m-0 mt-4 p-3 border rounded">
                     <h4 style={{ fontFamily:'Sailec' }}>Login to make changes</h4>
                     <div className="p-0 col-md-12 mt-3">
-                        <TextField className="w-100" variant="outlined" label="username" onChange={this.handleChange} name="username" value={this.state.data.username}/>
+                        <TextField className="w-100" id="username" variant="outlined" label="username" onChange={this.handleChange} name="username" value={this.state.data.username}/>
                     </div>
                     <input id="csrf-field" type="hidden" name="csrf" value={this.state.csrf}/>
                     <div className="p-0 col-md-12 mt-3">
-                        <TextField className="w-100" variant="outlined" label="password" onChange={this.handleChange} name="password" value={this.state.data.password}/>
+                        <TextField className="w-100" id="password" variant="outlined" label="password" onChange={this.handleChange} name="password" value={this.state.data.password}/>
                     </div>
                     <Button variant="contained" className="mt-3" color="primary" onClick={this.handleSubmit}>Login</Button>
                 </div>

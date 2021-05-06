@@ -38,7 +38,6 @@ const BlogEditor = props => {
       }
 
       const { data : res } = await axios.post(route + `${id}`, payload)
-      console.log(res)
   }
 
   const uploadCallback = file => {
