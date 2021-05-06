@@ -62,10 +62,10 @@ let limit_depth = (obj, current_depth, limit) => {
 }
 
 // middleware to prevent Mongo injection
-app.use((req, res, next) => {
-    limit_depth(req.body, 0, depth_limit);
-    next()
-})
+// app.use((req, res, next) => {
+//     limit_depth(req.body, 0, depth_limit);
+//     next()
+// })
 
 
 // connect to DB

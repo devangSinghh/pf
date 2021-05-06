@@ -5,8 +5,8 @@ var CryptoJS = require("crypto-js")
 router.get('/', async(req, res) => {
     try {
         const date = Date.now().toLocaleString()
-        var ciphertext = CryptoJS.AES.encrypt(date, process.env.CSRF_SECRET).toString()
-        res.send(ciphertext)
+        const csrf = CryptoJS.AES.encrypt(date, process.env.CSRF_SECRET).toString()
+        res.send(csrf)
       }
       catch(e) {
         console.log(e)
