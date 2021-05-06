@@ -124,11 +124,6 @@ const limiter = rate_limit({
 })
 app.use(limiter)
 
-const csrfProtection = csrf({ 
-    cookie : {
-      secure : process.env.NODE_ENV === 'production'
-    }
- })
 app.use('/success', session(express_session))
 app.use(express.json())
 app.use(cookie_parser())
