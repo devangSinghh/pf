@@ -13,6 +13,7 @@ app.disable('x-powered-by')
 const rate_limit = require('express-rate-limit')
 const xss = require('xss-clean')
 const csrf = require('csurf')
+const CryptoJS = require("crypto-js");
 const cors = require('cors')
 const cookie_parser = require('cookie-parser')
 const body_parser = require('body-parser')
@@ -123,7 +124,11 @@ const limiter = rate_limit({
 })
 app.use(limiter)
 
-const csrfProtection = csrf({ cookie : true })
+const csrfProtection = csrf({ 
+    cookie : {
+      secure : process.env.NODE_ENV === 'production'
+    }
+ })
 app.use('/success', session(express_session))
 app.use(express.json())
 app.use(cookie_parser())
@@ -195,7 +200,6 @@ app.get('/get-csrf', csrfProtection, (req, res) => {
 
 //csp report logging (in case of XSS attack)
 app.post('/__cspreport__', (req, res) => {
-  console.log(req.body);
 });
 
 //serve static files
