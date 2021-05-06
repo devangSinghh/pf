@@ -170,14 +170,15 @@ app.get('/add-project/:file_name', (req, res) => {
 app.get('/devblog/:blogname/:file_name', (req,res) => {
   res.sendFile(path.join(__dirname+"/media/devblog/"+ req.params.blogname + '/' +req.params.file_name))
 })
+app.get('/csrf', async(req, res) => {
+  const csrfToken = crypto.randomBytes(50).toString('base64').slice(0, 50)
+  res.send(csrfToken)
+})
   
 app.get('/blog/:blogname/:file_name', (req,res) => {
   res.sendFile(path.join(__dirname+"/media/blog/"+ req.params.blogname + '/' +req.params.file_name))
 })
 
-app.get('/get-session', (req, res) => {
-  res.send(`${req.session}`)
-})
 app.get('/blog/:slug', async(req, res) => {
   const thisBlog = await Blog.findOne({slug : req.params.slug})
   res.send(thisBlog)
@@ -189,10 +190,7 @@ app.get('/success', async(req, res, next) => {
   res.send({user : req.query.u, session_id : req.sessionID})
   
 })
-app.get('/get-csrf', async(req, res) => {
-  const _csrf = crypto.randomBytes(50).toString('base64').slice(0, 50)
-  res.send(crypto.randomBytes(50).toString('base64').slice(0, 50))
-})
+
 
 //csp report logging (in case of XSS attack)
 app.post('/__cspreport__', (req, res) => {

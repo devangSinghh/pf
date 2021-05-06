@@ -24,9 +24,9 @@ class Login extends Component {
     initial_state = this.state
 
     componentDidMount = async() => {
-        const {data : _csrfToken} = await axios.get('/add-project/get-csrf')
-        this.setState({ csrf : _csrfToken })
-        console.log(_csrfToken)
+        const {data : csrf} = await axios.get('/csrf')
+        this.setState({ csrf : csrf })
+        console.log(csrf)
     }
 
     handleSubmit = async e => {

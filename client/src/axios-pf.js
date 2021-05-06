@@ -1,8 +1,5 @@
 import axios from 'axios'
 
-axios.defaults.xsrfCookieName = 'csrftoken'
-axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-
 const instance = axios.create({
 
     // Base Domain Name
