@@ -1,11 +1,12 @@
+//https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 const router = require('express').Router()
-const crypto = require('crypto')
-
-const csrfToken = crypto.randomBytes(50).toString('base64').slice(0, 50)
+var CryptoJS = require("crypto-js")
 
 router.get('/', async(req, res) => {
     try {
-        res.send(csrfToken)
+        const date = Date.now().toLocaleString()
+        var ciphertext = CryptoJS.AES.encrypt(date, process.env.CSRF_SECRET).toString()
+        res.send(ciphertext)
       }
       catch(e) {
         console.log(e)

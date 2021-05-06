@@ -7,7 +7,6 @@ import TextField from '@material-ui/core/TextField'
 import Cookies from 'js-cookie'
 
 import axios, {base} from '../axios-pf'
-import CsrfProtect from '../common/csrf'
 
 class Login extends Component {
 
