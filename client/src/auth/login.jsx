@@ -27,6 +27,7 @@ class Login extends Component {
         const {data : _csrfToken} = await axios.get('/get-csrf')
         axios.defaults.headers.post['X-XSRF-TOKEN'] = _csrfToken
         this.setState({ csrf : _csrfToken.csrfToken })
+        console.log(_csrfToken)
     }
 
     handleSubmit = async e => {
