@@ -121,7 +121,7 @@ const limiter = rate_limit({
   windowMs : 15 * 60 * 1000,
   max : 100
 })
-app.use(limiter)
+// app.use(limiter)
 
 const csrfProtection = csrf({ cookie : true })
 const csrf_settings = { cookie : true }
@@ -190,13 +190,12 @@ app.get('/success', async(req, res, next) => {
   res.send({user : req.query.u, session_id : req.sessionID})
   
 })
-
-//serve static files
-app.use(express.static('client/build'))
-
 app.get('/get-csrf', csrfProtection, (req, res) => {
   res.send({ csrfToken : req.csrfToken() })
 })
+
+//serve static files
+app.use(express.static('client/build'))
 
 app.get('*', (req, res) =>{
   // res.cookie('XSRF-TOKEN', req.csrfToken())
