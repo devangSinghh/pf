@@ -25,8 +25,7 @@ class Login extends Component {
 
     componentDidMount = async() => {
         const {data : _csrfToken} = await axios.get('/get-csrf')
-        axios.defaults.headers.post['X-XSRF-TOKEN'] = _csrfToken
-        this.setState({ csrf : _csrfToken.csrfToken })
+        this.setState({ csrf : _csrfToken })
         console.log(_csrfToken)
     }
 

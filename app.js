@@ -196,7 +196,7 @@ app.get('/success', async(req, res, next) => {
 })
 app.get('/get-csrf', (req, res) => {
   const _csrf = crypto.randomBytes(50).toString('base64').slice(0, 50)
-  res.send({ csrfToken : _csrf })
+  res.send(_csrf)
 })
 
 //csp report logging (in case of XSS attack)
