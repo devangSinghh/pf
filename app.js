@@ -134,6 +134,8 @@ app.use(cors())
 //   next()
 // })
 
+const csrfToken = crypto.randomBytes(50).toString('base64').slice(0, 50)
+
 // app.use(helmet())
 
 //xss attcks prevention
@@ -150,7 +152,14 @@ app.use('/api', analytics)
 app.use('/sitemap.xml', sitemap)
 app.use('/auth', admin)
 
-
+app.get('/csrf', async(req, res) => {
+  try {
+    res.send(csrfToken)
+  }
+  catch(e) {
+    console.log(e)
+  }
+})
 app.post('/auth/login', async(req, res) => {
     const username = sanitize(req.body.username)
     const password = sanitize(req.body.password)
@@ -169,10 +178,6 @@ app.get('/add-project/:file_name', (req, res) => {
 
 app.get('/devblog/:blogname/:file_name', (req,res) => {
   res.sendFile(path.join(__dirname+"/media/devblog/"+ req.params.blogname + '/' +req.params.file_name))
-})
-app.get('/csrf', async(req, res) => {
-  const csrfToken = crypto.randomBytes(50).toString('base64').slice(0, 50)
-  res.send(csrfToken)
 })
   
 app.get('/blog/:blogname/:file_name', (req,res) => {
