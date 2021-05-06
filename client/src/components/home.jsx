@@ -21,8 +21,6 @@ class Home extends Component {
 
     componentDidMount = async() => {
         const {data:recordIp} = await axios.get('/record-ip/add')
-        const { data : csrf } = await axios.get('/csrf')
-        console.log(csrf)
     }
     
     recordClicks = () => {
