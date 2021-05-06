@@ -135,11 +135,17 @@ app.use(cors(cors_options))
 //   next()
 // })
 
-app.use(helmet())
+// app.use(helmet())
 
 //xss attcks prevention
 app.use(xss())
-
+app.use(function (req, res, next) {
+  res.setHeader(
+    'Content-Security-Policy-Report-Only',
+    "default-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; frame-src 'self'"
+  );
+  next();
+});
 //middlewares
 app.use('/add-project', project)
 app.use('/add-blog', blog)
@@ -193,6 +199,11 @@ app.get('/success', async(req, res, next) => {
 app.get('/get-csrf', csrfProtection, (req, res) => {
   res.send({ csrfToken : req.csrfToken() })
 })
+
+//csp report logging (in case of XSS attack)
+app.post('/__cspreport__', (req, res) => {
+  console.log(req.body);
+});
 
 //serve static files
 app.use(express.static('client/build'))
