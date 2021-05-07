@@ -34,11 +34,17 @@ const BlogEditor = props => {
   
   const saveEditorContent = async(e, route, id) => {
       const payload = { 
-        blogEditorContent : draftToHtml(convertToRaw(editorState.getCurrentContent())) ,
+        blogEditorContent : DOMPurify.sanitize(draftToHtml(convertToRaw(editorState.getCurrentContent()))) ,
         blogName : props.blogName
       }
 
       const { data : res } = await axios.post(route + `${id}`, payload)
+  }
+
+  const createMarkup = (html) => {
+    return  {
+      __html: DOMPurify.sanitize(html)
+    }
   }
 
   const uploadCallback = file => {
@@ -82,7 +88,7 @@ const BlogEditor = props => {
     hashtag={{}}
       />
       <h4 className="preivew-head">Preview</h4>
-      <div className="editor-preview" dangerouslySetInnerHTML={{__html: `${draftToHtml(convertToRaw(editorState.getCurrentContent()))}`}} />
+      <div className="editor-preview" dangerouslySetInnerHTML={ createMarkup(convertedContent) } />
 
       <Button variant="contained" color="primary" className="mb-4" onClick={e => saveEditorContent(e, props.route, props.blogId)}>Save</Button>
     </div>

@@ -136,7 +136,7 @@ app.use(cors())
 // })
 
 //xss attcks prevention
-app.use(xss())
+// app.use(xss())
 
 //middlewares
 app.use('/add-project', project)

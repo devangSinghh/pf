@@ -1,17 +1,11 @@
 import React, { Component } from 'react'
 import axios, { base } from '../axios-pf'
 import Cookies from 'js-cookie'
-import Button from '@material-ui/core/Button'
-import OutlinedInput from '@material-ui/core/OutlinedInput'
-import InputLabel from '@material-ui/core/InputLabel'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import IconButton from '@material-ui/core/IconButton'
-import FormControl from '@material-ui/core/FormControl'
-import ButtonGroup from '@material-ui/core/ButtonGroup'
+import DOMPurify from 'dompurify'
+import { Button, OutlinedInput, InputLabel, InputAdornment, IconButton, FormControl, ButtonGroup, Tooltip } from '@material-ui/core'
 import KeyboardArrowRightOutlinedIcon from '@material-ui/icons/KeyboardArrowRightOutlined'
 import BlogEditor from '../blog/blogEditor'
 import FileCopyIcon from '@material-ui/icons/FileCopy'
-import Tooltip from '@material-ui/core/Tooltip'
 import EmbedGist from '../common/EmbedGist'
 import reactStringReplace  from 'react-string-replace'
 
@@ -57,7 +51,11 @@ class EachDevBlog extends Component {
         const { data : resp } = await axios.post(`/devblog/banner/${blog.slug}`, payload, config)
 
     }
-
+    createMarkup = html => {
+        return  {
+          __html: DOMPurify.sanitize(html)
+        }
+      }
     formatEditorContent = () => {
 
         // Match github gist strings
@@ -80,7 +78,7 @@ class EachDevBlog extends Component {
                 // else if (replacedText[i].includes('https://github.com/'))
                 //     replacedText[i] = <a href={replacedText[i]} dangerouslySetInnerHTML={{ __html : replacedText[i] }}></a>
                 else {
-                    replacedText[i] = <p dangerouslySetInnerHTML={{ __html : replacedText[i] }} />
+                    replacedText[i] = <p dangerouslySetInnerHTML={this.createMarkup(replacedText[i])} />
                 }
             }
         }

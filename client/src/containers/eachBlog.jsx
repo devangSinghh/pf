@@ -1,19 +1,21 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import axios, { base } from '../axios-pf';
+import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
+import axios, { base } from '../axios-pf'
 
-import BLogFunctions from '../blog/blogFunctions';
-import { SwatchesPicker  } from 'react-color';
-import TextareaAutosize from '@material-ui/core/TextareaAutosize';
+import BLogFunctions from '../blog/blogFunctions'
+import { SwatchesPicker  } from 'react-color'
+import TextareaAutosize from '@material-ui/core/TextareaAutosize'
 
-import BlogEditor from '../blog/blogEditor';
+import BlogEditor from '../blog/blogEditor'
+
+import DOMPurify from 'dompurify'
 
 //share buttons
-import { FacebookShareButton, TwitterShareButton } from "react-share";
-import { FacebookIcon, TwitterIcon } from "react-share";
+import { FacebookShareButton, TwitterShareButton } from "react-share"
+import { FacebookIcon, TwitterIcon } from "react-share"
 
 //import Modal
-import M from '../common/modal';
+import M from '../common/modal'
 
 import $ from 'jquery'
 
@@ -121,6 +123,11 @@ class EachBlog extends BLogFunctions {
         };
     }
 
+    createMarkup = html => {
+        return  {
+          __html: DOMPurify.sanitize(html)
+        }
+      }
 
     copyTextToClipBoard = () => {
         navigator.clipboard.writeText(base + 'blogs/' + this.state.blog.slug)
@@ -184,7 +191,7 @@ class EachBlog extends BLogFunctions {
                 </h3>}
 
                 {/* <img src={mask} className="mask" alt=""/> */}
-                <p id="blog-content" className="blog-content" dangerouslySetInnerHTML={{__html:`${this.state.blog.blogEditorContent}`}}></p>
+                <p id="blog-content" className="blog-content" dangerouslySetInnerHTML={this.createMarkup(this.state.blog.blogEditorContent)}></p>
                 <p id="blog-content" className="blog-content" style={{ color:"white", marginBottom:"1.2rem" }}>Overall, the place is full of adventure and thrill ♡, with a perfect nature blend.  </p>
 
                 <div className="copy-to-clipboard">

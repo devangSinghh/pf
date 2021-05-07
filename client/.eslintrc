@@ -1,0 +1,13 @@
+{
+    "plugins": [
+      "jam3"
+    ],
+    "rules": {
+      "jam3/no-sanitizer-with-danger": [
+        2,
+        {
+          "wrapperName": ["sanitize"]
+        }
+      ]
+    }
+  }

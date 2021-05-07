@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import DOMPurify from 'dompurify'
 
 class EmbeddedGist extends Component {
 
@@ -39,6 +40,12 @@ class EmbeddedGist extends Component {
   copyTextToClipBoard = () => {
     navigator.clipboard.writeText(this.state.code)
     this.setState({ copyClipBoardStatus : true })
+  }
+
+  createMarkup = html => {
+    return  {
+      __html: DOMPurify.sanitize(html)
+    }
   }
 
   handleEvent = e => {
@@ -115,7 +122,7 @@ class EmbeddedGist extends Component {
       return <div></div>
     } else {
       return <div>
-        <div id="gist" onMouseDown={this.handleEvent} onSelect={this.handleEvent} onMouseUp={this.handleEvent} onFocus={this.handleFocus} dangerouslySetInnerHTML={{__html: this.state.src}} />
+        <div id="gist" onMouseDown={this.handleEvent} onSelect={this.handleEvent} onMouseUp={this.handleEvent} onFocus={this.handleFocus} dangerouslySetInnerHTML={this.createMarkup(this.state.src)} />
         <button className="copy-embed-gist" 
           onClick={this.onGistButtonClick} 
           style={{ position : 'absolute', left:this.state.buttonps.x, top:this.state.buttonps.y, transform : this.state.showbutton ? 'scale(1)' : 'scale(0)'}}>
