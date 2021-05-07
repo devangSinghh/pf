@@ -7,13 +7,17 @@ import InputLabel from '@material-ui/core/InputLabel'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import IconButton from '@material-ui/core/IconButton'
 import FormControl from '@material-ui/core/FormControl'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
 import KeyboardArrowRightOutlinedIcon from '@material-ui/icons/KeyboardArrowRightOutlined'
 import BlogEditor from '../blog/blogEditor'
+import FileCopyIcon from '@material-ui/icons/FileCopy'
+import Tooltip from '@material-ui/core/Tooltip'
 import EmbedGist from '../common/EmbedGist'
 import reactStringReplace  from 'react-string-replace'
 
 import Footer from '../blog/footer'
 
+import Loader from '../common/Loader'
 class EachDevBlog extends Component {
     
     state = {
@@ -23,7 +27,8 @@ class EachDevBlog extends Component {
             title : "",
             subtitle : "",
             blogBanner : null
-        }
+        },
+        loading : true
     }
 
     componentDidMount = async() => {
@@ -33,7 +38,7 @@ class EachDevBlog extends Component {
         const data = {...this.state.data}
         data.title = blog.title
         data.subtitle = blog.subtitle
-        this.setState({ data })
+        this.setState({ data, loading : false })
     }
     
     handleChange = ({ currentTarget : input }) => {
@@ -57,7 +62,14 @@ class EachDevBlog extends Component {
 
         // Match github gist strings
         let replacedText = reactStringReplace(this.state.blog.body, /(#https?:\/\/\S+)/g, (match, i) => (
-            <EmbedGist gist={match.split('/')[match.split('/').indexOf('gist.github.com') + 2].split('@')[0].slice(0, -3)} file={match.split('@')[1].split('<')[0]} />
+            <div id="gist-wrapper">
+                <EmbedGist gist={match.split('/')[match.split('/').indexOf('gist.github.com') + 2].split('@')[0].slice(0, -3)} file={match.split('@')[1].split('<')[0]} />
+                <Tooltip title="copy code">
+                    <IconButton className="copy-gist-button">
+                        <FileCopyIcon/>
+                    </IconButton>
+                </Tooltip>
+            </div>
         ))
 
         //iterate over the content and format remaining content 
@@ -97,13 +109,20 @@ class EachDevBlog extends Component {
         window.scrollTo(0, 0)
     }
     render() {
-        const ifAdmin = Cookies.get('admin')
+        const ifAdmin = Cookies.get('admin') && Cookies.get('session_id')
         const blog = this.state.blog === undefined ? null : this.state.blog
-        return (
+        const el = this.state.loading === true ? 
+            <Loader height="60vh" content="Loading..."/>
+            :
             <div className="container-fluid p-0">
-                {ifAdmin && <Button className="show-hide-b-d" onClick={this.showEditor} variant="outlined" color="primary">
-                    {this.state.showEditor ? "Hide editor" : "Show editor"}
-                </Button>}
+                {ifAdmin && 
+                <ButtonGroup orientation="vertical" className="show-hide-b-d">
+                    <Button className="" onClick={this.showEditor} variant="contained" color="secondary">
+                        {this.state.showEditor ? "done" : "Edit"}
+                    </Button>
+                    <Button variant="contained" color="secondary" className="logout-each-blog-page">Logout</Button>
+                </ButtonGroup>
+                }
                 <div className="container">
                 
                 {this.state.showEditor && 
@@ -203,8 +222,8 @@ class EachDevBlog extends Component {
                     </div>
                 </div>
                 <Footer/>
-            </div>
-        );
+                </div>
+        return (el)
     }
 }
 
