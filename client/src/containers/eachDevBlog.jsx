@@ -67,7 +67,9 @@ class EachDevBlog extends Component {
                     replacedText[i] = <p></p>
                 // else if (replacedText[i].includes('https://github.com/'))
                 //     replacedText[i] = <a href={replacedText[i]} dangerouslySetInnerHTML={{ __html : replacedText[i] }}></a>
-                else replacedText[i] = <p dangerouslySetInnerHTML={{ __html : replacedText[i] }}></p>
+                else {
+                    replacedText[i] = <p dangerouslySetInnerHTML={{ __html : replacedText[i] }} />
+                }
             }
         }
 
@@ -76,7 +78,7 @@ class EachDevBlog extends Component {
             console.log(match)
         ))
         
-        return <div>{formattedText}</div>
+        return <div>{replacedText}</div>
     }
 
     updateBlogTitle = async() => {

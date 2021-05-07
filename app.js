@@ -115,9 +115,9 @@ if (process.env.NODE_ENV === 'production') {
     express_session.saveUninitialized = false
 }
   
-// const cors_options = {
-//   credentials : true
-// }
+const cors_options = {
+  credentials : true
+}
 
 const limiter = rate_limit({
   windowMs : 15 * 60 * 1000,
@@ -134,9 +134,6 @@ app.use(cors())
 //   res.cookie('csrftoken', req.csrfToken())
 //   next()
 // })
-
-
-// app.use(helmet())
 
 //xss attcks prevention
 app.use(xss())
