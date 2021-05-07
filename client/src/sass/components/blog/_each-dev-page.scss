@@ -1,7 +1,13 @@
 .show-hide-b-d {
+    // background-color: rgb(216, 216, 216);
     position: fixed !important;
     left: 0;
+    // bottom: 50%;
 }
+// .logout-each-blog-page {
+//     position: fixed;
+//     left: 140px;
+// }
 .devblog-e-page {
     font-family: $font-7;
     .banner-img {
@@ -91,6 +97,32 @@
         }
     }
 }
+#gist-wrapper {
+    position: relative;
+    .copy-gist-button {
+        position: absolute;
+        border-radius: 50%;
+        margin: 0.2rem;
+        padding: 0.7rem;
+        top: 0;
+        right: 0;
+    }
+}
+
+.copy-embed-gist {
+    border-radius: 0.2rem;
+    padding: 0.2rem;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    transition: all 0.2s ease;
+    background-color: rgb(70, 69, 69);
+    color: white;
+    width: 80px;
+
+    &:active {
+        transform: scale(0.97);
+    }
+}
+
 
 @media (max-width : 1200px) {
     .body-wrapper {

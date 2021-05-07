@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const admin = require('../models/auth')
-const sessions = require('../models/sessions')
+const crypto = require('crypto-js')
 const sanitize = require('mongo-sanitize')
 const Router = require('express').Router()
 const boxen = require('boxen')
@@ -10,21 +10,24 @@ mongoose.set('useFindAndModify', false)
 Router.post('/register', async(req, res) => {
 
     const username = sanitize(req.body.username)
-
+    const password = sanitize(req.body.password)
+    const hashed_password = crypto.AES.encrypt(password, process.env.PASSWORD_HASH_KEY).toString()
     const checkUser = await admin.find({ username : {$in : [username]} })
-
+    console.log(checkUser)
     try {
-        if(checkUser !== null) {
-            res.send(boxen('user already exists!! try different username', { borderColor :'yellow' }))
-            return
+        if(checkUser.length != 0) {
+            console.log(boxen('user already exists!! try different username', { borderColor :'yellow' }))
+            return res.send('user already exists!! try different username')
+            
         }
         const user = new admin({
-            username : req.body.username,
-            password : req.body.password
+            username : username,
+            password : hashed_password
         })
 
         const savedadmin = await user.save()
-        res.send(savedadmin)
+        res.send(`new admin (${username}) created`)
+        console.log(boxen(`new admin (${username}) created`, { borderColor :'green' }))
     }
     catch (e) {
         console.log(boxen('not able to create a new user! try again later', { borderColor : 'red' }))
@@ -40,7 +43,7 @@ Router.post('/validate-user-session/:user', async(req, res) => {
         res.send(data.session_id)
     }
     catch(e) {
-        console.log(boxen('data is became null', { borderColor : "red", padding:"1", }))
+        console.log(boxen('data became null', { borderColor : "red", padding:"1", }))
     }
     
   })

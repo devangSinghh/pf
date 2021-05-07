@@ -13,7 +13,7 @@ app.disable('x-powered-by')
 const rate_limit = require('express-rate-limit')
 const xss = require('xss-clean')
 // const csrf = require('csurf')
-const crypto = require('crypto')
+const CryptoJS = require('crypto-js')
 const cors = require('cors')
 const cookie_parser = require('cookie-parser')
 const body_parser = require('body-parser')
@@ -154,11 +154,15 @@ app.use('/csrf', csrf)
 app.post('/auth/login', async(req, res) => {
     const username = sanitize(req.body.username)
     const password = sanitize(req.body.password)
-    const data = await adminModel.findOne({ username : username, password : password })
+    
+    const data = await adminModel.findOne({ username : username })
 
-    if (data.length != 0) {
+    var bytes  = CryptoJS.AES.decrypt(data.password, process.env.PASSWORD_HASH_KEY)
+    var decrypted_password = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+    console.log(typeof decrypted_password.toString(), typeof password)
+    if (data.length != 0 && decrypted_password.toString() === password) {
       res.status(200)
-       return res.redirect('/success?u=' + data.username) //pass username in query
+       return res.redirect('/success?u=' + username) //pass username in query
       }
     res.send(data)
 })

@@ -21,6 +21,7 @@ import DevBlogsAdmin from './containers/devBlogsAdmin'
 import EachDevBlog from './containers/eachDevBlog'
 import Login from './auth/login'
 import { Cookies } from 'js-cookie'
+import Register from './auth/Register'
 
 function App() {
 
@@ -42,6 +43,7 @@ function App() {
            <Route path="/blogs/:slug" render={props => <EachBlog {...props} key={props.location.key}/>} />
            <Route path="/blogs" component={Blog} />
            <Route path="/d/blogs" exact component={DeveloperBlogs} />
+           <Route path="/register" component={Register} />
            <Route path="/login" component={Login} />
            <Route path="/d/blogs/:slug" render={props => <EachDevBlog {...props} key={props.location.key}/>} />
            <Route path="/showcase-your-blog" component={ShowcaseBlog} />
