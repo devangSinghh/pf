@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 class EmbeddedGist extends Component {
 
@@ -10,15 +10,7 @@ class EmbeddedGist extends Component {
         stylesheetAdded : false,
         src: "",
         gist : this.props.gist,
-        file : this.props.file,
-        mouse : { clientX : 0, clientY : 0 },
-        code : '',
-        showbutton : false,
-        buttoncontent : 'copy',
-          buttonps : {
-            x : 0,
-            y : 0
-          }
+        file : this.props.file
         }
     
   // The Gist JSON data includes a stylesheet to add to the page
@@ -35,45 +27,10 @@ class EmbeddedGist extends Component {
       document.head.appendChild(link);
     }
   }
-
-  copyTextToClipBoard = () => {
-    navigator.clipboard.writeText(this.state.code)
-    this.setState({ copyClipBoardStatus : true })
-  }
-
-  handleEvent = e => {
-    const { pageX, pageY, clientX, clientY } = e
-    const gist = document.getElementById('gist') === null ? null : document.getElementById('gist').getBoundingClientRect()
-
-    if (e.type === "mouseup" && window.getSelection().toString().length !== 0) {
-      const s = window.getSelection()
-      //  const oRect = s.getRangeAt(0).getBoundingClientRect()
-       this.setState({ code : s.toString(), showbutton : true, buttonps : { x:0, y:clientY - gist.top } })
-     } 
-     else {
-       
-       this.setState({ showbutton : false,  buttonps : { x:0, y:clientY - gist.top }, buttoncontent : 'copy' })
-     }
-  }
-
-  handleFocus = (event) => console.log(event.target.select())
-
-  updatePosition = e => {
-    const { pageX, pageY, clientX, clientY } = e
-    if(document.getElementById('gist') === null) {}
-    else {
-      const gist = document.getElementById('gist').getBoundingClientRect()
-      this.setState({ mouse : { clientX : clientX - gist.left, clientY : clientY - gist.top } })
-    }
-    
-  };
-
+  
   componentDidMount = async() => {
     const props = this.props
     this.setState({ gist : props.gist, file : props.file })
-
-    document.addEventListener("mousemove", this.updatePosition, false);
-    document.addEventListener("mouseenter", this.updatePosition, false);
 
     // Create a JSONP callback that will set our state
     // with the data that comes back from the Gist site
@@ -82,7 +39,6 @@ class EmbeddedGist extends Component {
         this.setState({ loading: false, src: gist.div })
         this.addStylesheet(gist.stylesheet)
     }
-    
 
     let url = "https://gist.github.com/" + this.state.gist + ".json?callback=" + gistCallback
     if (this.state.file === undefined ? "" : this.state.file.length !== 0) {
@@ -95,33 +51,13 @@ class EmbeddedGist extends Component {
     script.src = url
     document.head.appendChild(script)
   }
-
-
-  componentWillUnmount = async() => {
-      document.removeEventListener("mousemove", this.updatePosition)
-      document.removeEventListener("mouseenter", this.updatePosition)
-  }
-
-  onGistButtonClick = () => {
-    this.copyTextToClipBoard()
-    this.setState({ buttoncontent : 'copied!' })
-    setTimeout(function(){
-      this.setState({showbutton : false});
-    }.bind(this),1500);
-  }
     
   render() {
     if (this.state.loading) {
       return <div></div>
     } else {
-      return <div>
-        <div id="gist" onMouseDown={this.handleEvent} onSelect={this.handleEvent} onMouseUp={this.handleEvent} onFocus={this.handleFocus} dangerouslySetInnerHTML={{__html: this.state.src}} />
-        <button className="copy-embed-gist" 
-          onClick={this.onGistButtonClick} 
-          style={{ position : 'absolute', left:this.state.buttonps.x, top:this.state.buttonps.y, transform : this.state.showbutton ? 'scale(1)' : 'scale(0)'}}>
-            {this.state.buttoncontent}
-        </button>
-        </div>
+        
+      return <div dangerouslySetInnerHTML={{__html: this.state.src}} />
     }
   }
 }

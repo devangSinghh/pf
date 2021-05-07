@@ -110,14 +110,7 @@ class DevBlogsAdmin extends Component {
                     <div className="col-md-12 p-0 mb-3">
                         <TextField name="content" onChange={this.handleChange} value={data.content} className="w-100" id="outlined-basic-3" multiline rows={10} label="Blog card content" variant="outlined" />
                     </div>
-                    <div className="a-b-wr row m-0">
-                        <div className="save d-flex justify-content-start">
-                            <Button onClick={this.AddDevBlog} variant="outlined">Save</Button>
-                        </div>
-                        <div className="logout d-flex justify-content-end">
-                            <Button onClick={this.AddDevBlog} variant="contained" color="secondary">Logout</Button>
-                        </div>
-                    </div>
+                    <Button onClick={this.AddDevBlog} variant="outlined">Save</Button>
                 </div>
             </div>
         );

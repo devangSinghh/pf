@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
 import { Link, Redirect } from 'react-router-dom'
+
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
+
 import Cookies from 'js-cookie'
+
 import axios, {base} from '../axios-pf'
 
 class Login extends Component {
@@ -11,6 +14,7 @@ class Login extends Component {
         data : {
             username : "",
             password : "",
+            csrfVal : ""
         },
         csrf : '',
         logStatus : true,
@@ -27,7 +31,6 @@ class Login extends Component {
 
         const csrf_input_field = document.getElementById('csrf-field')
         const csrf_value = csrf_input_field.getAttribute('value')
-        
         //check for csrf attacks
         if (csrf_value !== this.state.csrf) {
             this.setState({ logStatus : false })
@@ -37,8 +40,7 @@ class Login extends Component {
         
         const payload = {
             username : data.username,
-            password : data.password,
-            csrf : this.state.csrf
+            password : data.password
         }
 
         const { data : res } = await axios.post('/auth/login', payload)
@@ -75,6 +77,7 @@ class Login extends Component {
                     </div>
                     <Button variant="contained" className="mt-3" color="primary" onClick={this.handleSubmit}>Login</Button>
                 </div>
+
             </div>
         );
     }
