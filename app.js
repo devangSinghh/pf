@@ -121,7 +121,7 @@ const cors_options = {
 }
 
 const limiter = rate_limit({
-  windowMs : 15 * 60 * 1000,
+  windowMs : 1 * 30 * 1000,
   max : 100
 })
 app.use(limiter)
