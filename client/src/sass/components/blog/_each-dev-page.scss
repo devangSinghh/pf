@@ -123,6 +123,15 @@
     }
 }
 
+.read-more-blogs {
+    padding: 2rem;
+
+    .read-more-heading {
+        font-size: 20px;
+        font-family: $font-7;
+        color: white;
+    }
+}
 
 @media (max-width : 1200px) {
     .body-wrapper {

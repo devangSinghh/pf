@@ -6,33 +6,40 @@ import { Button, OutlinedInput, InputLabel, InputAdornment, IconButton, FormCont
 import KeyboardArrowRightOutlinedIcon from '@material-ui/icons/KeyboardArrowRightOutlined'
 import BlogEditor from '../blog/blogEditor'
 import FileCopyIcon from '@material-ui/icons/FileCopy'
+import FacebookIcon from '@material-ui/icons/Facebook'
+import LinkedInIcon from '@material-ui/icons/LinkedIn'
+import TwitterIcon from '@material-ui/icons/Twitter'
 import EmbedGist from '../common/EmbedGist'
 import reactStringReplace  from 'react-string-replace'
 
 import Footer from '../blog/footer'
-
+import DevCard from '../common/developerBlogCard'
 import Loader from '../common/Loader'
 class EachDevBlog extends Component {
     
     state = {
         showEditor : false,
         blog : [],
+        read_more : [],
         data : {
             title : "",
             subtitle : "",
             blogBanner : null
         },
-        loading : true
+        loading : true,
+        color : [ '#0F413B', '#222', '#3625B4', '#A84760', '#8432D0', '#A84760'],
+        currentColor : ''
     }
 
     componentDidMount = async() => {
-        const { match: { params } } = this.props;
+        const { match: { params } } = this.props
         const { data : blog } = await axios.get('/devblog/' + params.slug)
-        this.setState({ blog })
+        const { data : read_more } = await axios.get('/suggestions/read-more')
         const data = {...this.state.data}
         data.title = blog.title
         data.subtitle = blog.subtitle
-        this.setState({ data, loading : false })
+        const currentColor =  this.state.color[Math.floor(Math.random() * this.state.color.length)]
+        this.setState({ blog, data, currentColor, read_more, loading : false })
     }
     
     handleChange = ({ currentTarget : input }) => {
@@ -108,19 +115,32 @@ class EachDevBlog extends Component {
         this.setState({ showEditor:!this.state.showEditor })
         window.scrollTo(0, 0)
     }
+
+    callLogout = () => {
+        Cookies.remove('session_id')
+        Cookies.remove('admin')
+    }
+
     render() {
         const ifAdmin = Cookies.get('admin') && Cookies.get('session_id')
         const blog = this.state.blog === undefined ? null : this.state.blog
+        const read_more = this.state.read_more === undefined ? null : this.state.read_more
         const el = this.state.loading === true ? 
             <Loader height="60vh" content="Loading..."/>
             :
             <div className="container-fluid p-0">
                 {ifAdmin && 
                 <ButtonGroup orientation="vertical" className="show-hide-b-d">
-                    <Button className="" onClick={this.showEditor} variant="contained" color="secondary">
+                    <Button className="" onClick={this.showEditor} variant="contained" color="primary">
                         {this.state.showEditor ? "done" : "Edit"}
                     </Button>
-                    <Button variant="contained" color="secondary" className="logout-each-blog-page">Logout</Button>
+                    <Button 
+                    variant="contained" color="primary" 
+                    className="logout-each-blog-page"
+                    onClick={this.callLogout}
+                    >
+                        Logout
+                    </Button>
                 </ButtonGroup>
                 }
                 <div className="container">
@@ -212,13 +232,27 @@ class EachDevBlog extends Component {
                     <div className="body-wrapper">
                         <ul className="blog-share">
                             <li>SHARE</li>
-                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.facebook.com/sharer/sharer.php?u=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-facebook"/></li></a>
-                            <a style={{ textDecoration:"none", color:"#444" }} className="twitter-share-button" href={"https://twitter.com/share?url=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-twitter"/></li></a>
-                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.linkedin.com/sharing/share-offsite/?url=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-linkedin"/></li></a>
+                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.facebook.com/sharer/sharer.php?u=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank">
+                                <li><IconButton><FacebookIcon/></IconButton></li>
+                            </a>
+                            <a style={{ textDecoration:"none", color:"#444" }} className="twitter-share-button" href={"https://twitter.com/share?url=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank">
+                                <li><IconButton><LinkedInIcon/></IconButton></li>
+                            </a>
+                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.linkedin.com/sharing/share-offsite/?url=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank">
+                               <li><IconButton><TwitterIcon/></IconButton></li>
+                            </a>
                         </ul>
                         <p id="blog-body" className="body">
                             {this.formatEditorContent()}
                         </p>
+                    </div>
+                </div>
+                <div className="read-more-blogs" style={{ backgroundColor:this.state.currentColor }}>
+                    <div className="container">
+                        <h2 className="read-more-heading">Read more...</h2>
+                        <div className="row m-0">
+                            {read_more.map((m, key) => <DevCard key={key} title={m.cardtitle} content={m.content} date={m.publishedOn} slug={m.slug} card={base + m.cardBanner}/>)}
+                        </div>
                     </div>
                 </div>
                 <Footer/>

@@ -8,10 +8,16 @@ import Tooltip from '@material-ui/core/Tooltip'
 
 const DevCard = props => {
     return ( 
-        <div className="col-md-4">
+        <div className="col-md-4 mt-3">
             <div className="d-blog-card m-2">
-                <Link to={'/d/blogs/' + props.slug}><img style={{ pointerEvents:"none" }} src={props.card} className="d-blog-card-img" alt=""/></Link>
-                {/* <RippleButton children={ */}
+                {/* <Link to={'/d/blogs/' + props.slug}> */}
+                <div>
+                    <Link className="d-flex justify-content-center" to={'/d/blogs/' + props.slug}>
+                    <img src={props.card} className="d-blog-card-img" alt=""/>
+                    </Link>
+                </div>
+                    
+                {/* </Link> */}
                 <div>
                     <div className="row w-100 m-0 wrapper d-flex align-items-center">
                     <h5 className="d-blog-card-heading">{props.title}</h5>
@@ -26,9 +32,10 @@ const DevCard = props => {
                 <Link to={'/d/blogs/' + props.slug}>
                     <div style={{textTransform: 'none'}} className="read-more">
                         <Tooltip title="Open blog" aria-label="add">
-                            <IconButton aria-label="blog title">
-                                <ArrowRightAltIcon/>
-                            </IconButton>
+                            {/* <IconButton aria-label="blog title"> */}
+                                {/* <ArrowRightAltIcon/> */}
+                                <div className="read-b-btn">Read <ArrowRightAltIcon/> </div>
+                            {/* </IconButton> */}
                         </Tooltip>
                     </div>
                 </Link>
