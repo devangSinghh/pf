@@ -123,7 +123,7 @@ const limiter = rate_limit({
   windowMs : 1 * 40 * 1000,
   max : 100
 })
-app.use(limiter)
+// app.use(limiter)
 
 app.use('/success', session(express_session))
 app.use(express.json())
