@@ -120,7 +120,7 @@ const cors_options = {
 }
 
 const limiter = rate_limit({
-  windowMs : 15 * 60 * 1000,
+  windowMs : 1 * 40 * 1000,
   max : 100
 })
 app.use(limiter)
@@ -136,7 +136,7 @@ app.use(cors())
 // })
 
 //xss attcks prevention
-app.use(xss())
+// app.use(xss())
 
 //middlewares
 app.use('/add-project', project)
