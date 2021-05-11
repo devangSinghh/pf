@@ -119,10 +119,10 @@ const cors_options = {
   credentials : true
 }
 
-const limiter = rate_limit({
-  windowMs : 1 * 40 * 1000,
-  max : 100
-})
+// const limiter = rate_limit({
+//   windowMs : 1 * 40 * 1000,
+//   max : 100
+// })
 // app.use(limiter)
 
 app.use('/success', session(express_session))
@@ -191,10 +191,9 @@ app.get('/success', async(req, res, next) => {
   
 })
 
-
 //csp report logging (in case of XSS attack)
 app.post('/__cspreport__', (req, res) => {
-});
+})
 
 //serve static files
 app.use(express.static('client/build'))
