@@ -33,7 +33,7 @@ class EachDevBlog extends Component {
 
     componentDidMount = async() => {
         const { match: { params } } = this.props
-        const { data : blog } = await axios.get('/devblog/' + params.slug)
+        const { data : blog } = await axios.get('/devblog/get/' + params.slug)
         const { data : read_more } = await axios.get('/suggestions/read-more')
         const data = {...this.state.data}
         data.title = blog.title
@@ -69,11 +69,6 @@ class EachDevBlog extends Component {
         let replacedText = reactStringReplace(this.state.blog.body, /(#https?:\/\/\S+)/g, (match, i) => (
             <div id="gist-wrapper">
                 <EmbedGist gist={match.split('/')[match.split('/').indexOf('gist.github.com') + 2].split('@')[0].slice(0, -3)} file={match.split('@')[1].split('<')[0]} />
-                <Tooltip title="copy code">
-                    <IconButton className="copy-gist-button">
-                        <FileCopyIcon/>
-                    </IconButton>
-                </Tooltip>
             </div>
         ))
 
@@ -81,6 +76,8 @@ class EachDevBlog extends Component {
         for(let i = 0;i<replacedText.length;i++) {
             if(typeof replacedText[i] === 'string') {
                 if (replacedText[i].includes('target="_self"'))
+                    replacedText[i] = <p></p>
+                if(replacedText[i].includes('BlinkMacSystemFont'))
                     replacedText[i] = <p></p>
                 // else if (replacedText[i].includes('https://github.com/'))
                 //     replacedText[i] = <a href={replacedText[i]} dangerouslySetInnerHTML={{ __html : replacedText[i] }}></a>
@@ -232,13 +229,13 @@ class EachDevBlog extends Component {
                     <div className="body-wrapper">
                         <ul className="blog-share">
                             <li>SHARE</li>
-                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.facebook.com/sharer/sharer.php?u=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank">
+                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.facebook.com/sharer/sharer.php?u=thedevang.com/blogs/" + this.state.blog.slug} target="_blank">
                                 <li><IconButton><FacebookIcon/></IconButton></li>
                             </a>
-                            <a style={{ textDecoration:"none", color:"#444" }} className="twitter-share-button" href={"https://twitter.com/share?url=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank">
+                            <a style={{ textDecoration:"none", color:"#444" }} className="twitter-share-button" href={"https://twitter.com/share?url=thedevang.com/blogs/" + this.state.blog.slug} target="_blank">
                                 <li><IconButton><LinkedInIcon/></IconButton></li>
                             </a>
-                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.linkedin.com/sharing/share-offsite/?url=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank">
+                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.linkedin.com/sharing/share-offsite/?url=thedevang.com/blogs/" + this.state.blog.slug} target="_blank">
                                <li><IconButton><TwitterIcon/></IconButton></li>
                             </a>
                         </ul>

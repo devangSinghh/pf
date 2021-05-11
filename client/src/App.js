@@ -36,16 +36,16 @@ function App() {
       <Router>
         <Switch>
            <Route path="/" exact component={Home} />
-           <Route path="/admin" component={Manage} />
-           <Route path="/d/admin" component={DevBlogsAdmin} />
+           {/* <Route path="/admin" exact component={Manage} /> */}
+           {/* <Route path="/d/admin" component={DevBlogsAdmin} /> */}
 
            {/*Blog routes*/}
-           <Route path="/blogs/:slug" render={props => <EachBlog {...props} key={props.location.key}/>} />
-           <Route path="/blogs" component={Blog} />
-           <Route path="/d/blogs" exact component={DeveloperBlogs} />
+           <Route path="/travel/:slug" render={props => <EachBlog {...props} key={props.location.key}/>} />
+           <Route path="/travel" exact component={Blog} />
+           <Route path="/blogs" exact component={DeveloperBlogs} />
            <Route path="/register" component={Register} />
-           <Route path="/login" component={Login} />
-           <Route path="/d/blogs/:slug" render={props => <EachDevBlog {...props} key={props.location.key}/>} />
+           {/* <Route path="/login" component={Login} /> */}
+           <Route path="/blogs/:slug" render={props => <EachDevBlog {...props} key={props.location.key}/>} />
            <Route path="/showcase-your-blog" component={ShowcaseBlog} />
 
         </Switch>

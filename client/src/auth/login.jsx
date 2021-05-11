@@ -60,7 +60,7 @@ class Login extends Component {
     render() {
 
         if (Cookies.get('session_id') && Cookies.get('session_id').length !== 0 && Cookies.get('admin') && Cookies.get('admin').length !== 0) 
-            return <Redirect to="/d/admin"/>
+            return <Redirect to="/admin"/>
 
         return (
             <div className="container">

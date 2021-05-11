@@ -13,7 +13,7 @@ class Blog extends Component {
     }
 
     componentDidMount = async() => {
-        const { data : blogs } = await axios.get(base + 'add-blog');
+        const { data : blogs } = await axios.get('add-blog');
         this.setState({ blogs, loadingBlogs : false })
     }
 

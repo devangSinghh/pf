@@ -1,0 +1,9 @@
+@font-face {
+    font-family: sailec;
+    src:url('./sailec-medium.ttf')
+}
+
+.admin-login-form {
+    font-family: sailec;
+    font-weight: 700;
+}

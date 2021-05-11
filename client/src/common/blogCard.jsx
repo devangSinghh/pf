@@ -7,7 +7,7 @@ import 'rsuite/dist/styles/rsuite-default.css';
 const BlogCard = props => {
     return (
         <div className="mt-5">
-            <Link to={"/blogs/" + props.slug}>
+            <Link to={"/travel/" + props.slug}>
                 <img src={props.image} className="blog-card-image img img-fluid" alt=""/>
             </Link>
             <h5 className="blog-card-initial-line" style={{ color:`${props.color}`, opacity:0.7 }}>{props.blogInitialLine}</h5>

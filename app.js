@@ -44,6 +44,27 @@ const sitemap = require("./routes/sitemap")
 const admin = require('./routes/auth')
 const csrf = require('./routes/csrf')
 const suggestions = require('./routes/suggestions')
+const node_panel = require('./routes/admin/panel')
+
+
+const addon_test = require('./build/Release/native.node')
+console.log(addon_test.hello())
+
+const hbs = require('hbs')
+
+
+// registerPartials for Admin
+hbs.registerPartials(__dirname+'/views/partials/')
+// registerPartials for User
+//hbs.registerPartials(__dirname+'/views/user/partials/')
+
+// To print Json object in HBS file using {{json this}}
+hbs.registerHelper('json', function(obj) {
+    return JSON.stringify(obj);
+  });
+
+// Set View Engine
+app.set('view engine', 'hbs')
 
 //Port
 const PORT = 6161
@@ -63,10 +84,10 @@ let limit_depth = (obj, current_depth, limit) => {
 }
 
 // middleware to prevent Mongo injection
-// app.use((req, res, next) => {
-//     limit_depth(req.body, 0, depth_limit);
-//     next()
-// })
+app.use((req, res, next) => {
+    limit_depth(req.body, 0, depth_limit);
+    next()
+})
 
 
 // connect to DB
@@ -124,7 +145,10 @@ const limiter = rate_limit({
   windowMs : 1 * 30 * 1000,
   max : 100
 })
-app.use(limiter)
+// app.use(limiter)
+
+app.set('views', path.join(__dirname, 'views'))
+// app.set('view engine', 'ejs')
 
 app.use('/success', session(express_session))
 app.use(express.json())
@@ -136,22 +160,58 @@ app.use(cors())
 //   next()
 // })
 
+app.use(express.static(__dirname+'/public'))
+// app.use('/admin', express.static('./node_modules/admin-lte'))
+
 //xss attcks prevention
 // app.use(xss())
 
 //middlewares
-app.use('/add-project', project)
-app.use('/add-blog', blog)
-app.use('/devblog', devblog)
-app.use('/update-blog', editThisBlog)
-app.use('/showcase-blog-request', blogRequest)
-app.use('/record-ip', ip)
-app.use('/api', analytics)
-app.use('/sitemap.xml', sitemap)
-app.use('/auth', admin)
-app.use('/csrf', csrf)
-app.use('/suggestions', suggestions)
+app.use('/api/add-project', project)
+app.use('/api/add-blog', blog)
+app.use('/api/devblog', devblog)
+app.use('/api/update-blog', editThisBlog)
+app.use('/api/showcase-blog-request', blogRequest)
+app.use('/api/record-ip', ip)
+app.use('/api/api', analytics)
+app.use('/api/sitemap.xml', sitemap)
+app.use('/api/auth', admin)
+app.use('/api/csrf', csrf)
+app.use('/api/suggestions', suggestions)
+// app.use('/admin', node_panel)
+app.use(require('./routes'))
+app.use(express.static('views/images')); 
 
+const all_routes_list = []
+
+function print (path, layer) {
+  if (layer.route) {
+    layer.route.stack.forEach(print.bind(null, path.concat(split(layer.route.path))))
+  } else if (layer.name === 'router' && layer.handle.stack) {
+    layer.handle.stack.forEach(print.bind(null, path.concat(split(layer.regexp))))
+  } else if (layer.method) {
+    all_routes_list.push({ method:layer.method.toUpperCase(), 
+      path:path.concat(split(layer.regexp)).filter(Boolean).join('/') , is_get:layer.method.toUpperCase() === 'GET' })
+  }
+}
+
+function split (thing) {
+  if (typeof thing === 'string') {
+    return thing.split('/')
+  } else if (thing.fast_slash) {
+    return ''
+  } else {
+    var match = thing.toString()
+      .replace('\\/?', '')
+      .replace('(?=\\/|$)', '$')
+      .match(/^\/\^((?:\\[.*+?^${}()|[\]\\\/]|[^.*+?^${}()|[\]\\\/])*)\$\//)
+    return match
+      ? match[1].replace(/\\(.)/g, '$1').split('/')
+      : '<complex:' + thing.toString() + '>'
+  }
+}
+
+app._router.stack.forEach(print.bind(null, []))
 
 app.post('/auth/login', async(req, res) => {
     const username = sanitize(req.body.username)
@@ -159,14 +219,26 @@ app.post('/auth/login', async(req, res) => {
     
     const data = await adminModel.findOne({ username : username })
 
-    var bytes  = CryptoJS.AES.decrypt(data.password, process.env.PASSWORD_HASH_KEY)
-    var decrypted_password = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
-    console.log(typeof decrypted_password.toString(), typeof password)
+    const bytes  = CryptoJS.AES.decrypt(data.password, process.env.PASSWORD_HASH_KEY)
+    const decrypted_password = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+
     if (data.length != 0 && decrypted_password.toString() === password) {
       res.status(200)
        return res.redirect('/success?u=' + username) //pass username in query
       }
     res.send(data)
+})
+
+
+app.get('/node-admin/api', async(req, res) => {
+  res.render('admin/api', { 'data' :  all_routes_list})
+})
+
+app.get('/success', async(req, res, next) => {
+  // const user = sanitize(req.query.u)
+  req.session.loggedIn = true
+  const update_session_id = await authModel.findOneAndUpdate({ username : req.query.u }, { session_id : req.sessionID })
+  res.send({user : req.query.u, session_id : req.sessionID})
 })
 
 app.get('/add-project/:file_name', (req, res) => {
@@ -184,13 +256,6 @@ app.get('/blog/:blogname/:file_name', (req,res) => {
 app.get('/blog/:slug', async(req, res) => {
   const thisBlog = await Blog.findOne({slug : req.params.slug})
   res.send(thisBlog)
-})
-app.get('/success', async(req, res, next) => {
-  // const user = sanitize(req.query.u)
-  req.session.loggedIn = true
-  const update_session_id = await authModel.findOneAndUpdate({ username : req.query.u }, { session_id : req.sessionID })
-  res.send({user : req.query.u, session_id : req.sessionID})
-  
 })
 
 

@@ -1,0 +1,193 @@
+{{> admin/header}}
+{{> admin/sidebar}}
+
+    <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        {{data.title}}
+        <small>Add / Edit / Delete Blogs</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/admin"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Blogs</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-User" onclick="userAction('','add')">
+                <i class="fa fa-fw fa-user-plus"></i>
+                </button>
+              </h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="example2" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Title</th>
+                  <th>body</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#each data.blogs as |blog|}}
+                  <tr>
+                    <td class="col-md-2"><a href="devblog/{{blog.slug}}">{{blog.name}}</a></td>
+                    <td class="col-md-2">{{blog.cardtitle}}</td>
+                    <td class="col-md-6"><p id="blog-body">{{{blog.body}}}</p></td>
+                    {{!-- <td>{{user.password}}</td> --}}
+                    <td class="col-md-2 d-flex justify-content-center">
+                      <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modal-User" onclick="userAction('{{blog.id}}','edit')">
+                      <i class="fa fa-edit"></i>
+                      </button>
+                      <button type="button" class="btn btn-danger" onclick="userAction('{{blog.id}}','delete')">
+                      <i class="fa fa-trash"></i>
+                      </button>
+                      <button type="button" class="btn btn-info" onclick="userAction('{{blog.id}}','')">
+                      <i class="fa fa-info"></i>
+                      </button>
+                    </td>
+                  </tr>
+                {{/each}}
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+
+  <div class="modal fade" id="modal-User">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="modalTitle">edit blog</h4>
+        </div>
+        <div class="modal-body">
+
+          <!-- form start -->
+            <form class="form-horizontal" id="modalForm" action="/api/devblog" method="POST" enctype="multipart/form-data">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="name" class="col-sm-2 control-label">name</label>
+                  <div class="col-sm-10">
+                    <input type="hidden" id="_id" name="_id">
+                    <input type="text" id="name" name="name" class="form-control" placeholder="name">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="description" class="col-sm-2 control-label">author</label>
+                  <div class="col-sm-10">
+                    <input type="text" id="author" name="author" class="form-control" placeholder="blog author">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="content" class="col-sm-2 control-label">Content</label>
+                  <div class="col-sm-10">
+                    <input type="text" id="content" name="content" class="form-control" placeholder="card content">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="devblogtitle" class="col-sm-2 control-label">cardtitle</label>
+                  <div class="col-sm-10">
+                    <input type="text" id="devblogtitle" name="devblogtitle" class="form-control" placeholder="card title">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="devblogfile" class="col-sm-2 control-label">card banner</label>
+                  <div class="col-sm-10">
+                    <input type="file" id="devblogfile" name="devblogfile" class="form-control" placeholder="card banner image">
+                  </div>
+                </div>
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-default">Cancel</button>
+                <button type="submit" id="modalSubmit" class="btn btn-info pull-right">Add</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+{{> admin/footer}}
+
+
+<script>
+$(document).ready(function() {
+  $("#blog-body").click(function() {
+    alert("Hello, world!")
+  });
+})
+function userAction(id,action) {
+  var base_url = window.location.origin
+  if(action == 'add') {
+    const fd = new FormData();    
+    fd.append( 'name', $('#name').val() )
+    fd.append( 'content', $('#content').val() )
+    fd.append( 'devblogtitle', $('#devblogtitle').val() )
+    fd.append( 'devblogfile', input.files[0] )
+
+    $.ajax({
+    url: '/api/devblog',
+    data: fd,
+    processData: false,
+    contentType: false,
+    type: 'POST',
+    success: function(data){
+        alert(data);
+    }
+    })
+    $('#_id').val("")
+    $('#content').val("")
+    $('#devblogtitle').val("")
+  }
+  else if(action == 'edit') {
+    $.ajax({
+      type: 'GET',
+      url: base_url+'/api/devblog/'+id,
+      success: function (data) {
+        $('#_id').val(data.data.blog._id)
+        $('#content').val(data.data.blog.content)
+        $('#name').val(data.data.blog.name)
+        $('#author').val(data.data.blog.author)
+        $('#devblogtitle').val(data.data.blog.cardtitle)
+        $('#modalTitle').html(data.data.blog.name)
+        $('#modalSubmit').html(data.data.modalSubmit)
+        $('#modalForm').attr('action', '/api/devblog/'+id)
+      }
+    })
+  }
+  else if(action == 'delete') {
+      $.ajax({
+      type: 'DELETE',
+      url: base_url+'/api/devblog/'+id,
+      success: function (data) {
+        location.reload()
+      }
+    })
+  }
+}
+</script>

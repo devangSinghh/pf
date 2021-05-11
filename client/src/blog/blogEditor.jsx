@@ -16,7 +16,7 @@ const BlogEditor = props => {
   const [convertedContent, setConvertedContent] = useState(null);
 
   useEffect(async() => {
-    const { data:blog } = await axios.get(base + `devblog/${props.slug}/`)
+    const { data:blog } = await axios.get(`devblog/get/${props.slug}/`)
     if (blog.body !== undefined)
     setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML(blog.body))))
   }, [])

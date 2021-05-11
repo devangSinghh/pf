@@ -10,9 +10,8 @@ const DevCard = props => {
     return ( 
         <div className="col-md-4 mt-3">
             <div className="d-blog-card m-2">
-                {/* <Link to={'/d/blogs/' + props.slug}> */}
                 <div>
-                    <Link className="d-flex justify-content-center" to={'/d/blogs/' + props.slug}>
+                    <Link className="d-flex justify-content-center" to={'/blogs/' + props.slug}>
                     <img src={props.card} className="d-blog-card-img" alt=""/>
                     </Link>
                 </div>
@@ -29,7 +28,7 @@ const DevCard = props => {
                 </p>
                 </div>
                 {/* } /> */}
-                <Link to={'/d/blogs/' + props.slug}>
+                <Link to={'/blogs/' + props.slug}>
                     <div style={{textTransform: 'none'}} className="read-more">
                         <Tooltip title="Open blog" aria-label="add">
                             {/* <IconButton aria-label="blog title"> */}

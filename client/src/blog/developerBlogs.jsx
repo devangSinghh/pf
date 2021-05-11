@@ -39,7 +39,7 @@ class DeveloperBlogs extends Component {
 
     componentDidMount = async() => {
         window.scrollTo(0, 0)
-        let { data:blogs } = await axios.get('/devblog')
+        let { data:blogs } = await axios.get('/devblog/get')
         blogs = shuffle(blogs)
         this.setState({ blogs, loading : false })
     }
