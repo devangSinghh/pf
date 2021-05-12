@@ -89,7 +89,7 @@ class DevBlogsAdmin extends Component {
             return <Redirect to="/login" />
         }
         else if(this.state.blogAdded) {
-            return <Redirect to={"/d/blogs/" + blog.name}/>
+            return <Redirect to={"/blogs/" + blog.name}/>
         }
         return (
             <div className="dev-blog-admin-container">

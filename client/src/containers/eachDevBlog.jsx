@@ -1,44 +1,45 @@
 import React, { Component } from 'react'
 import axios, { base } from '../axios-pf'
 import Cookies from 'js-cookie'
-import Button from '@material-ui/core/Button'
-import OutlinedInput from '@material-ui/core/OutlinedInput'
-import InputLabel from '@material-ui/core/InputLabel'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import IconButton from '@material-ui/core/IconButton'
-import FormControl from '@material-ui/core/FormControl'
-import ButtonGroup from '@material-ui/core/ButtonGroup'
+import DOMPurify from 'dompurify'
+import { Button, OutlinedInput, InputLabel, InputAdornment, IconButton, FormControl, ButtonGroup, Tooltip } from '@material-ui/core'
 import KeyboardArrowRightOutlinedIcon from '@material-ui/icons/KeyboardArrowRightOutlined'
 import BlogEditor from '../blog/blogEditor'
 import FileCopyIcon from '@material-ui/icons/FileCopy'
-import Tooltip from '@material-ui/core/Tooltip'
+import FacebookIcon from '@material-ui/icons/Facebook'
+import LinkedInIcon from '@material-ui/icons/LinkedIn'
+import TwitterIcon from '@material-ui/icons/Twitter'
 import EmbedGist from '../common/EmbedGist'
 import reactStringReplace  from 'react-string-replace'
 
 import Footer from '../blog/footer'
-
+import DevCard from '../common/developerBlogCard'
 import Loader from '../common/Loader'
 class EachDevBlog extends Component {
     
     state = {
         showEditor : false,
         blog : [],
+        read_more : [],
         data : {
             title : "",
             subtitle : "",
             blogBanner : null
         },
-        loading : true
+        loading : true,
+        color : [ '#0F413B', '#222', '#3625B4', '#A84760', '#8432D0', '#A84760'],
+        currentColor : ''
     }
 
     componentDidMount = async() => {
-        const { match: { params } } = this.props;
-        const { data : blog } = await axios.get('/devblog/' + params.slug)
-        this.setState({ blog })
+        const { match: { params } } = this.props
+        const { data : blog } = await axios.get('devblog/' + params.slug)
+        const { data : read_more } = await axios.get('suggestions/read-more')
         const data = {...this.state.data}
         data.title = blog.title
         data.subtitle = blog.subtitle
-        this.setState({ data, loading : false })
+        const currentColor =  this.state.color[Math.floor(Math.random() * this.state.color.length)]
+        this.setState({ blog, data, currentColor, read_more, loading : false })
     }
     
     handleChange = ({ currentTarget : input }) => {
@@ -57,6 +58,12 @@ class EachDevBlog extends Component {
         const { data : resp } = await axios.post(`/devblog/banner/${blog.slug}`, payload, config)
 
     }
+
+    createMarkup = html => {
+        return  {
+          __html: DOMPurify.sanitize(html)
+        }
+      }
 
     formatEditorContent = () => {
 
@@ -113,6 +120,7 @@ class EachDevBlog extends Component {
     render() {
         const ifAdmin = Cookies.get('admin') && Cookies.get('session_id')
         const blog = this.state.blog === undefined ? null : this.state.blog
+        const read_more = this.state.read_more === undefined ? null : this.state.read_more
         const el = this.state.loading === true ? 
             <Loader height="60vh" content="Loading..."/>
             :
@@ -214,13 +222,21 @@ class EachDevBlog extends Component {
                     <div className="body-wrapper">
                         <ul className="blog-share">
                             <li>SHARE</li>
-                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.facebook.com/sharer/sharer.php?u=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-facebook"/></li></a>
-                            <a style={{ textDecoration:"none", color:"#444" }} className="twitter-share-button" href={"https://twitter.com/share?url=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-twitter"/></li></a>
-                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.linkedin.com/sharing/share-offsite/?url=thedevang.com/d/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-linkedin"/></li></a>
+                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.facebook.com/sharer/sharer.php?u=thedevang.com/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-facebook"/></li></a>
+                            <a style={{ textDecoration:"none", color:"#444" }} className="twitter-share-button" href={"https://twitter.com/share?url=thedevang.com/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-twitter"/></li></a>
+                            <a style={{ textDecoration:"none", color:"#444" }} href={"https://www.linkedin.com/sharing/share-offsite/?url=thedevang.com/blogs/" + this.state.blog.slug} target="_blank"><li><i className="fa fa-linkedin"/></li></a>
                         </ul>
                         <p id="blog-body" className="body">
                             {this.formatEditorContent()}
                         </p>
+                    </div>
+                </div>
+                <div className="read-more-blogs" style={{ backgroundColor:this.state.currentColor }}>
+                    <div className="container">
+                        <h2 className="read-more-heading">Read more...</h2>
+                        <div className="row m-0">
+                            {read_more.filter(m => m !== null).map((m, key) => <DevCard key={key} title={m.cardtitle} content={m.content} date={m.publishedOn} slug={m.slug} card={base + m.cardBanner}/>)}
+                        </div>
                     </div>
                 </div>
                 <Footer/>

@@ -29,7 +29,6 @@ const BlogEditor = props => {
   const convertContentToHTML = () => {
     let currentContentAsHTML = convertToHTML(editorState.getCurrentContent());
     setConvertedContent(currentContentAsHTML);
-    console.log((currentContentAsHTML))
   }
   
   const saveEditorContent = async(e, route, id) => {

@@ -10,7 +10,7 @@ const DevCard = props => {
     return ( 
         <div className="col-md-4">
             <div className="d-blog-card m-2">
-                <Link to={'/d/blogs/' + props.slug}><img style={{ pointerEvents:"none" }} src={props.card} className="d-blog-card-img" alt=""/></Link>
+                <Link to={'/blogs/' + props.slug}><img style={{ pointerEvents:"none" }} src={props.card} className="d-blog-card-img" alt=""/></Link>
                 {/* <RippleButton children={ */}
                 <div>
                     <div className="row w-100 m-0 wrapper d-flex align-items-center">
@@ -23,7 +23,7 @@ const DevCard = props => {
                 </p>
                 </div>
                 {/* } /> */}
-                <Link to={'/d/blogs/' + props.slug}>
+                <Link to={'/blogs/' + props.slug}>
                     <div style={{textTransform: 'none'}} className="read-more">
                         <Tooltip title="Open blog" aria-label="add">
                             <IconButton aria-label="blog title">

@@ -15,7 +15,7 @@ router.put('/:name', Apidata.uploadBlog , async(req, res) => {
 
     imgur.setClientID("e3e1260deca3963");
     imgur.upload(path.join(__dirname, "./media/blog/" + req.file.filename),function(err, res){
-        console.log(res.data.link); //log the imgur url
+        console.log(res.data.link) //log the imgur url
     });
 
     if (fs.readdir('./media/blog/' + req.params.name).filter(m => m.includes('banner')).length == 0) {

@@ -42,6 +42,7 @@ const ip = require('./routes/ip')
 const analytics = require('./routes/analytics')
 const sitemap = require("./routes/sitemap")
 const admin = require('./routes/auth')
+const suggestions = require('./routes/suggestions')
 const csrf = require('./routes/csrf')
 
 //Port
@@ -149,6 +150,7 @@ app.use('/api', analytics)
 app.use('/sitemap.xml', sitemap)
 app.use('/auth', admin)
 app.use('/csrf', csrf)
+app.use('/suggestions', suggestions)
 
 
 app.post('/auth/login', async(req, res) => {
@@ -159,7 +161,7 @@ app.post('/auth/login', async(req, res) => {
 
     var bytes  = CryptoJS.AES.decrypt(data.password, process.env.PASSWORD_HASH_KEY)
     var decrypted_password = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
-    console.log(typeof decrypted_password.toString(), typeof password)
+
     if (data.length != 0 && decrypted_password.toString() === password) {
       res.status(200)
        return res.redirect('/success?u=' + username) //pass username in query
