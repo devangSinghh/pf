@@ -204,7 +204,7 @@ class EachDevBlog extends Component {
                             className="m-2">Upload this Image
                             </Button>}
                         </div>
-                    <BlogEditor route="/devblog/content/" slug={blog.slug} blogId={blog._id}/>
+                    <BlogEditor route="/devblog/content/" type="devblog" slug={blog.slug} blogId={blog._id}/>
                 </div>}
                 </div>
 

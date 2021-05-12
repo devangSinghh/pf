@@ -1,0 +1,178 @@
+{{> admin/header}}
+{{> admin/sidebar}}
+
+    <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        {{data.title}}
+        <small>Add / Edit / Delete Project</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/admin"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">projects</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-User" onclick="userAction('','add')">
+                <i class="fa fa-fw fa-user-plus"></i>
+                </button>
+              </h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="example2" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#each data.projects as |project|}}
+                  <tr>
+                    <td class="col-md-2">{{project.name}}</td>
+                    <td class="col-md-8">{{project.desc}}</td>
+                    {{!-- <td>{{user.password}}</td> --}}
+                    <td>
+                      <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modal-User" onclick="userAction('{{project.id}}','edit')">
+                      <i class="fa fa-edit"></i>
+                      </button>
+                      <button type="button" class="btn btn-danger" onclick="userAction('{{project.id}}','delete')">
+                      <i class="fa fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                {{/each}}
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+
+  <div class="modal fade" id="modal-User">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="modalTitle">edit project</h4>
+        </div>
+        <div class="modal-body">
+
+          <!-- form start -->
+            <form class="form-horizontal" id="modalForm" action="/api/add-project" method="POST" enctype="multipart/form-data">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="name" class="col-sm-2 control-label">name</label>
+                  <div class="col-sm-10">
+                    <input type="hidden" id="_id" name="_id">
+                    <input type="text" id="name" name="name" class="form-control" placeholder="name">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="description" class="col-sm-2 control-label">description</label>
+                  <div class="col-sm-10">
+                    <input type="text" id="desc" name="desc" class="form-control" placeholder="description">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="link" class="col-sm-2 control-label">link</label>
+                  <div class="col-sm-10">
+                    <input type="text" id="link" name="link" class="form-control" placeholder="link">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="link" class="col-sm-2 control-label">image</label>
+                  <div class="col-sm-10">
+                    <input type="file" id="file" name="file" class="form-control" placeholder="image">
+                  </div>
+                </div>
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-default">Cancel</button>
+                <button type="submit" id="modalSubmit" class="btn btn-info pull-right">Add</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+{{> admin/footer}}
+
+
+<script>
+function userAction(id,action) {
+  var base_url = window.location.origin
+  if(action == 'add') {
+    const fd = new FormData();    
+    fd.append( 'name', $('#name').val() );
+    fd.append( 'desc', $('#desc').val() );
+    fd.append( 'link', $('#link').val() );
+    fd.append( 'file', input.files[0] );
+
+    $.ajax({
+    url: '/api/add-project',
+    data: fd,
+    processData: false,
+    contentType: false,
+    type: 'POST',
+    success: function(data){
+        alert(data);
+    }
+    })
+    $('#_id').val("")
+    $('#name').val("")
+    $('#desc').val("")
+    $('#link').val("")
+  }
+  else if(action == 'edit') {
+    $.ajax({
+      type: 'GET',
+      url: base_url+'/api/add-project/'+id,
+      success: function (data) {
+        $('#_id').val(data.data.project._id)
+        $('#name').val(data.data.project.name)
+        $('#desc').val(data.data.project.desc)
+        $('#link').val(data.data.project.link)
+        $('#modalTitle').html(data.data.project.name)
+        $('#modalSubmit').html(data.data.modalSubmit)
+        $('#modalForm').attr('action', '/api/add-project/'+id)
+      }
+    })
+  }
+  else if(action == 'delete') {
+      $.ajax({
+      type: 'DELETE',
+      url: base_url+'/api/add-project/'+id,
+      success: function (data) {
+        location.reload()
+      }
+    })
+  }
+}
+</script>

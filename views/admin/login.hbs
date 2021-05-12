@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+</head>
+<body onload='onload()'>
+    <style>
+        @font-face {
+            font-family: sailec;
+            src:url('./sailec-medium.ttf')
+        }
+        .wrapper {
+            height: 100vh;
+            background-color: rgb(22, 22, 22);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+        }
+        .container-form {
+            width: 35%;
+            margin: 0 auto;
+        }
+        .admin-login-form {
+            font-family: 'Roboto', Courier, monospace;
+            font-weight: 700;
+            background-color: rgb(27, 27, 27);
+            box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+            border-radius: 0.5rem;
+        }
+        .head, label {
+            color: rgb(219, 219, 219);
+        }
+        .form-control {
+            background-color: black;
+            border: 1px solid rgb(43, 43, 43) !important;
+            color: white;
+        }
+        .form-control:focus {
+            background-color: black;
+            color: rgb(224, 224, 224);
+        }
+        button {
+            border: none;
+            padding: 0.4rem;
+            border-radius: 0.3rem;
+            width: 90px;
+            color: white;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+            background-color: rgb(85, 84, 167);
+        }
+        button :active {
+            transform: scale(0.98);
+        }
+        @media (max-width:768px) {
+           .container-form {
+            width: 95%;
+            margin: 0 auto;
+            } 
+        }
+    </style>
+    <div onload="setValue()" class="wrapper container-fluid p-4">
+        <div class="container-form admin-login-form p-3">
+            <h2 class="mb-2 head">Admin login</h2>
+            <hr style="height:0.5px;background-color:rgb(138, 138, 138)">
+            <form id="#login_form" action="/login" method="POST">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input  required type="text" name="username" class="form-control" id="username" aria-describedby="username" placeholder="username">
+                    <input type="hidden" name="hiddenText" val="" id="hiddenText">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input  required type="password" name="password" class="form-control" id="password" placeholder="password">
+                </div>
+                <button type="submit" id="button" class="">Login</button>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        let size = 7;
+        $(document).ready(function() {   
+            $('#button').click(function() {   
+            let num = Math.floor(1 + (Math.random() * Math.pow(10, size)));
+            $('#hiddenText').val(num)
+            })
+        })
+    </script>
+</body>
+</html>

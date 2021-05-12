@@ -13,7 +13,7 @@ Router.post('/register', async(req, res) => {
     const password = sanitize(req.body.password)
     const hashed_password = crypto.AES.encrypt(password, process.env.PASSWORD_HASH_KEY).toString()
     const checkUser = await admin.find({ username : {$in : [username]} })
-
+    console.log(checkUser)
     try {
         if(checkUser.length != 0) {
             console.log(boxen('user already exists!! try different username', { borderColor :'yellow' }))
