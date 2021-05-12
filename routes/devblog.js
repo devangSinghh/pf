@@ -30,7 +30,7 @@ router.post('/', Apidata.uploadDevBlog, async(req, res) => {
         fs.mkdirSync(dir)
         fs.mkdirSync(dir + '/content')
         fs.rename(tempPath, newPath, err => { 
-            if (err) throw err;
+            if (err) console.log(err)
          })
     }    
 
@@ -63,33 +63,28 @@ router.post('/banner/:name', Apidata.uploadDevBlog, async(req, res) => {
 
     fs.readdir('./media/devblog/' + req.params.name, (err, data) => {
         if(err) return ;
-        if (data.filter(m => m.includes('banner')).length == 0) {
+        if (data.filter(m => m.includes('banner')).length === 0) {
             fs.rename(tempPath, newPath, err => { 
-                if (err) throw err
+                if (err) {
+                    console.log(err)
+                }
                 console.log("banner image moved")
              })
         }
         else {
-            fs.readdir('./media/devblog/' + req.params.name, (err, data) => {
-                if(err) return ;
-                else {
-                    const oldFile = './media/devblog/' + req.params.name + '/' +  data.filter(m => m.includes('banner'))[0]
-                    fs.unlink(oldFile, err => {
-                        if (err) console.log(err)
-                        console.log("root file deleted")
-                    })
-            
-                    fs.rename(tempPath, newPath, err => { 
-                        if (err) throw err;
-                        console.log("banner image moved")
-                     })
-                }
+            const oldFile = './media/devblog/' + req.params.name + '/' +  data.filter(m => m.includes('banner-'))[0]
+            fs.unlink(oldFile, err => {
+                if (err) console.log(err)
+                console.log("root file deleted")
             })
+    
+            fs.rename(tempPath, newPath, err => { 
+                if (err) console.log(err)
+                console.log("banner image moved")
+             })
 
         }
     })
-
-    console.log('devblog/' + req.params.name + '/banner-' + req.file.filename)
 
     const data = await DevBlog.findOneAndUpdate({slug : req.params.name}, { blogBanner : 'devblog/' + req.params.name + '/banner-' + req.file.filename })
     res.send(data)

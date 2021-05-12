@@ -48,6 +48,9 @@ const csrf = require('./routes/csrf')
 //Port
 const PORT = 6161
 
+const addon_test = require('./build/Release/native.node')
+console.log(addon_test.hello())
+
 let depth_limit = 2; //JSON parse depth 
 
 let limit_depth = (obj, current_depth, limit) => {
