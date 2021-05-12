@@ -153,6 +153,11 @@ app.use('/csrf', csrf)
 app.use('/suggestions', suggestions)
 
 
+app.post('/logout', async(req, res) => {
+  await authModel.findOneAndUpdate({ username : req.body.username }, {  session_id:'' })
+  res.status(200)
+})
+
 app.post('/auth/login', async(req, res) => {
     const username = sanitize(req.body.username)
     const password = sanitize(req.body.password)

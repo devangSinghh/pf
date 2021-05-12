@@ -54,7 +54,6 @@ class EachDevBlog extends Component {
         const blog = this.state.blog
         payload.append('devblogfile', this.state.data.blogBanner)
         const config = { headers: { 'content-type': 'multipart/form-data' } }
-
         const { data : resp } = await axios.post(`/devblog/banner/${blog.slug}`, payload, config)
 
     }
@@ -117,6 +116,13 @@ class EachDevBlog extends Component {
         this.setState({ showEditor:!this.state.showEditor })
         window.scrollTo(0, 0)
     }
+
+    LogOut = async() => {
+        Cookies.remove('session_id')
+        await axios.post('/logout', { username : Cookies.get('admin') })
+        Cookies.remove('admin')
+    }
+
     render() {
         const ifAdmin = Cookies.get('admin') && Cookies.get('session_id')
         const blog = this.state.blog === undefined ? null : this.state.blog
@@ -130,7 +136,7 @@ class EachDevBlog extends Component {
                     <Button className="" onClick={this.showEditor} variant="contained" color="secondary">
                         {this.state.showEditor ? "done" : "Edit"}
                     </Button>
-                    <Button variant="contained" color="secondary" className="logout-each-blog-page">Logout</Button>
+                    <Button onClick={this.LogOut} variant="contained" color="secondary" className="logout-each-blog-page">Logout</Button>
                 </ButtonGroup>
                 }
                 <div className="container">

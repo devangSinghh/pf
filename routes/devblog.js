@@ -60,6 +60,7 @@ router.post('/banner/:name', Apidata.uploadDevBlog, async(req, res) => {
 
     const tempPath = './media/devblog/' + req.file.filename
     const newPath = './media/devblog/' + req.params.name + '/banner-' + req.file.filename
+
     fs.readdir('./media/devblog/' + req.params.name, (err, data) => {
         if(err) return ;
         if (data.filter(m => m.includes('banner')).length == 0) {
