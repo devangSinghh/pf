@@ -33,7 +33,7 @@ class EachDevBlog extends Component {
 
     componentDidMount = async() => {
         const { match: { params } } = this.props
-        const { data : blog } = await axios.get('devblog/' + params.slug)
+        const { data : blog } = await axios.get('devblog/get/' + params.slug)
         const { data : read_more } = await axios.get('suggestions/read-more')
         const data = {...this.state.data}
         data.title = blog.title

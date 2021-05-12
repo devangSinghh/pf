@@ -15,7 +15,7 @@ class DeveloperBlogs extends Component {
     }
 
     componentDidMount = async() => {
-        const { data:blogs } = await axios.get('/devblog')
+        const { data:blogs } = await axios.get('/devblog/get')
         this.setState({ blogs })
     }
     

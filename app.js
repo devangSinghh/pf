@@ -46,10 +46,6 @@ const csrf = require('./routes/csrf')
 const suggestions = require('./routes/suggestions')
 const node_panel = require('./routes/admin/panel')
 
-
-const addon_test = require('./build/Release/native.node')
-console.log(addon_test.hello())
-
 const hbs = require('hbs')
 
 
