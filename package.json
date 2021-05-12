@@ -1,7 +1,6 @@
 {
   "name": "pf",
   "version": "1.0.0",
-  "gypfile": true,
   "description": "Devang Singh IITK portfolio",
   "main": "index.js",
   "dependencies": {
