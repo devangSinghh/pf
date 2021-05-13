@@ -268,6 +268,7 @@ class EachBlog extends BLogFunctions {
                 {/* <div className="blog-editor container">
                     <BlogEditor 
                     blogId={this.state.blog._id} 
+                    type="blog"
                     route='update-blog/save-editor-content/'
                     savedContent={this.state.blog.blogEditorContent} 
                     blogName={this.state.blogName}/>

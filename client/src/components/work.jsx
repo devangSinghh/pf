@@ -15,6 +15,7 @@ class Work extends Component {
     }
 
     render() {
+        const projects = this.state.projects === undefined ? null : this.state.projects
         return (
             <div className="work-experience">
                 <h5 className="timeline-heading mt-5">Work Experience</h5>
@@ -26,7 +27,7 @@ class Work extends Component {
                 <a href="https://github.com/devangSinghh"><button><img src={glogo} alt=""/></button></a>
 
                 <div className="row d-flex justify-content-center m-0">
-                    {this.state.projects.map(m => 
+                    {projects.map(m => 
                         <div className="col-md-6 p-2 d-flex justify-content-center work-cards p-0">
                             <WorkCard title={m.name} description={m.desc} link={m.link} image={m.image} />
                         </div>    
